@@ -1,0 +1,64 @@
+{
+	"name": "parame76",
+	"version": "0.1.0",
+	"description": "The mono-repo for desi76, desi76-cli, desi76-ui and desi76-uis",
+	"private": true,
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/MYNAME/parame76.git"
+	},
+	"homepage": "https://MYNAME.github.io/parame76/",
+	"author": "MYNAME",
+	"license": "ISC",
+	"keywords": [
+		"parametrix",
+		"3D",
+		"CAD"
+	],
+	"type": "module",
+	"workspaces": [
+		"pkg/*"
+	],
+	"scripts": {
+		"desi76:dev": "npm -w desi76 run dev",
+		"desi76:ci": "npm -w desi76 run ci",
+		"desi76:svgo": "npm -w desi76 run svgo",
+		"desi76:clean": "npm -w desi76 run clean",
+		"desi76:version": "npm -w desi76 version patch",
+		"desi76:publish": "npm -w desi76 publish --provenance",
+		"desi76-ui:dev": "npm -w desi76-ui run dev",
+		"desi76-ui:ci": "npm -w desi76-ui run ci",
+		"desi76-ui:clean": "npm -w desi76-ui run clean",
+		"desi76-ui:preview": "npm -w desi76-ui run preview",
+		"desi76-ui:version": "npm -w desi76-ui version patch",
+		"desi76-cli:ci": "npm -w desi76-cli run ci",
+		"desi76-cli:run": "npm -w desi76-cli run run",
+		"desi76-cli:clean": "npm -w desi76-cli run clean",
+		"desi76-cli:version": "npm -w desi76-cli version patch",
+		"desi76-cli:publish": "npm -w desi76-cli publish --provenance",
+		"desi76-uis:ci": "npm -w desi76-uis run ci",
+		"desi76-uis:copy_public": "npm -w desi76-uis run copy_public",
+		"desi76-uis:run": "npm -w desi76-uis run run",
+		"desi76-uis:clean": "npm -w desi76-uis run clean",
+		"desi76-uis:version": "npm -w desi76-uis version patch",
+		"desi76-uis:publish": "npm -w desi76-uis publish --provenance",
+		"dev": "run-p desi76:dev desi76-ui:dev",
+		"ci": "run-s desi76:ci desi76-ui:ci desi76-cli:ci desi76-uis:ci",
+		"ci2": "run-s desi76:ci desi76-ui:ci",
+		"ci3": "run-s desi76:ci desi76-cli:ci",
+		"svgo": "run-s desi76:svgo",
+		"clean-root": "rimraf tmp output output2",
+		"clean": "run-s clean-root desi76:clean desi76-ui:clean desi76-cli:clean desi76-uis:clean",
+		"preview": "run-s desi76-ui:preview",
+		"run-uis": "run-s desi76-uis:run",
+		"run-cli": "run-s desi76-cli:run",
+		"versions": "run-s desi76:version desi76-ui:version desi76-cli:version desi76-uis:version",
+		"gh-publish": "run-s desi76:publish desi76-cli:publish desi76-uis:publish",
+		"ls-workspaces": "npm -ws exec -c pwd"
+	},
+	"devDependencies": {
+		"@atao60/fse-cli": "^0.1.9",
+		"npm-run-all2": "^8.0.4",
+		"rimraf": "^6.0.1"
+	}
+}
