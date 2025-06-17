@@ -1,4 +1,4 @@
 // index.ts : entry point
 
-export * from './myGroup1/voila';
-export * from './myGroup1/catamaran';
+export * from './boat/catamaran';
+export * from './boat/voila';

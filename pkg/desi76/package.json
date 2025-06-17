@@ -48,9 +48,9 @@
 		"test:unit": "vitest",
 		"test:unit:once": "vitest --run",
 		"ci": "run-s check build pretty lint test:unit:once svgo",
-		"svgo1": "svgo --config ./svgo.config.js -f src/myGroup1/svg -o dist/pgdsvg/",
+		"svgo1": "svgo --config ./svgo.config.js -f src/boat/svg -o dist/pgdsvg/",
 		"svgo": "run-s svgo1",
-		"browserBundleA": "esbuild src/myGroup1/catamaran.ts --bundle --format=esm --outfile=dist2/catamaran.js",
+		"browserBundleA": "esbuild src/boat/catamaran.ts --bundle --format=esm --outfile=dist2/catamaran.js",
 		"browserBundleAll": "esbuild dist/index.js --bundle --format=esm --outfile=dist2/desi76.js",
 		"clean": "rimraf dist dist2 node_modules"
 	},
