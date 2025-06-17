@@ -107,6 +107,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const W2 = param.W2;
 		const W2b = W2 - 2 * T1;
 		const floatLength = L212 + 2 * L3;
+		const aEnv = Math.atan2(param.H3, L2);
+		const a2 = pi2 - aEnv;
+		const a3 = a2 / 2;
+		const Y3 = T1 * Math.tan(a3);
+		const LH3 = Math.sqrt(L2 ** 2 + param.H3 ** 2);
 		// step-5 : checks on the parameter values
 		if (param.L4 < R4) {
 			throw `err089: L4 ${param.L4} is too small compare to D4 ${param.D4}`;
@@ -164,8 +169,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		function makeCtrCabEnv(x0: number, Sx: number): tContour {
 			const rCtr = contour(x0, param.H1)
 				.addSegStrokeR(Sx * T1, 0)
-				.addSegStrokeR(0, param.H2)
-				.addSegStrokeR(-Sx * T1, 0)
+				.addSegStrokeR(0, param.H2 - Y3)
+				.addSegStrokeRP(pi2 - Sx * a2, LH3 - Y3)
+				.addSegStrokeRP(pi2 - Sx * (a2 + pi2), T1)
+				.addSegStrokeRP(pi2 - Sx * (a2 + pi), LH3)
 				.closeSegStroke();
 			return rCtr;
 		}
