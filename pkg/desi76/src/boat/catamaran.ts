@@ -3,7 +3,7 @@
 
 // step-1 : import from geometrix
 import type {
-	//tContour,
+	tContour,
 	//tOuterInner,
 	tParamDef,
 	tParamVal,
@@ -13,7 +13,7 @@ import type {
 	//tSubDesign
 } from 'geometrix';
 import {
-	//contour,
+	contour,
 	//contourCircle,
 	ctrRectangle,
 	figure,
@@ -45,11 +45,14 @@ const pDef: tParamDef = {
 		pNumber('H1', 'mm', 120, 1, 1000, 1),
 		pNumber('H2', 'mm', 40, 1, 1000, 1),
 		pNumber('H3', 'mm', 100, 1, 1000, 1),
+		pNumber('T1', 'mm', 2, 0.1, 20, 0.1),
+		pNumber('T2', 'mm', 4, 0.1, 30, 0.1),
+		pNumber('R12', 'mm', 10, 0, 500, 1),
+		pNumber('R22', 'mm', 10, 0, 500, 1),
 		pSectionSeparator('details'),
 		pNumber('D1', 'mm', 50, 1, 500, 1),
 		pNumber('D4', 'mm', 40, 1, 500, 1),
-		pNumber('L4', 'mm', 40, 1, 500, 1),
-		pNumber('T1', 'mm', 2, 0.1, 20, 0.1)
+		pNumber('L4', 'mm', 40, 1, 500, 1)
 	],
 	paramSvg: {
 		W1: 'catamaran_top.svg',
@@ -61,10 +64,13 @@ const pDef: tParamDef = {
 		H1: 'catamaran_side.svg',
 		H2: 'catamaran_side.svg',
 		H3: 'catamaran_side.svg',
+		T1: 'catamaran_front.svg',
+		T2: 'catamaran_top.svg',
+		R12: 'catamaran_top.svg',
+		R22: 'catamaran_top.svg',
 		D1: 'catamaran_front.svg',
 		D4: 'catamaran_top.svg',
-		L4: 'catamaran_top.svg',
-		T1: 'catamaran_front.svg'
+		L4: 'catamaran_top.svg'
 	},
 	sim: {
 		tMax: 180,
@@ -76,13 +82,19 @@ const pDef: tParamDef = {
 // step-3 : definition of the function that creates from the parameter-values the figures and construct the 3D
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
-	const figTop = figure();
+	const figFloatBase = figure();
+	//const figFloatWall = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
+		//const pi = Math.PI;
+		//const pi2 = pi / 2;
 		const W212 = param.W1 + 2 * param.W2;
 		const L212 = param.L1 + 2 * param.L1;
 		const R4 = param.D4 / 2;
+		const W3p = param.W3p / 100.0;
+		const L3 = param.L3;
+		const W2 = param.W2;
 		// step-5 : checks on the parameter values
 		if (param.L4 < R4) {
 			throw `err089: L4 ${param.L4} is too small compare to D4 ${param.D4}`;
@@ -90,31 +102,64 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-6 : any logs
 		rGeome.logstr += `cabine surface ${ffix(W212 * L212)} mm2\n`;
 		// step-7 : drawing of the figures
-		// figTop
+		// dub-functions
+		function makeCtrFloat(
+			x0: number,
+			y0: number,
+			dx1: number,
+			dy1: number,
+			px2: number,
+			dy2: number,
+			cr: number
+		): tContour {
+			const dx2 = dx1 * px2;
+			const dx2b = dx1 - dx2;
+			const rCtr = contour(x0, y0)
+				.addPointR(dx2, -dy2)
+				.addSegStroke()
+				//.addSegArc3(-pi2, true)
+				.addCornerRounded(cr)
+				.addPointR(dx2b, dy2)
+				.addSegStroke()
+				//.addSegArc3(pi2, false)
+				.addSegStrokeR(0, dy1)
+				.addPointR(-dx2b, dy2)
+				.addSegStroke()
+				//.addSegArc3(pi2, true)
+				.addCornerRounded(cr)
+				.addPointR(-dx2, -dy2)
+				.addSegStroke()
+				//.addSegArc3(-pi2, false)
+				.closeSegStroke();
+			return rCtr;
+		}
+		// figFloatBase
+		const ctrFloatBase = makeCtrFloat(0, L3, L212, W2, 1 - W3p, L3, param.R21);
 		const ctrCabineBase = ctrRectangle(0, param.L3, W212, L212);
-		figTop.addSecond(ctrCabineBase);
+		figFloatBase.addMainO(ctrFloatBase);
+		figFloatBase.addSecond(ctrCabineBase);
 		// final figure list
 		rGeome.fig = {
-			faceTop: figTop
+			faceFloatBase: figFloatBase
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
 		rGeome.vol = {
 			extrudes: [
 				{
-					outName: `subpax_${designName}_top`,
-					face: `${designName}_faceTop`,
+					outName: `subpax_${designName}_floatB`,
+					face: `${designName}_faceFloatBase`,
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: param.T1,
 					rotate: [0, 0, 0],
-					translate: [0, 0, param.H1]
+					translate: [0, 0, 0]
 				}
 			],
 			volumes: [
 				{
 					outName: `pax_${designName}`,
 					boolMethod: EBVolume.eUnion,
-					inList: [`subpax_${designName}_top`]
+					inList: [`subpax_${designName}_floatB`]
 				}
 			]
 		};
