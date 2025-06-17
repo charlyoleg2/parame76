@@ -86,6 +86,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const figFloatWall = figure();
 	const figCabineBase = figure();
 	const figCabineWall = figure();
+	const figVault = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -116,7 +117,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `cabine surface ${ffix(W212 * L212)} mm2\n`;
 		rGeome.logstr += `float length ${ffix(floatLength)}, width W212 ${ffix(W212)} mm\n`;
 		// step-7 : drawing of the figures
-		// dub-functions
+		// sub-functions
 		function makeCtrFloat(
 			x0: number,
 			y0: number,
@@ -144,6 +145,28 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.addPointR(-dx2, -dy2)
 				//.addSegStroke()
 				.addSegArc3(pi2, false)
+				.closeSegStroke();
+			return rCtr;
+		}
+		function makeCtrU(x0: number, y0: number, iw: number, ih: number): tContour {
+			const rCtr = contour(x0, y0)
+				.addSegStrokeR(iw, 0)
+				.addSegStrokeR(0, ih)
+				.addSegStrokeR(-T1, 0)
+				.addSegStrokeR(0, -ih + T1)
+				.addSegStrokeR(-iw + 2 * T1, 0)
+				.addSegStrokeR(0, ih - T1)
+				.addSegStrokeR(-T1, 0)
+				.closeSegStroke();
+			return rCtr;
+		}
+		function makeCtrVault(x0: number, Sx: number): tContour {
+			const rCtr = contour(x0, param.H1 - R1)
+				.addPointR(Sx * R1, R1)
+				.addSegArc(R1, false, Sx < 0 ? true : false)
+				.addSegStrokeR(0, T1)
+				.addSegStrokeR(-Sx * (T1 + R1), 0)
+				.addSegStrokeR(0, -T1 - R1)
 				.closeSegStroke();
 			return rCtr;
 		}
@@ -180,12 +203,19 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figCabineWall.addSecond(ctrRectangle(0, 0, floatLength, param.H1));
 		figCabineWall.addSecond(ctrRectangle(L3, param.H1 - R1, L212, R1));
 		figCabineWall.addSecond(ctrRectangle(L3, param.H1, L212, T1));
+		// figVault
+		figVault.addMainO(makeCtrVault(W2, 1));
+		figVault.addMainO(makeCtrVault(W2 + W1, -1));
+		figVault.addSecond(makeCtrU(0, 0, W2, param.H1));
+		figVault.addSecond(makeCtrU(W2 + W1, 0, W2, param.H1));
+		figVault.addSecond(makeCtrU(0, param.H1, W212, param.H2 + param.H3));
 		// final figure list
 		rGeome.fig = {
 			faceFloatWall: figFloatWall,
 			faceFloatBase: figFloatBase,
 			faceCabineBase: figCabineBase,
-			faceCabineWall: figCabineWall
+			faceCabineWall: figCabineWall,
+			faceVault: figVault
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
@@ -201,7 +231,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				},
 				{
 					outName: `subpax_${designName}_floatW`,
-					face: `${designName}_faceFloatBase`,
+					face: `${designName}_faceFloatWall`,
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: param.H1,
 					rotate: [0, 0, 0],
@@ -220,16 +250,24 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					face: `${designName}_faceCabineWall`,
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: T1,
-					rotate: [pi2, 0, 0],
-					translate: [0, T1, 0]
+					rotate: [pi2, 0, pi2],
+					translate: [0, 0, 0]
 				},
 				{
 					outName: `subpax_${designName}_cabineW2`,
 					face: `${designName}_faceCabineWall`,
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: T1,
+					rotate: [pi2, 0, pi2],
+					translate: [W212 - T1, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_vault`,
+					face: `${designName}_faceVault`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: L212,
 					rotate: [pi2, 0, 0],
-					translate: [0, W212, 0]
+					translate: [0, L212 + L3, 0]
 				}
 			],
 			volumes: [
@@ -241,7 +279,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 						`subpax_${designName}_floatW`,
 						`subpax_${designName}_cabineB`,
 						`subpax_${designName}_cabineW1`,
-						`subpax_${designName}_cabineW2`
+						`subpax_${designName}_cabineW2`,
+						`subpax_${designName}_vault`
 					]
 				}
 			]
