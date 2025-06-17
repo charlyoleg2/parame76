@@ -85,22 +85,26 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const figFloatBase = figure();
 	const figFloatWall = figure();
 	const figCabineBase = figure();
+	const figCabineWall = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
 		const pi = Math.PI;
 		const pi2 = pi / 2;
 		const W212 = param.W1 + 2 * param.W2;
-		const L212 = param.L1 + 2 * param.L1;
+		const L212 = param.L1 + 2 * param.L2;
 		const R1 = param.D1 / 2;
 		const R4 = param.D4 / 2;
 		const W3p = param.W3p / 100.0;
 		const T1 = param.T1;
 		const T2 = param.T2;
+		const L1 = param.L1;
+		const L2 = param.L2;
 		const L3 = param.L3;
 		const W1 = param.W1;
 		const W2 = param.W2;
 		const W2b = W2 - 2 * T1;
+		const floatLength = L212 + 2 * L3;
 		// step-5 : checks on the parameter values
 		if (param.L4 < R4) {
 			throw `err089: L4 ${param.L4} is too small compare to D4 ${param.D4}`;
@@ -110,6 +114,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// step-6 : any logs
 		rGeome.logstr += `cabine surface ${ffix(W212 * L212)} mm2\n`;
+		rGeome.logstr += `float length ${ffix(floatLength)}, width W212 ${ffix(W212)} mm\n`;
 		// step-7 : drawing of the figures
 		// dub-functions
 		function makeCtrFloat(
@@ -163,11 +168,24 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figFloatWall.addSecond(ctrCabineBaseHole);
 		figFloatBase.addSecond(ctrCabineBase);
 		figFloatBase.addSecond(ctrCabineBaseHole);
+		// figCabineWall
+		const ctrCabineWall = contour(L3, param.H1)
+			.addSegStrokeR(L212, 0)
+			.addSegStrokeR(0, param.H2)
+			.addSegStrokeR(-L2, param.H3)
+			.addSegStrokeR(-L1, 0)
+			.addSegStrokeR(-L2, -param.H3)
+			.closeSegStroke();
+		figCabineWall.addMainO(ctrCabineWall);
+		figCabineWall.addSecond(ctrRectangle(0, 0, floatLength, param.H1));
+		figCabineWall.addSecond(ctrRectangle(L3, param.H1 - R1, L212, R1));
+		figCabineWall.addSecond(ctrRectangle(L3, param.H1, L212, T1));
 		// final figure list
 		rGeome.fig = {
 			faceFloatWall: figFloatWall,
 			faceFloatBase: figFloatBase,
-			faceCabineBase: figCabineBase
+			faceCabineBase: figCabineBase,
+			faceCabineWall: figCabineWall
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
@@ -196,6 +214,22 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					length: T1,
 					rotate: [0, 0, 0],
 					translate: [0, 0, param.H1]
+				},
+				{
+					outName: `subpax_${designName}_cabineW1`,
+					face: `${designName}_faceCabineWall`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: T1,
+					rotate: [pi2, 0, 0],
+					translate: [0, T1, 0]
+				},
+				{
+					outName: `subpax_${designName}_cabineW2`,
+					face: `${designName}_faceCabineWall`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: T1,
+					rotate: [pi2, 0, 0],
+					translate: [0, W212, 0]
 				}
 			],
 			volumes: [
@@ -205,7 +239,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					inList: [
 						`subpax_${designName}_floatB`,
 						`subpax_${designName}_floatW`,
-						`subpax_${designName}_cabineB`
+						`subpax_${designName}_cabineB`,
+						`subpax_${designName}_cabineW1`,
+						`subpax_${designName}_cabineW2`
 					]
 				}
 			]
