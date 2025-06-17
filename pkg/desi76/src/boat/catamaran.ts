@@ -86,6 +86,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const figFloatWall = figure();
 	const figCabineBase = figure();
 	const figCabineWall = figure();
+	const figCabineEnv = figure();
 	const figVault = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
@@ -160,6 +161,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.closeSegStroke();
 			return rCtr;
 		}
+		function makeCtrCabEnv(x0: number, Sx: number): tContour {
+			const rCtr = contour(x0, param.H1)
+				.addSegStrokeR(Sx * T1, 0)
+				.addSegStrokeR(0, param.H2)
+				.addSegStrokeR(-Sx * T1, 0)
+				.closeSegStroke();
+			return rCtr;
+		}
 		function makeCtrVault(x0: number, Sx: number): tContour {
 			const rCtr = contour(x0, param.H1 - R1)
 				.addPointR(Sx * R1, R1)
@@ -203,6 +212,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figCabineWall.addSecond(ctrRectangle(0, 0, floatLength, param.H1));
 		figCabineWall.addSecond(ctrRectangle(L3, param.H1 - R1, L212, R1));
 		figCabineWall.addSecond(ctrRectangle(L3, param.H1, L212, T1));
+		// figCabineEnv
+		figCabineEnv.addMainO(makeCtrCabEnv(L3, 1));
+		figCabineEnv.addMainO(makeCtrCabEnv(L3 + L212, -1));
+		figCabineEnv.mergeFigure(figCabineWall, true);
 		// figVault
 		figVault.addMainO(makeCtrVault(W2, 1));
 		figVault.addMainO(makeCtrVault(W2 + W1, -1));
@@ -215,6 +228,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			faceFloatBase: figFloatBase,
 			faceCabineBase: figCabineBase,
 			faceCabineWall: figCabineWall,
+			faceCabineEnv: figCabineEnv,
 			faceVault: figVault
 		};
 		// step-8 : recipes of the 3D construction
@@ -262,6 +276,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					translate: [W212 - T1, 0, 0]
 				},
 				{
+					outName: `subpax_${designName}_cabineEnv`,
+					face: `${designName}_faceCabineEnv`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: W212,
+					rotate: [pi2, 0, pi2],
+					translate: [0, 0, 0]
+				},
+				{
 					outName: `subpax_${designName}_vault`,
 					face: `${designName}_faceVault`,
 					extrudeMethod: EExtrude.eLinearOrtho,
@@ -280,6 +302,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 						`subpax_${designName}_cabineB`,
 						`subpax_${designName}_cabineW1`,
 						`subpax_${designName}_cabineW2`,
+						`subpax_${designName}_cabineEnv`,
 						`subpax_${designName}_vault`
 					]
 				}
