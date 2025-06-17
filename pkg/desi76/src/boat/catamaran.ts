@@ -46,9 +46,9 @@ const pDef: tParamDef = {
 		pNumber('H2', 'mm', 40, 1, 1000, 1),
 		pNumber('H3', 'mm', 100, 1, 1000, 1),
 		pNumber('T1', 'mm', 2, 0.1, 20, 0.1),
-		pNumber('T2', 'mm', 4, 0.1, 30, 0.1),
-		pNumber('R12', 'mm', 10, 0, 500, 1),
-		pNumber('R22', 'mm', 10, 0, 500, 1),
+		pNumber('T2', 'mm', 5, 0.1, 30, 0.1),
+		pNumber('R21', 'mm', 1, 0, 500, 1),
+		pNumber('R22', 'mm', 3, 0, 500, 1),
 		pSectionSeparator('details'),
 		pNumber('D1', 'mm', 50, 1, 500, 1),
 		pNumber('D4', 'mm', 40, 1, 500, 1),
@@ -66,7 +66,7 @@ const pDef: tParamDef = {
 		H3: 'catamaran_side.svg',
 		T1: 'catamaran_front.svg',
 		T2: 'catamaran_top.svg',
-		R12: 'catamaran_top.svg',
+		R21: 'catamaran_top.svg',
 		R22: 'catamaran_top.svg',
 		D1: 'catamaran_front.svg',
 		D4: 'catamaran_top.svg',
@@ -83,18 +83,22 @@ const pDef: tParamDef = {
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
 	const figFloatBase = figure();
-	//const figFloatWall = figure();
+	const figFloatWall = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
-		//const pi = Math.PI;
-		//const pi2 = pi / 2;
+		const pi = Math.PI;
+		const pi2 = pi / 2;
 		const W212 = param.W1 + 2 * param.W2;
 		const L212 = param.L1 + 2 * param.L1;
 		const R4 = param.D4 / 2;
 		const W3p = param.W3p / 100.0;
+		const T1 = param.T1;
+		const T2 = param.T2;
 		const L3 = param.L3;
+		const W1 = param.W1;
 		const W2 = param.W2;
+		const W2b = W2 - 2 * T1;
 		// step-5 : checks on the parameter values
 		if (param.L4 < R4) {
 			throw `err089: L4 ${param.L4} is too small compare to D4 ${param.D4}`;
@@ -116,30 +120,39 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const dx2b = dx1 - dx2;
 			const rCtr = contour(x0, y0)
 				.addPointR(dx2, -dy2)
-				.addSegStroke()
-				//.addSegArc3(-pi2, true)
+				//.addSegStroke()
+				.addSegArc3(-pi2, true)
 				.addCornerRounded(cr)
 				.addPointR(dx2b, dy2)
-				.addSegStroke()
-				//.addSegArc3(pi2, false)
+				//.addSegStroke()
+				.addSegArc3(-pi2, false)
 				.addSegStrokeR(0, dy1)
 				.addPointR(-dx2b, dy2)
-				.addSegStroke()
-				//.addSegArc3(pi2, true)
+				//.addSegStroke()
+				.addSegArc3(pi2, true)
 				.addCornerRounded(cr)
 				.addPointR(-dx2, -dy2)
-				.addSegStroke()
-				//.addSegArc3(-pi2, false)
+				//.addSegStroke()
+				.addSegArc3(pi2, false)
 				.closeSegStroke();
 			return rCtr;
 		}
-		// figFloatBase
-		const ctrFloatBase = makeCtrFloat(0, L3, L212, W2, 1 - W3p, L3, param.R21);
+		// figFloatWall
+		const ctrFloatExt1 = makeCtrFloat(0, L3, W2, L212, 1 - W3p, L3, param.R21);
+		const ctrFloatInt1 = makeCtrFloat(T1, L3, W2b, L212, 1 - W3p, L3 - T2, param.R22);
+		const ctrFloatExt2 = makeCtrFloat(W2 + W1, L3, W2, L212, W3p, L3, param.R21);
+		const ctrFloatInt2 = makeCtrFloat(W2 + W1 + T1, L3, W2b, L212, W3p, L3 - T2, param.R22);
 		const ctrCabineBase = ctrRectangle(0, param.L3, W212, L212);
-		figFloatBase.addMainO(ctrFloatBase);
+		figFloatWall.addMainOI([ctrFloatExt1, ctrFloatInt1]);
+		figFloatWall.addMainOI([ctrFloatExt2, ctrFloatInt2]);
+		figFloatWall.addSecond(ctrCabineBase);
+		// figFloatBase
+		figFloatBase.addMainO(ctrFloatExt1);
+		figFloatBase.addMainO(ctrFloatExt2);
 		figFloatBase.addSecond(ctrCabineBase);
 		// final figure list
 		rGeome.fig = {
+			faceFloatWall: figFloatWall,
 			faceFloatBase: figFloatBase
 		};
 		// step-8 : recipes of the 3D construction
@@ -153,13 +166,21 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					length: param.T1,
 					rotate: [0, 0, 0],
 					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_floatW`,
+					face: `${designName}_faceFloatBase`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.H1,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
 				}
 			],
 			volumes: [
 				{
 					outName: `pax_${designName}`,
 					boolMethod: EBVolume.eUnion,
-					inList: [`subpax_${designName}_floatB`]
+					inList: [`subpax_${designName}_floatB`, `subpax_${designName}_floatW`]
 				}
 			]
 		};
