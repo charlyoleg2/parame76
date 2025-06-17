@@ -14,7 +14,7 @@ import type {
 } from 'geometrix';
 import {
 	contour,
-	//contourCircle,
+	contourCircle,
 	ctrRectangle,
 	figure,
 	//degToRad,
@@ -84,6 +84,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
 	const figFloatBase = figure();
 	const figFloatWall = figure();
+	const figCabineBase = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -91,6 +92,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const pi2 = pi / 2;
 		const W212 = param.W1 + 2 * param.W2;
 		const L212 = param.L1 + 2 * param.L1;
+		const R1 = param.D1 / 2;
 		const R4 = param.D4 / 2;
 		const W3p = param.W3p / 100.0;
 		const T1 = param.T1;
@@ -102,6 +104,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-5 : checks on the parameter values
 		if (param.L4 < R4) {
 			throw `err089: L4 ${param.L4} is too small compare to D4 ${param.D4}`;
+		}
+		if (W1 < 2 * (R1 + R4)) {
+			throw `err109: W1 ${W1} is too small compare to D1 ${param.D1} and D4 ${param.D4}`;
 		}
 		// step-6 : any logs
 		rGeome.logstr += `cabine surface ${ffix(W212 * L212)} mm2\n`;
@@ -142,18 +147,27 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const ctrFloatInt1 = makeCtrFloat(T1, L3, W2b, L212, 1 - W3p, L3 - T2, param.R22);
 		const ctrFloatExt2 = makeCtrFloat(W2 + W1, L3, W2, L212, W3p, L3, param.R21);
 		const ctrFloatInt2 = makeCtrFloat(W2 + W1 + T1, L3, W2b, L212, W3p, L3 - T2, param.R22);
-		const ctrCabineBase = ctrRectangle(0, param.L3, W212, L212);
 		figFloatWall.addMainOI([ctrFloatExt1, ctrFloatInt1]);
 		figFloatWall.addMainOI([ctrFloatExt2, ctrFloatInt2]);
-		figFloatWall.addSecond(ctrCabineBase);
 		// figFloatBase
 		figFloatBase.addMainO(ctrFloatExt1);
 		figFloatBase.addMainO(ctrFloatExt2);
+		// figCabineBase
+		const ctrCabineBase = ctrRectangle(0, param.L3, W212, L212);
+		const ctrCabineBaseHole = contourCircle(W212 / 2, L3 + T1 + param.L4, R4);
+		figCabineBase.addMainOI([ctrCabineBase, ctrCabineBaseHole]);
+		figCabineBase.mergeFigure(figFloatWall, true);
+		figCabineBase.addSecond(ctrRectangle(W2, param.L3, R1, L212));
+		figCabineBase.addSecond(ctrRectangle(W2 + W1 - R1, param.L3, R1, L212));
+		figFloatWall.addSecond(ctrCabineBase);
+		figFloatWall.addSecond(ctrCabineBaseHole);
 		figFloatBase.addSecond(ctrCabineBase);
+		figFloatBase.addSecond(ctrCabineBaseHole);
 		// final figure list
 		rGeome.fig = {
 			faceFloatWall: figFloatWall,
-			faceFloatBase: figFloatBase
+			faceFloatBase: figFloatBase,
+			faceCabineBase: figCabineBase
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
@@ -163,7 +177,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					outName: `subpax_${designName}_floatB`,
 					face: `${designName}_faceFloatBase`,
 					extrudeMethod: EExtrude.eLinearOrtho,
-					length: param.T1,
+					length: T1,
 					rotate: [0, 0, 0],
 					translate: [0, 0, 0]
 				},
@@ -174,13 +188,25 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					length: param.H1,
 					rotate: [0, 0, 0],
 					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_cabineB`,
+					face: `${designName}_faceCabineBase`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: T1,
+					rotate: [0, 0, 0],
+					translate: [0, 0, param.H1]
 				}
 			],
 			volumes: [
 				{
 					outName: `pax_${designName}`,
 					boolMethod: EBVolume.eUnion,
-					inList: [`subpax_${designName}_floatB`, `subpax_${designName}_floatW`]
+					inList: [
+						`subpax_${designName}_floatB`,
+						`subpax_${designName}_floatW`,
+						`subpax_${designName}_cabineB`
+					]
 				}
 			]
 		};
