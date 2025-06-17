@@ -3,8 +3,8 @@
 
 // step-1 : import from geometrix
 import type {
-	tContour,
-	tOuterInner,
+	//tContour,
+	//tOuterInner,
 	tParamDef,
 	tParamVal,
 	tGeom,
@@ -13,15 +13,15 @@ import type {
 	//tSubDesign
 } from 'geometrix';
 import {
-	contour,
-	contourCircle,
+	//contour,
+	//contourCircle,
 	ctrRectangle,
 	figure,
 	//degToRad,
 	//radToDeg,
 	ffix,
 	pNumber,
-	pCheckbox,
+	//pCheckbox,
 	//pDropdown,
 	pSectionSeparator,
 	EExtrude,
@@ -35,30 +35,36 @@ const pDef: tParamDef = {
 	partName: 'catamaran',
 	params: [
 		//pNumber(name, unit, init, min, max, step)
-		pNumber('L1', 'mm', 120, 1, 400, 1),
-		pNumber('L2', 'mm', 80, 1, 400, 1),
-		pNumber('W1', 'mm', 2, 0.1, 10, 0.1),
-		pNumber('H1', 'mm', 40, 1, 400, 1),
-		pNumber('H2', 'mm', 2, 0.1, 10, 0.1),
-		//pSectionSeparator(name)
-		pSectionSeparator('hollow'),
-		//pCheckbox(name, init)
-		pCheckbox('holes', true),
-		pNumber('D1', 'mm', 10, 1, 400, 1),
-		pNumber('D2', 'mm', 5, 1, 400, 1),
-		pSectionSeparator('corners'),
-		pNumber('Rc', 'mm', 10, 0, 400, 1)
+		pNumber('W1', 'mm', 200, 10, 1000, 1),
+		pNumber('W2', 'mm', 100, 10, 1000, 1),
+		pNumber('W3p', '%', 10, 1, 99, 1),
+		pNumber('L1', 'mm', 300, 1, 1000, 1),
+		pNumber('L2', 'mm', 150, 1, 1000, 1),
+		pNumber('L3', 'mm', 200, 1, 1000, 1),
+		pSectionSeparator('others'),
+		pNumber('H1', 'mm', 120, 1, 1000, 1),
+		pNumber('H2', 'mm', 40, 1, 1000, 1),
+		pNumber('H3', 'mm', 100, 1, 1000, 1),
+		pSectionSeparator('details'),
+		pNumber('D1', 'mm', 50, 1, 500, 1),
+		pNumber('D4', 'mm', 40, 1, 500, 1),
+		pNumber('L4', 'mm', 40, 1, 500, 1),
+		pNumber('T1', 'mm', 2, 0.1, 20, 0.1)
 	],
 	paramSvg: {
+		W1: 'catamaran_top.svg',
+		W2: 'catamaran_top.svg',
+		W3p: 'catamaran_top.svg',
 		L1: 'catamaran_top.svg',
 		L2: 'catamaran_top.svg',
-		W1: 'catamaran_side.svg',
+		L3: 'catamaran_top.svg',
 		H1: 'catamaran_side.svg',
 		H2: 'catamaran_side.svg',
-		holes: 'catamaran_top.svg',
-		D1: 'catamaran_top.svg',
-		D2: 'catamaran_top.svg',
-		Rc: 'catamaran_top.svg'
+		H3: 'catamaran_side.svg',
+		D1: 'catamaran_front.svg',
+		D4: 'catamaran_top.svg',
+		L4: 'catamaran_top.svg',
+		T1: 'catamaran_front.svg'
 	},
 	sim: {
 		tMax: 180,
@@ -70,117 +76,45 @@ const pDef: tParamDef = {
 // step-3 : definition of the function that creates from the parameter-values the figures and construct the 3D
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
-	const figBottom = figure();
 	const figTop = figure();
-	const figSide = figure();
-	const figFace = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
-		const L1b = param.L1 - 2 * param.W1;
-		const L2b = param.L2 - 2 * param.W1;
-		const Rcb = Math.max(param.Rc - param.W1, 0);
-		const H3b = param.H1 - param.H2;
-		const circleDelta = ((param.D1 + param.D2) * 3) / 4;
+		const W212 = param.W1 + 2 * param.W2;
+		const L212 = param.L1 + 2 * param.L1;
+		const R4 = param.D4 / 2;
 		// step-5 : checks on the parameter values
-		if (L1b < 0) {
-			throw `err085: L1 ${param.L1} is too small compare to W1 ${param.W1}`;
-		}
-		if (L2b < 0) {
-			throw `err088: L2 ${param.L2} is too small compare to W1 ${param.W1}`;
-		}
-		if (H3b < 0) {
-			throw `err091: H1 ${param.H1} is too small compare to H2 ${param.H2}`;
+		if (param.L4 < R4) {
+			throw `err089: L4 ${param.L4} is too small compare to D4 ${param.D4}`;
 		}
 		// step-6 : any logs
-		rGeome.logstr += `box-base surface ${ffix(param.L1 * param.L2)} mm2\n`;
-		rGeome.logstr += `box volume ${ffix(param.L1 * param.L2 * param.H1)} mm3\n`;
+		rGeome.logstr += `cabine surface ${ffix(W212 * L212)} mm2\n`;
 		// step-7 : drawing of the figures
 		// figTop
-		const ctrExt = contour(0, 0)
-			.addCornerRounded(param.Rc)
-			.addSegStrokeA(param.L1, 0)
-			.addCornerRounded(param.Rc)
-			.addSegStrokeA(param.L1, param.L2)
-			.addCornerRounded(param.Rc)
-			.addSegStrokeA(0, param.L2)
-			.addCornerRounded(param.Rc)
-			.closeSegStroke();
-		const ctrInt = ctrRectangle(param.W1, param.W1, L1b, L2b, Rcb);
-		const ctrsTop: tOuterInner = [ctrExt, ctrInt];
-		figTop.addMainOI(ctrsTop);
-		const hole1 = contourCircle(param.L1 / 2, param.L2 / 2, param.D1 / 2);
-		const hole2 = contourCircle(param.L1 / 2 + circleDelta, param.L2 / 2, param.D2 / 2);
-		if (param.holes) {
-			figTop.addSecond(hole1);
-			figTop.addSecond(hole2);
-		}
-		// figBottom
-		if (param.holes) {
-			figBottom.addMainOI([ctrExt, hole1, hole2]);
-		} else {
-			figBottom.addMainO(ctrExt);
-		}
-		figBottom.addSecond(ctrInt);
-		// figSide
-		function shapeU(hLength: number): tContour {
-			const rCtr = contour(0, 0)
-				.addSegStrokeR(hLength, 0)
-				.addSegStrokeR(0, param.H1)
-				.addSegStrokeR(-param.W1, 0)
-				.addSegStrokeR(0, -H3b)
-				.addSegStrokeR(-hLength + 2 * param.W1, 0)
-				.addSegStrokeR(0, H3b)
-				.addSegStrokeR(-param.W1, 0)
-				.closeSegStroke();
-			return rCtr;
-		}
-		figSide.addMainOI([shapeU(param.L2)]);
-		if (param.holes) {
-			const x1 = param.L2 / 2 - param.D1 / 2;
-			figSide.addSecond(ctrRectangle(x1, 0, param.D1, param.H2));
-		}
-		// figFace
-		figFace.addMainO(shapeU(param.L1));
-		if (param.holes) {
-			const x1 = param.L1 / 2 - param.D1 / 2;
-			figFace.addSecond(ctrRectangle(x1, 0, param.D1, param.H2));
-			const x2 = param.L1 / 2 + circleDelta - param.D2 / 2;
-			figFace.addSecond(ctrRectangle(x2, 0, param.D2, param.H2));
-		}
+		const ctrCabineBase = ctrRectangle(0, param.L3, W212, L212);
+		figTop.addSecond(ctrCabineBase);
 		// final figure list
 		rGeome.fig = {
-			faceBottom: figBottom,
-			faceTop: figTop,
-			faceSide: figSide,
-			faceFace: figFace
+			faceTop: figTop
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
 		rGeome.vol = {
 			extrudes: [
 				{
-					outName: `subpax_${designName}_bottom`,
-					face: `${designName}_faceBottom`,
-					extrudeMethod: EExtrude.eLinearOrtho,
-					length: param.H2,
-					rotate: [0, 0, 0],
-					translate: [0, 0, 0]
-				},
-				{
 					outName: `subpax_${designName}_top`,
 					face: `${designName}_faceTop`,
 					extrudeMethod: EExtrude.eLinearOrtho,
-					length: H3b,
+					length: param.T1,
 					rotate: [0, 0, 0],
-					translate: [0, 0, param.H2]
+					translate: [0, 0, param.H1]
 				}
 			],
 			volumes: [
 				{
 					outName: `pax_${designName}`,
 					boolMethod: EBVolume.eUnion,
-					inList: [`subpax_${designName}_bottom`, `subpax_${designName}_top`]
+					inList: [`subpax_${designName}_top`]
 				}
 			]
 		};
