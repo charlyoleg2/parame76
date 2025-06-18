@@ -171,7 +171,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.addSegStrokeR(Sx * T1, 0)
 				.addSegStrokeR(0, param.H2 - Y3)
 				.addSegStrokeRP(pi2 - Sx * a2, LH3 - Y3)
-				.addSegStrokeRP(pi2 - Sx * (a2 + pi2), T1)
+				.addSegStrokeRP(pi2 - Sx * (a2 - pi2), T1)
 				.addSegStrokeRP(pi2 - Sx * (a2 + pi), LH3)
 				.closeSegStroke();
 			return rCtr;
