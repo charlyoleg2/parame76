@@ -1,5 +1,5 @@
 // catamaran.ts
-// a box
+// A model of catamaran boat
 
 // step-1 : import from geometrix
 import type {
@@ -332,7 +332,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 // step-11 : definiton of the final object that gathers the precedent object and function
 const catamaranDef: tPageDef = {
 	pTitle: 'catamaran',
-	pDescription: 'A box',
+	pDescription: 'model of catamaran boat',
 	pDef: pDef,
 	pGeom: pGeom
 };
