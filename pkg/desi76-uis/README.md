@@ -1,18 +1,20 @@
-desi76-uis
+Desi76-uis
 ==========
 
 
 Presentation
 ------------
 
-*desi76-uis* is the static web-server of the web-app *desi76-ui*.
+*desi76-uis* is the mini-server package for enabling the local installation of the web-ui *desi76-ui*.
+
+Usually, this mini-server package desi76-uis is part of a mono-repo containing an other package for the web-ui and potentially an *universal* library backing the web-ui.
 
 
 Requirements
 ------------
 
-- [node](https://nodejs.org) > 20.10.0
-- [npm](https://docs.npmjs.com/cli) > 10.1.0
+- [node](https://nodejs.org) > 22.0.0
+- [npm](https://docs.npmjs.com/cli) > 11.0.0
 
 
 Installation
@@ -39,17 +41,5 @@ Usage without installation
 npx desi76-uis
 npx --package=desi76-uis desi76-uis
 npx --package=desi76-uis desi76-uis --help
-```
-
-
-Development
------------
-
-```bash
-git clone https://github.com/charlyoleg2/parame76
-cd parame76
-npm install
-npm run ci
-npm -w desi76-uis run run
 ```
 
