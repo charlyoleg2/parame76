@@ -27,7 +27,7 @@ import {
 	ffix,
 	pNumber,
 	//pCheckbox,
-	//pDropdown,
+	pDropdown,
 	pSectionSeparator,
 	EExtrude,
 	EBVolume,
@@ -40,15 +40,27 @@ const pDef: tParamDef = {
 	partName: 'stairs',
 	params: [
 		//pNumber(name, unit, init, min, max, step)
-		pNumber('D1', 'mm', 100, 5, 500, 1),
-		pNumber('Di', 'mm', 50, 2, 500, 1),
-		pSectionSeparator('Thickness'),
-		pNumber('T1', 'mm', 30, 1, 500, 1)
+		pNumber('Nn', 'stair', 20, 1, 200, 1),
+		pNumber('Nd', 'stair', 40, 1, 200, 1),
+		pNumber('D1', 'mm', 5000, 1000, 50000, 1),
+		pNumber('W1', 'mm', 2000, 400, 10000, 1),
+		pNumber('W2', 'mm', 4000, 400, 10000, 1),
+		pSectionSeparator('Details'),
+		pDropdown('border', ['arc', 'straight']),
+		pNumber('H1', 'mm', 20, 10, 500, 1),
+		pNumber('Wc', 'mm', 20, 10, 500, 1),
+		pNumber('Nc', 'column', 6, 1, 100, 1)
 	],
 	paramSvg: {
+		Nn: 'stairs_top.svg',
+		Nd: 'stairs_top.svg',
 		D1: 'stairs_top.svg',
-		Di: 'stairs_top.svg',
-		T1: 'stairs_top.svg'
+		W1: 'stairs_top.svg',
+		W2: 'stairs_top.svg',
+		border: 'stairs_top.svg',
+		H1: 'stairs_height.svg',
+		Wc: 'stairs_top.svg',
+		Nc: 'stairs_height.svg'
 	},
 	sim: {
 		tMax: 180,
@@ -59,15 +71,13 @@ const pDef: tParamDef = {
 
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
-	const figCylinder = figure();
-	const figHeight = figure();
+	const figTop = figure();
+	const figBorderL = figure();
+	const figBorderS = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
-		const Ri = param.Di / 2;
 		const R1 = param.D1 / 2;
-		const surface = Math.PI * R1 ** 2 - Math.PI * Ri ** 2;
-		const volume = surface * param.T1;
 		// step-5 : checks on the parameter values
 		if (R1 < Ri) {
 			throw `err071: D1 ${param.D1} is too small compare to Di ${param.Di}`;
@@ -103,7 +113,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			volumes: [
 				{
 					outName: `pax_${designName}`,
-					boolMethod: EBVolume.eIdentity,
+					boolMethod: EBVolume.eUnion,
 					inList: [`subpax_${designName}_cyl`]
 				}
 			]
