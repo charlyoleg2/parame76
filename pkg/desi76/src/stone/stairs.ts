@@ -91,6 +91,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const Rid = Wid / Math.sin(aStair2);
 		const Red = Wed / Math.sin(aStair2);
 		const p0 = point(0, 0);
+		const a0 = pi2 + aStair2;
 		// step-5 : checks on the parameter values
 		if (param.Wi2 < param.Wi1) {
 			throw `err092: Wi2 ${param.Wi2} is too small compare to Wi1 ${param.Wi1}`;
@@ -106,8 +107,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `Stairs angle ${ffix(param.Nn / param.Nd)} turn\n`;
 		// sub-function
 		function spiral(r0: number, wc: number, rd: number, idx: number): [Point, Point, Point] {
-			const aa = (idx + 2) * 2 * aStair2;
 			const ab = idx * 2 * aStair2;
+			const aa = ab + a0;
 			const rr = r0 + idx * wc;
 			const pc = point(rd, 0).rotate(p0, aa);
 			const rp1 = pc.translatePolar(ab, rr);
