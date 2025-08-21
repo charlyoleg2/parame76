@@ -2,6 +2,7 @@
 // an helicoidal stairs
 
 import type {
+	Point,
 	//tContour,
 	//tOuterInner,
 	tParamDef,
@@ -17,8 +18,8 @@ import {
 	//withinZeroPi,
 	//withinPiPi,
 	//ShapePoint,
-	//point,
-	//contour,
+	point,
+	contour,
 	contourCircle,
 	//ctrRectangle,
 	figure,
@@ -41,7 +42,7 @@ const pDef: tParamDef = {
 	params: [
 		//pNumber(name, unit, init, min, max, step)
 		pNumber('Nn', 'stair', 20, 1, 200, 1),
-		pNumber('Nd', 'stair', 40, 1, 200, 1),
+		pNumber('Nd', 'stair', 40, 2, 200, 1),
 		pNumber('D1', 'mm', 5000, 1000, 50000, 1),
 		pNumber('Wi1', 'mm', 1000, 1, 10000, 1),
 		pNumber('We1', 'mm', 1000, 1, 10000, 1),
@@ -84,11 +85,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const pi = Math.PI;
 		//const pi2 = pi / 2;
 		const R1 = param.D1 / 2;
-		const Wic = (param.Wi2 - param.Wi1) / param.Nn;
-		const Wec = (param.We2 - param.We1) / param.Nn;
+		const Wid = (param.Wi2 - param.Wi1) / param.Nn;
+		const Wed = (param.We2 - param.We1) / param.Nn;
 		const aStair2 = pi / param.Nd;
-		const Rid = Wic / Math.sin(aStair2);
-		const Red = Wec / Math.sin(aStair2);
+		const Rid = Wid / Math.sin(aStair2);
+		const Red = Wed / Math.sin(aStair2);
+		const p0 = point(0, 0);
 		// step-5 : checks on the parameter values
 		if (param.Wi2 < param.Wi1) {
 			throw `err092: Wi2 ${param.Wi2} is too small compare to Wi1 ${param.Wi1}`;
@@ -96,13 +98,23 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (param.We2 < param.We1) {
 			throw `err095: We2 ${param.We2} is too small compare to We1 ${param.We1}`;
 		}
-		if (param.W < R1) {
+		if (R1 < param.Wi2) {
 			throw `err098: D1 ${param.D1} is too small compare to Wi2 ${param.Wi2}`;
 		}
 		// step-6 : any logs
 		rGeome.logstr += `Stair angle ${ffix(radToDeg(2 * aStair2))} degree\n`;
 		rGeome.logstr += `Stairs angle ${ffix(param.Nn / param.Nd)} turn\n`;
 		// sub-function
+		function spiral(r0: number, wc: number, rd: number, idx: number): [Point, Point, Point] {
+			const aa = (idx + 2) * 2 * aStair2;
+			const ab = idx * 2 * aStair2;
+			const rr = r0 + idx * wc;
+			const pc = point(rd, 0).rotate(p0, aa);
+			const rp1 = pc.translatePolar(ab, rr);
+			const rp2 = pc.translatePolar(ab + aStair2, rr);
+			const rp3 = pc.translatePolar(ab + 2 * aStair2, rr);
+			return [rp1, rp2, rp3];
+		}
 		// figTop
 		const ctrCircleRef = contourCircle(0, 0, R1);
 		const ctrCircleSpiralI = contourCircle(0, 0, Rid);
@@ -110,6 +122,24 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figTop.addSecond(ctrCircleRef);
 		figTop.addSecond(ctrCircleSpiralI);
 		figTop.addSecond(ctrCircleSpiralE);
+		for (let ii = 0; ii < param.Nn; ii++) {
+			const [pi1, pi2, pi3] = spiral(R1 - param.Wi1, -Wid, Rid, ii);
+			const [pe1, pe2, pe3] = spiral(R1 + param.We1, Wed, Red, ii);
+			const iCtr = contour(pe1.cx, pe1.cy);
+			if (param.border === 0) {
+				iCtr.addPointA(pe2.cx, pe2.cy).addPointA(pe3.cx, pe3.cy).addSegArc2();
+			} else {
+				iCtr.addSegStrokeA(pe3.cx, pe3.cy);
+			}
+			iCtr.addSegStrokeA(pi3.cx, pi3.cy);
+			if (param.border === 0) {
+				iCtr.addPointA(pi2.cx, pi2.cy).addPointA(pi1.cx, pi1.cy).addSegArc2();
+			} else {
+				iCtr.addSegStrokeA(pi1.cx, pi1.cy);
+			}
+			iCtr.closeSegStroke();
+			figTop.addMainO(iCtr);
+		}
 		// figBorderI
 		// figBorderE
 		// final figure list
