@@ -83,7 +83,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	try {
 		// step-4 : some preparation calculation
 		const pi = Math.PI;
-		//const pi2 = pi / 2;
+		const pi2 = pi / 2;
 		const R1 = param.D1 / 2;
 		const Wid = (param.Wi2 - param.Wi1) / param.Nn;
 		const Wed = (param.We2 - param.We1) / param.Nn;
