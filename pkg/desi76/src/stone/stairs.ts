@@ -5,6 +5,7 @@ import type {
 	Point,
 	tContour,
 	//tOuterInner,
+	tFigures,
 	tParamDef,
 	tParamVal,
 	tGeom,
@@ -164,6 +165,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figTop.addSecond(ctrCircleRef);
 		figTop.addSecond(ctrCircleSpiralI);
 		figTop.addSecond(ctrCircleSpiralE);
+		const ctrListStair: tContour[] = [];
 		for (let ii = 0; ii < param.Nn; ii++) {
 			const wEI = ii * (Wed + Wid) + param.We1 + param.Wi1;
 			let [pi1, pi2, pi3] = spiral(R1 - param.Wi1, Wid, Rid, 0, ii, -1);
@@ -174,10 +176,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			if (param.spiral === 2) {
 				[pe1, pe2, pe3] = spiral(R1 - param.Wi1, Wid, Rid, wEI, ii, -1);
 			}
-			figTop.addMainO(ctrStair(pi1, pi2, pi3, pe1, pe2, pe3));
+			const iCtr = ctrStair(pi1, pi2, pi3, pe1, pe2, pe3);
+			ctrListStair.push(iCtr);
+			figTop.addMainO(iCtr);
 		}
 		// figTopColumn
 		figTopColumn.mergeFigure(figTop, true);
+		const ctrListColumnI: tContour[] = [];
+		const ctrListColumnE: tContour[] = [];
 		for (let ii = 0; ii < columnNb; ii++) {
 			const ii2 = (ii + 1) * param.Nc - 1;
 			const wEI = ii2 * (Wed + Wid) + param.We1 + param.Wi1;
@@ -197,6 +203,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			}
 			const iCtrColumnI = ctrStair(pi1, pi2, pi3, pi4, pi5, pi6);
 			const iCtrColumnE = ctrStair(pe1, pe2, pe3, pe4, pe5, pe6);
+			ctrListColumnI.push(iCtrColumnI);
+			ctrListColumnE.push(iCtrColumnE);
 			figTopColumn.addMainO(iCtrColumnI);
 			figTopColumn.addMainO(iCtrColumnE);
 			figTop.addSecond(iCtrColumnI);
@@ -225,12 +233,30 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			}
 			xx += lStair;
 		}
+		// one figure per stair and colmun
+		const figListStair: tFigures = {};
+		const figListCol: tFigures = {};
+		for (const [idx, elem] of ctrListStair.entries()) {
+			const iFig = figure();
+			iFig.addMainO(elem);
+			const iFace = `faceStair${idx.toString().padStart(4, '0')}`;
+			figListStair[iFace] = iFig;
+		}
+		for (const [idx, elem] of ctrListColumnI.entries()) {
+			const iFig = figure();
+			iFig.addMainO(elem);
+			iFig.addMainO(ctrListColumnE[idx]);
+			const iFace = `faceCol${idx.toString().padStart(4, '0')}`;
+			figListStair[iFace] = iFig;
+		}
 		// final figure list
 		rGeome.fig = {
 			faceTop: figTop,
 			faceTopColumn: figTopColumn,
 			faceBorderI: figBorderI,
-			faceBorderE: figBorderE
+			faceBorderE: figBorderE,
+			...figListStair,
+			...figListCol
 		};
 		// volume
 		const designName = rGeome.partName;
