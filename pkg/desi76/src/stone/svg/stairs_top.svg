@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="434.53802"
-   height="410.8121"
-   viewBox="0 0 114.97152 108.69404"
+   width="445.40753"
+   height="449.94214"
+   viewBox="0 0 117.84741 119.04719"
    version="1.1"
    id="svg1"
    inkscape:version="1.4.2 (1:1.4.2+202505120737+ebf0e940d0)"
@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
-     inkscape:zoom="2.6021816"
-     inkscape:cx="227.11713"
-     inkscape:cy="1037.7831"
+     inkscape:zoom="1.8400203"
+     inkscape:cx="227.17141"
+     inkscape:cy="828.52349"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="0"
@@ -35,14 +35,20 @@
     <inkscape:page
        x="0"
        y="0"
-       width="114.97152"
-       height="108.69404"
+       width="117.84741"
+       height="119.04719"
        id="page2"
        margin="0"
        bleed="0" />
   </sodipodi:namedview>
   <defs
      id="defs1">
+    <rect
+       x="111.95529"
+       y="104.89015"
+       width="290.75766"
+       height="58.695004"
+       id="rect4" />
     <rect
        x="102.60621"
        y="90.69313"
@@ -156,13 +162,13 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-26.975069,-21.553594)">
+     transform="translate(-24.099195,-21.553595)">
     <rect
        style="fill:#ffffff;stroke:#ffffff;stroke-width:0.264583;stroke-linejoin:round"
        id="rect19"
-       width="114.70694"
-       height="108.42945"
-       x="27.107361"
+       width="117.58282"
+       height="118.7826"
+       x="24.231487"
        y="21.685886"
        inkscape:export-filename="stairs_top.svg"
        inkscape:export-xdpi="96"
@@ -350,5 +356,17 @@
          x="102.60547"
          y="104.9298"
          id="tspan17">We2</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-2.5020397,99.804371)"
+       id="text4"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect4);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="111.95508"
+         y="119.12707"
+         id="tspan18">spiral:
+</tspan><tspan
+         x="111.95508"
+         y="139.12707"
+         id="tspan19">[ExtInt, Exterior, Interior]</tspan></text>
   </g>
 </svg>

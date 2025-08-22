@@ -49,6 +49,7 @@ const pDef: tParamDef = {
 		pNumber('Wi2', 'mm', 2000, 1, 10000, 1),
 		pNumber('We2', 'mm', 2000, 1, 10000, 1),
 		pSectionSeparator('Details'),
+		pDropdown('spiral', ['ExtInt', 'Exterior', 'Interior']),
 		pDropdown('border', ['arc', 'straight']),
 		pNumber('H1', 'mm', 200, 10, 2000, 1),
 		pNumber('Wc', 'mm', 200, 10, 2000, 1),
@@ -62,6 +63,7 @@ const pDef: tParamDef = {
 		We1: 'stairs_top.svg',
 		Wi2: 'stairs_top.svg',
 		We2: 'stairs_top.svg',
+		spiral: 'stairs_top.svg',
 		border: 'stairs_top.svg',
 		H1: 'stairs_height.svg',
 		Wc: 'stairs_top.svg',
@@ -157,8 +159,15 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figTop.addSecond(ctrCircleSpiralI);
 		figTop.addSecond(ctrCircleSpiralE);
 		for (let ii = 0; ii < param.Nn; ii++) {
-			const [pi1, pi2, pi3] = spiral(R1 - param.Wi1, Wid, Rid, 0, ii, -1);
-			const [pe1, pe2, pe3] = spiral(R1 + param.We1, Wed, Red, 0, ii, 1);
+			const wEI = ii * (Wed + Wid) + param.We1 + param.Wi1;
+			let [pi1, pi2, pi3] = spiral(R1 - param.Wi1, Wid, Rid, 0, ii, -1);
+			let [pe1, pe2, pe3] = spiral(R1 + param.We1, Wed, Red, 0, ii, 1);
+			if (param.spiral === 1) {
+				[pi1, pi2, pi3] = spiral(R1 + param.We1, Wed, Red, wEI, ii, 1);
+			}
+			if (param.spiral === 2) {
+				[pe1, pe2, pe3] = spiral(R1 - param.Wi1, Wid, Rid, wEI, ii, -1);
+			}
 			figTop.addMainO(ctrStair(pi1, pi2, pi3, pe1, pe2, pe3));
 		}
 		// figTopColumn
