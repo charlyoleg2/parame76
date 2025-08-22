@@ -1,6 +1,6 @@
 {
 	"name": "parame76",
-	"version": "0.1.6",
+	"version": "0.1.7",
 	"description": "The mono-repo for desi76, desi76-cli, desi76-ui and desi76-uis",
 	"private": true,
 	"repository": {
