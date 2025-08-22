@@ -42,8 +42,8 @@ const pDef: tParamDef = {
 	partName: 'stairs',
 	params: [
 		//pNumber(name, unit, init, min, max, step)
-		pNumber('Nn', 'stair', 20, 1, 200, 1),
-		pNumber('Nd', 'stair', 40, 2, 200, 1),
+		pNumber('Nn', 'stair', 25, 1, 200, 1),
+		pNumber('Nd', 'stair', 20, 2, 200, 1),
 		pNumber('D1', 'mm', 5000, 1000, 50000, 1),
 		pNumber('Wi1', 'mm', 1000, 1, 10000, 1),
 		pNumber('We1', 'mm', 1000, 1, 10000, 1),
@@ -211,6 +211,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			figTop.addSecond(iCtrColumnE);
 		}
 		// figBorderI
+		const colHeight: number[] = [];
 		let xx = 0;
 		for (let ii = 0; ii < param.Nn; ii++) {
 			const lStair = (R1 - param.Wi1 - ii * Wid) * 2 * aStair2;
@@ -218,6 +219,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			figBorderI.addMainO(ctrRectangle(xx, yy, lStair, param.H1));
 			if ((ii + 1) % param.Nc === 0 && yy > 0) {
 				figBorderI.addMainO(ctrRectangle(xx, 0, lStair, yy));
+				colHeight.push(yy);
 			}
 			xx += lStair;
 		}
@@ -242,7 +244,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		for (const [idx, elem] of ctrListStair.entries()) {
 			const iFig = figure();
 			iFig.addMainO(elem);
-			const iStr = `stair${idx.toString().padStart(4, '0')}`;
+			const iStr = `Stair${idx.toString().padStart(4, '0')}`;
 			const iFace = `face${iStr}`;
 			figListStair[iFace] = iFig;
 			listVol.push({
@@ -259,8 +261,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const iFig = figure();
 			iFig.addMainO(elem);
 			iFig.addMainO(ctrListColumnE[idx]);
-			const iFace = `faceCol${idx.toString().padStart(4, '0')}`;
+			const iStr = `Col${idx.toString().padStart(4, '0')}`;
+			const iFace = `face${iStr}`;
 			figListStair[iFace] = iFig;
+			listVol.push({
+				outName: `subpax_${designName}_${iStr}`,
+				face: `${designName}_${iFace}`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: colHeight[idx],
+				rotate: [0, 0, 0],
+				translate: [0, 0, 0]
+			});
+			listVolName.push(`subpax_${designName}_${iStr}`);
 		}
 		// final figure list
 		rGeome.fig = {
