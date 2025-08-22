@@ -9,8 +9,8 @@ import type {
 	tParamDef,
 	tParamVal,
 	tGeom,
-	tPageDef
-	//tExtrude
+	tPageDef,
+	tExtrude
 	//tVolume
 	//tSubInst
 	//tSubDesign
@@ -236,11 +236,24 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// one figure per stair and colmun
 		const figListStair: tFigures = {};
 		const figListCol: tFigures = {};
+		const listVol: tExtrude[] = [];
+		const listVolName: string[] = [];
+		const designName = rGeome.partName;
 		for (const [idx, elem] of ctrListStair.entries()) {
 			const iFig = figure();
 			iFig.addMainO(elem);
-			const iFace = `faceStair${idx.toString().padStart(4, '0')}`;
+			const iStr = `stair${idx.toString().padStart(4, '0')}`;
+			const iFace = `face${iStr}`;
 			figListStair[iFace] = iFig;
+			listVol.push({
+				outName: `subpax_${designName}_${iStr}`,
+				face: `${designName}_${iFace}`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.H1,
+				rotate: [0, 0, 0],
+				translate: [0, 0, idx * param.H1]
+			});
+			listVolName.push(`subpax_${designName}_${iStr}`);
 		}
 		for (const [idx, elem] of ctrListColumnI.entries()) {
 			const iFig = figure();
@@ -259,23 +272,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			...figListCol
 		};
 		// volume
-		const designName = rGeome.partName;
 		rGeome.vol = {
-			extrudes: [
-				{
-					outName: `subpax_${designName}_top`,
-					face: `${designName}_faceCylinder`,
-					extrudeMethod: EExtrude.eLinearOrtho,
-					length: param.H1,
-					rotate: [0, 0, 0],
-					translate: [0, 0, 0]
-				}
-			],
+			extrudes: listVol,
 			volumes: [
 				{
 					outName: `pax_${designName}`,
 					boolMethod: EBVolume.eUnion,
-					inList: [`subpax_${designName}_top`]
+					inList: listVolName
 				}
 			]
 		};
