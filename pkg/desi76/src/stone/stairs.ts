@@ -117,6 +117,23 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `Stair angle ${ffix(radToDeg(2 * aStair2))} degree\n`;
 		rGeome.logstr += `Stairs angle ${ffix(param.Nn / param.Nd)} turn with ${columnNb} columns\n`;
 		// sub-function
+		function ptSpiral(ird: number, idx: number, iSign: number): [Point, number] {
+			const rab = idx * 2 * aStair2;
+			const cPi = iSign < 0 ? pi : 0;
+			const aa = rab + a0 + cPi;
+			const rpt = point(ird, 0).rotate(p0, aa);
+			return [rpt, rab];
+		}
+		function ctrPolygon(iN: number, ird: number, iSign: number): tContour {
+			const [pp0] = ptSpiral(ird, 0, iSign);
+			const rCtr = contour(pp0.cx, pp0.cy);
+			for (let ii = 1; ii < iN; ii++) {
+				const [ppi] = ptSpiral(ird, ii, iSign);
+				rCtr.addSegStrokeA(ppi.cx, ppi.cy);
+			}
+			rCtr.closeSegStroke();
+			return rCtr;
+		}
 		function spiral(
 			ir0: number,
 			irr: number,
@@ -125,11 +142,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			idx: number,
 			iSign: number
 		): [Point, Point, Point] {
-			const ab = idx * 2 * aStair2;
-			const cPi = iSign < 0 ? pi : 0;
-			const aa = ab + a0 + cPi;
+			const [pc, ab] = ptSpiral(ird, idx, iSign);
 			const rr = ir0 + iSign * (idx * irr - iwc);
-			const pc = point(ird, 0).rotate(p0, aa);
 			const rp1 = pc.translatePolar(ab, rr);
 			const rp2 = pc.translatePolar(ab + aStair2, rr);
 			const rp3 = pc.translatePolar(ab + 2 * aStair2, rr);
@@ -160,11 +174,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// figTop
 		const ctrCircleRef = contourCircle(0, 0, R1);
-		const ctrCircleSpiralI = contourCircle(0, 0, Rid);
-		const ctrCircleSpiralE = contourCircle(0, 0, Red);
+		const ctrPolygonI = ctrPolygon(param.Nd, Rid, -1);
+		const ctrPolygonE = ctrPolygon(param.Nd, Red, 1);
 		figTop.addSecond(ctrCircleRef);
-		figTop.addSecond(ctrCircleSpiralI);
-		figTop.addSecond(ctrCircleSpiralE);
+		figTop.addSecond(ctrPolygonI);
+		figTop.addSecond(ctrPolygonE);
 		const ctrListStair: tContour[] = [];
 		for (let ii = 0; ii < param.Nn; ii++) {
 			const wEI = ii * (Wed + Wid) + param.We1 + param.Wi1;
