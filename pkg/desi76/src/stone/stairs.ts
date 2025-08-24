@@ -54,7 +54,7 @@ const pDef: tParamDef = {
 		pDropdown('border', ['arc', 'straight']),
 		pNumber('H1', 'mm', 200, 10, 2000, 1),
 		pNumber('Wc', 'mm', 200, 10, 2000, 1),
-		pNumber('Nc', 'column', 6, 1, 100, 1)
+		pNumber('Nc', 'column', 6, 0, 100, 1)
 	],
 	paramSvg: {
 		Nn: 'stairs_top.svg',
@@ -96,7 +96,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const Red = Wed / (2 * Math.sin(aStair2));
 		const p0 = point(0, 0);
 		const a0 = pi2 + aStair2;
-		const columnNb = Math.floor(param.Nn / param.Nc);
+		const columnNb = param.Nc > 0 ? Math.floor(param.Nn / param.Nc) : 0;
+		const Nc = param.Nc > 0 ? param.Nc : 1;
 		// step-5 : checks on the parameter values
 		if (param.Wi2 < param.Wi1) {
 			throw `err092: Wi2 ${param.Wi2} is too small compare to Wi1 ${param.Wi1}`;
@@ -238,7 +239,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const lStair = (R1 - param.Wi1 - ii * Wid) * 2 * aStair2;
 			const yy = ii * param.H1;
 			figBorderI.addMainO(ctrRectangle(xx, yy, lStair, param.H1));
-			if ((ii + 1) % param.Nc === 0 && yy > 0) {
+			if ((ii + 1) % Nc === 0 && yy > 0) {
 				figBorderI.addMainO(ctrRectangle(xx, 0, lStair, yy));
 				colHeight.push(yy);
 			}
@@ -251,7 +252,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const lStair = (R1 + param.We1 - ii * Wed) * 2 * aStair2;
 			const yy = ii * param.H1;
 			figBorderE.addMainO(ctrRectangle(xx, yy, lStair, param.H1));
-			if ((ii + 1) % param.Nc === 0 && yy > 0) {
+			if ((ii + 1) % Nc === 0 && yy > 0) {
 				figBorderE.addMainO(ctrRectangle(xx, 0, lStair, yy));
 			}
 			xx += lStair;
