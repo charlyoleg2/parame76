@@ -172,6 +172,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			rCtr.closeSegStroke();
 			return rCtr;
 		}
+		function ptColumn(ipI: Point, ipE: Point, iWc: number): [Point, Point] {
+			const aa = Math.atan2(ipE.cy - ipI.cy, ipE.cx - ipI.cx);
+			const rpI = ipI.translatePolar(aa, iWc);
+			const rpE = ipE.translatePolar(aa + pi, iWc);
+			return [rpI, rpE];
+		}
 		// figTop
 		const ctrCircleRef = contourCircle(0, 0, R1);
 		const ctrPolygonI = ctrPolygon(param.Nd, Rid, -1);
@@ -202,9 +208,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const ii2 = (ii + 1) * param.Nc - 1;
 			const wEI = ii2 * (Wed + Wid) + param.We1 + param.Wi1;
 			let [pi1, pi2, pi3] = spiral(R1 - param.Wi1, Wid, Rid, 0, ii2, -1);
-			let [pi4, pi5, pi6] = spiral(R1 - param.Wi1, Wid, Rid, param.Wc, ii2, -1);
 			let [pe1, pe2, pe3] = spiral(R1 + param.We1, Wed, Red, 0, ii2, 1);
-			let [pe4, pe5, pe6] = spiral(R1 + param.We1, Wed, Red, param.Wc, ii2, 1);
+			let [pi4, pe4] = ptColumn(pi1, pe1, param.Wc);
+			let [pi5, pe5] = ptColumn(pi2, pe2, param.Wc);
+			let [pi6, pe6] = ptColumn(pi3, pe3, param.Wc);
 			if (param.spiral === 1) {
 				[pe4, pe5, pe6] = spiral(R1 + param.We1, Wed, Red, param.Wc, ii2, 1);
 				[pi1, pi2, pi3] = spiral(R1 + param.We1, Wed, Red, wEI, ii2, 1);
