@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="600"
+   height="6000"
+   viewBox="0 0 158.75 1587.5"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.2 (1:1.4.2+202505120737+ebf0e940d0)"
+   sodipodi:docname="src_maison.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     inkscape:zoom="1.3113356"
+     inkscape:cx="390.44162"
+     inkscape:cy="342.01771"
+     inkscape:window-width="1854"
+     inkscape:window-height="1131"
+     inkscape:window-x="66"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <rect
+       x="145.4572"
+       y="464.41201"
+       width="125.25916"
+       height="44.229715"
+       id="rect9" />
+    <rect
+       x="74.732967"
+       y="625.31666"
+       width="138.02721"
+       height="57.956179"
+       id="rect8" />
+    <rect
+       x="292.06864"
+       y="410.62315"
+       width="124.30075"
+       height="35.486903"
+       id="rect7" />
+    <rect
+       x="83.457261"
+       y="407.98099"
+       width="120.49999"
+       height="49.567784"
+       id="rect6" />
+    <rect
+       x="83.457261"
+       y="517.03012"
+       width="94.224181"
+       height="90.339128"
+       id="rect5" />
+    <rect
+       x="283.45725"
+       y="577.27404"
+       width="144.35086"
+       height="61.769085"
+       id="rect4" />
+    <rect
+       x="272.24152"
+       y="480.42622"
+       width="101.21576"
+       height="43.467134"
+       id="rect3" />
+    <rect
+       x="18.301951"
+       y="0"
+       width="234.11246"
+       height="65.581993"
+       id="rect1" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-0.40353261,3.4300272)"
+       id="text1"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect1);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="18.302734"
+         y="14.236441"
+         id="tspan1">src_maison.svg</tspan></text>
+    <rect
+       style="fill:#ffffff;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round"
+       id="rect2"
+       width="21.166666"
+       height="52.916668"
+       x="22.213692"
+       y="42.976219" />
+    <rect
+       style="fill:#ffffff;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round"
+       id="rect2-3"
+       width="42.333332"
+       height="10.583333"
+       x="43.380356"
+       y="64.142883" />
+    <rect
+       style="fill:#ffb380;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round"
+       id="rect2-1"
+       width="21.166666"
+       height="21.166666"
+       x="43.380356"
+       y="74.726219" />
+    <rect
+       style="fill:#ffffff;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round"
+       id="rect2-3-3"
+       width="21.166662"
+       height="10.583333"
+       x="74.726219"
+       y="-75.130356"
+       transform="rotate(90)" />
+    <rect
+       style="fill:#d5e5ff;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round"
+       id="rect2-1-6"
+       width="15.610417"
+       height="21.166666"
+       x="75.130356"
+       y="74.726219" />
+    <rect
+       style="fill:#d5d5ff;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round"
+       id="rect2-1-6-5"
+       width="31.749992"
+       height="21.166666"
+       x="53.963692"
+       y="42.976219" />
+    <rect
+       style="fill:#ffffff;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round"
+       id="rect2-1-6-9"
+       width="21.166666"
+       height="21.166666"
+       x="85.713684"
+       y="42.976219" />
+    <rect
+       style="fill:#ffffff;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round"
+       id="rect2-3-3-2"
+       width="21.166662"
+       height="16.139584"
+       x="74.726219"
+       y="-106.88036"
+       transform="rotate(90)" />
+    <path
+       style="fill:#ffdd55;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round"
+       d="m 85.713683,42.976217 v 31.75 h 5.027099 V 95.892883 H 106.88036 V 74.726217 l -10e-6,-31.75 z"
+       id="path2" />
+    <rect
+       style="fill:#e6e6e6;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round"
+       id="rect2-3-3-4-0"
+       width="14.889894"
+       height="21.16667"
+       x="42.976219"
+       y="-43.38036"
+       transform="rotate(90)" />
+    <rect
+       style="fill:#cccccc;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round"
+       id="rect2-3-3-4-0-6"
+       width="38.026772"
+       height="21.16667"
+       x="57.866112"
+       y="-43.38036"
+       transform="rotate(90)" />
+    <rect
+       style="fill:#d3bc5f;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round"
+       id="rect2-3-3-4"
+       width="21.166662"
+       height="10.583333"
+       x="42.976219"
+       y="-53.963692"
+       transform="rotate(90)" />
+    <path
+       style="fill:#ffd5d5;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round"
+       d="M 43.380355,64.142884 V 74.726217 H 64.547019 V 95.892883 H 75.130355 V 74.726217 H 85.713683 V 64.142884 Z"
+       id="path3" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,20.983695,-44.086274)"
+       id="text3"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect3);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="272.24219"
+         y="494.66222"
+         id="tspan2">cuisine</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,4.035326,-104.5694)"
+       id="text4"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:center;text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect4);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"
+       x="27.699219"
+       y="0"><tspan
+         x="331.62891"
+         y="591.50988"
+         id="tspan3">salle
+</tspan><tspan
+         x="350.83203"
+         y="611.50988"
+         id="tspan10">a
+</tspan><tspan
+         x="326.82812"
+         y="631.50988"
+         id="tspan11">manger</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,48.222146,-60.617048)"
+       id="text5"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:center;text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect5);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"
+       x="23.464844"
+       y="0"><tspan
+         x="106.56543"
+         y="531.26574"
+         id="tspan12">salle
+</tspan><tspan
+         x="120.96777"
+         y="551.26574"
+         id="tspan13">de
+</tspan><tspan
+         x="111.36621"
+         y="571.26574"
+         id="tspan14">bain</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,20.162138,-59.777304)"
+       id="text6"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect6);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="83.457031"
+         y="422.21691"
+         id="tspan15">bibli</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-15.041401,-57.756679)"
+       id="text7"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect7);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="292.06836"
+         y="424.85949"
+         id="tspan16">sejour</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-6.8894579,-96.299548)"
+       id="text8"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:center;text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect8);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"
+       x="27.71875"
+       y="0"><tspan
+         x="119.74219"
+         y="639.55285"
+         id="tspan17">rampe
+</tspan><tspan
+         x="114.94141"
+         y="659.55285"
+         id="tspan18">garage</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,7.8517754,-39.819789)"
+       id="text9"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect9);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="145.45703"
+         y="478.64855"
+         id="tspan19">bureau</tspan></text>
+  </g>
+</svg>
