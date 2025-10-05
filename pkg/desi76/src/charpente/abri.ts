@@ -41,7 +41,7 @@ const pDef: tParamDef = {
 		H1: 'abri_base.svg',
 		H2: 'abri_base.svg',
 		radius: 'abri_base.svg',
-		Rc: 'abri_base.svg'
+		Rc: 'abri_beam_heights.svg'
 	},
 	sim: {
 		tMax: 180,
