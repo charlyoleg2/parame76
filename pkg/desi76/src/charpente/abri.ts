@@ -108,13 +108,16 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const stepX = param.W1b + param.Lb;
 		const W1a2 = param.W1a / 2;
 		const D3H = param.H1 + param.H2 + param.H3 / 2;
+		const R2 = param.D2 / 2;
 		const R3 = param.D3 / 2;
+		const H1H2R2 = param.H1 + param.H2 / 2 - R2;
+		const H1H2 = param.H1 + param.H2;
 		const laPole = la + 2 * param.Ja;
 		const W3U1 = param.W3 - param.U1;
 		const W1bU1 = param.W1b - param.U1;
 		const W1aV1 = param.W1a - param.V1;
 		const lbPole = lb + 2 * W3U1;
-		const H123 = param.H1 + param.H2 + param.H3;
+		const H123 = H1H2 + param.H3;
 		// step-5 : checks on the parameter values
 		if (W1a2V1 < 1) {
 			throw `err096: W1a ${param.W1a} is too small compare to V1 ${param.V1} mm`;
@@ -165,6 +168,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeR(-param.V1, 0)
 			.closeSegStroke();
 		figPoleFace.addMainOI([ctrPoleFace, contourCircle(W1a2, D3H, R3)]);
+		figPoleFace.addSecond(ctrRectangle(param.V1, H1H2R2, W1a2V1, 2 * R2));
+		figPoleFace.addSecond(ctrRectangle(param.V1, H1H2, W1a2V1, param.H3));
 		// final figure list
 		rGeome.fig = {
 			faceBase: figBase,
