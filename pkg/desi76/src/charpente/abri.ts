@@ -92,26 +92,31 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	try {
 		// step-4 : some preparation calculation
 		const H2H3 = param.H2 + param.H3;
-		const W1V1 = param.W1a - 2 * param.V1;
-		const W1U1 = param.W1b - 2 * param.U1;
+		const W1aV1 = param.W1a - 2 * param.V1;
+		const W1b2U1 = param.W1b - 2 * param.U1;
 		const poleSecondNb = (param.SecondPoleNorth ? 1 : 0) + (param.SecondPoleSouth ? 1 : 0);
 		const poleNbWEmin = 2 + poleSecondNb;
-		const lb = (param.Nb * param.W1b + (param.Nb - 1) * param.Lb) / 1000; // m
-		const laPre = param.Na * param.W1a + (param.Na - 1 - poleSecondNb) * param.La; // m
-		const la = (laPre + poleSecondNb * param.Ka) / 1000; // m
-		const lbInner = lb - (2 * param.W1b) / 1000;
-		const laInner = la - (2 * param.W1a) / 1000;
-		const lbRoof = lb;
-		const laRoof = la + (2 * param.Ja) / 1000;
+		const lb = param.Nb * param.W1b + (param.Nb - 1) * param.Lb; // mm
+		const lbWall = lb / 1000; // m
+		const laPre = param.Na * param.W1a + (param.Na - 1 - poleSecondNb) * param.La; // mm
+		const la = laPre + poleSecondNb * param.Ka; // mm
+		const laWall = la / 1000; // m
+		const lbInner = lbWall - (2 * param.W1b) / 1000;
+		const laInner = laWall - (2 * param.W1a) / 1000;
+		const lbRoof = lbWall;
+		const laRoof = laWall + (2 * param.Ja) / 1000;
 		const stepX = param.W1b + param.Lb;
 		const W1a2 = param.W1a / 2;
 		const D3H = param.H1 + param.H2 + param.H3 / 2;
 		const R3 = param.D3 / 2;
+		const laJa = la + 2 * param.Ja;
+		const W3U1 = param.W2 - param.U1;
+		const W1bU1 = param.W1b - param.U1;
 		// step-5 : checks on the parameter values
-		if (W1V1 < 1) {
+		if (W1aV1 < 1) {
 			throw `err096: W1a ${param.W1a} is too small compare to V1 ${param.V1} mm`;
 		}
-		if (W1U1 < 1) {
+		if (W1b2U1 < 1) {
 			throw `err099: W1b ${param.W1b} is too small compare to U1 ${param.U1} mm`;
 		}
 		if (param.Na < poleNbWEmin) {
@@ -119,7 +124,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// step-6 : any logs
 		rGeome.logstr += `Inner size X: ${ffix(lbInner)} Y: ${ffix(laInner)} m, S: ${ffix(lbInner * laInner)} m2\n`;
-		rGeome.logstr += `Wall size X: ${ffix(lb)} Y: ${ffix(la)} m, S: ${ffix(lb * la)} m2\n`;
+		rGeome.logstr += `Wall size X: ${ffix(lbWall)} Y: ${ffix(laWall)} m, S: ${ffix(lbWall * laWall)} m2\n`;
 		rGeome.logstr += `Roof size X: ${ffix(lbRoof)} Y: ${ffix(laRoof)} m, S: ${ffix(lbRoof * laRoof)} m2\n`;
 		// step-7 : drawing of the figures
 		// sub-functions
@@ -128,6 +133,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		for (let jj = 0; jj < param.Na; jj++) {
 			for (let ii = 0; ii < param.Nb; ii++) {
 				figBase.addMainO(ctrRectangle(ii * stepX, yj, param.W1b, param.W1a));
+				figBase.addSecond(ctrRectangle(0, yj + param.V1 - param.W2, lb, param.W2));
+				figBase.addSecond(ctrRectangle(0, yj + param.W1a - param.V1, lb, param.W2));
 			}
 			if (jj === 0) {
 				yj += param.W1a + (param.SecondPoleSouth ? param.Ka : param.La);
@@ -137,13 +144,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				yj += param.W1a + param.La;
 			}
 		}
+		for (let ii = 0; ii < param.Nb; ii++) {
+			figBase.addSecond(ctrRectangle(ii * stepX - W3U1, -param.Ja, param.W3, laJa));
+			figBase.addSecond(ctrRectangle(ii * stepX + W1bU1, -param.Ja, param.W3, laJa));
+		}
 		// figPoleFace
 		const ctrPoleFace = contour(0, 0)
 			.addSegStrokeR(param.W1a, 0)
 			.addSegStrokeR(0, param.H1)
 			.addSegStrokeR(-param.V1, 0)
 			.addSegStrokeR(0, H2H3)
-			.addSegStrokeR(-W1V1, 0)
+			.addSegStrokeR(-W1aV1, 0)
 			.addSegStrokeR(0, -H2H3)
 			.addSegStrokeR(-param.V1, 0)
 			.closeSegStroke();
