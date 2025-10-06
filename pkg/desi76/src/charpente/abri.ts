@@ -114,6 +114,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const H1H2 = param.H1 + param.H2;
 		const laPole = la + 2 * param.Ja;
 		const W3U1 = param.W3 - param.U1;
+		const W2V1 = param.W2 - param.V1;
 		const W1bU1 = param.W1b - param.U1;
 		const W1aV1 = param.W1a - param.V1;
 		const lbPole = lb + 2 * W3U1;
@@ -168,8 +169,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeR(-param.V1, 0)
 			.closeSegStroke();
 		figPoleFace.addMainOI([ctrPoleFace, contourCircle(W1a2, D3H, R3)]);
-		figPoleFace.addSecond(ctrRectangle(param.V1, H1H2R2, W1a2V1, 2 * R2));
+		figPoleFace.addSecond(ctrRectangle(-W2V1, H1H2R2, W1a2V1 + 2 * param.W2, 2 * R2));
 		figPoleFace.addSecond(ctrRectangle(param.V1, H1H2, W1a2V1, param.H3));
+		figPoleFace.addSecond(ctrRectangle(-W2V1, param.H1, param.W2, param.H2));
+		figPoleFace.addSecond(ctrRectangle(W1aV1, param.H1, param.W2, param.H2));
 		// final figure list
 		rGeome.fig = {
 			faceBase: figBase,
