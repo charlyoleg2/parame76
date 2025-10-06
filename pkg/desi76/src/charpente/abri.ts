@@ -2,7 +2,7 @@
 // A shelter made out of wood beam for supporting photovoltaic panels
 
 import type {
-	//tContour,
+	tContour,
 	//tOuterInner,
 	tParamDef,
 	tParamVal,
@@ -87,7 +87,9 @@ const pDef: tParamDef = {
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
 	const figBase = figure();
-	const figPoleFace = figure();
+	const figSouth = figure();
+	const figEast = figure();
+	const figPoleSouth = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -107,6 +109,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const laRoof = laWall + (2 * param.Ja) / 1000;
 		const stepX = param.W1b + param.Lb;
 		const W1a2 = param.W1a / 2;
+		const D2H = param.H1 + param.H2 / 2;
 		const D3H = param.H1 + param.H2 + param.H3 / 2;
 		const R2 = param.D2 / 2;
 		const R3 = param.D3 / 2;
@@ -138,9 +141,23 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `Pole Vertical: W1a: ${ffix(param.W1a)} W1b: ${ffix(param.W1b)} H: ${ffix(H123)} mm x${param.Na * param.Nb}\n`;
 		// step-7 : drawing of the figures
 		// sub-functions
+		function ctrPole(ix: number, iy: number, ih23: number): tContour {
+			const rCtr = contour(ix, 0)
+				.addSegStrokeR(param.W1b, 0)
+				.addSegStrokeR(0, H123 - ih23)
+				.addSegStrokeR(-param.U1, 0)
+				.addSegStrokeR(0, ih23)
+				.addSegStrokeR(-W1b2U1, 0)
+				.addSegStrokeR(0, -ih23)
+				.addSegStrokeR(-param.U1, 0)
+				.closeSegStroke();
+			return rCtr;
+		}
 		// figBase
 		let yj = 0;
+		const posA: number[] = [];
 		for (let jj = 0; jj < param.Na; jj++) {
+			posA.push(yj);
 			for (let ii = 0; ii < param.Nb; ii++) {
 				figBase.addMainO(ctrRectangle(ii * stepX, yj, param.W1b, param.W1a));
 				figBase.addSecond(ctrRectangle(-W3U1, yj + param.V1 - param.W2, lbPole, param.W2));
@@ -158,25 +175,33 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			figBase.addSecond(ctrRectangle(ii * stepX - W3U1, -param.Ja, param.W3, laPole));
 			figBase.addSecond(ctrRectangle(ii * stepX + W1bU1, -param.Ja, param.W3, laPole));
 		}
-		// figPoleFace
-		const ctrPoleFace = contour(0, 0)
-			.addSegStrokeR(param.W1a, 0)
-			.addSegStrokeR(0, param.H1)
-			.addSegStrokeR(-param.V1, 0)
-			.addSegStrokeR(0, H2H3)
-			.addSegStrokeR(-W1a2V1, 0)
-			.addSegStrokeR(0, -H2H3)
-			.addSegStrokeR(-param.V1, 0)
-			.closeSegStroke();
-		figPoleFace.addMainOI([ctrPoleFace, contourCircle(W1a2, D3H, R3)]);
-		figPoleFace.addSecond(ctrRectangle(-W2V1, H1H2R2, W1a2V1 + 2 * param.W2, 2 * R2));
-		figPoleFace.addSecond(ctrRectangle(param.V1, H1H2, W1a2V1, param.H3));
-		figPoleFace.addSecond(ctrRectangle(-W2V1, param.H1, param.W2, param.H2));
-		figPoleFace.addSecond(ctrRectangle(W1aV1, param.H1, param.W2, param.H2));
+		// figSouth
+		for (let ii = 0; ii < param.Nb; ii++) {
+			const ix = ii * stepX;
+			figSouth.addMainOI([ctrPole(ix, 0, param.H3), contourCircle(ix + W1a2, D2H, R2)]);
+			figSouth.addSecond(ctrRectangle(ix - W3U1, H1H2, param.W3, param.H3));
+			figSouth.addSecond(ctrRectangle(ix + W1bU1, H1H2, param.W3, param.H3));
+		}
+		figSouth.addSecond(ctrRectangle(-W3U1, param.H1, lbPole, param.H2));
+		// figEast
+		for (const ix of posA) {
+			figEast.addMainOI([ctrPole(ix, 0, H2H3), contourCircle(ix + W1a2, D3H, R3)]);
+			figEast.addSecond(ctrRectangle(ix - W2V1, param.H1, param.W2, param.H2));
+			figEast.addSecond(ctrRectangle(ix + W1aV1, param.H1, param.W2, param.H2));
+		}
+		figEast.addSecond(ctrRectangle(-param.Ja, H1H2, laPole, param.H3));
+		// figPoleSouth
+		figPoleSouth.addMainOI([ctrPole(0, 0, H2H3), contourCircle(W1a2, D3H, R3)]);
+		figPoleSouth.addSecond(ctrRectangle(-W2V1, H1H2R2, W1a2V1 + 2 * param.W2, 2 * R2));
+		figPoleSouth.addSecond(ctrRectangle(param.V1, H1H2, W1a2V1, param.H3));
+		figPoleSouth.addSecond(ctrRectangle(-W2V1, param.H1, param.W2, param.H2));
+		figPoleSouth.addSecond(ctrRectangle(W1aV1, param.H1, param.W2, param.H2));
 		// final figure list
 		rGeome.fig = {
 			faceBase: figBase,
-			facePoleFace: figPoleFace
+			faceSouth: figSouth,
+			faceEast: figEast,
+			facePoleSouth: figPoleSouth
 		};
 		// volume
 		const designName = rGeome.partName;
@@ -184,7 +209,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			extrudes: [
 				{
 					outName: `subpax_${designName}_top`,
-					face: `${designName}_facePoleFace`,
+					face: `${designName}_facePoleSouth`,
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: 10,
 					rotate: [0, 0, 0],
