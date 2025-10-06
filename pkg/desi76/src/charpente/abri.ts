@@ -92,7 +92,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	try {
 		// step-4 : some preparation calculation
 		const H2H3 = param.H2 + param.H3;
-		const W1aV1 = param.W1a - 2 * param.V1;
+		const W1a2V1 = param.W1a - 2 * param.V1;
 		const W1b2U1 = param.W1b - 2 * param.U1;
 		const poleSecondNb = (param.SecondPoleNorth ? 1 : 0) + (param.SecondPoleSouth ? 1 : 0);
 		const poleNbWEmin = 2 + poleSecondNb;
@@ -109,11 +109,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const W1a2 = param.W1a / 2;
 		const D3H = param.H1 + param.H2 + param.H3 / 2;
 		const R3 = param.D3 / 2;
-		const laJa = la + 2 * param.Ja;
-		const W3U1 = param.W2 - param.U1;
+		const laPole = la + 2 * param.Ja;
+		const W3U1 = param.W3 - param.U1;
 		const W1bU1 = param.W1b - param.U1;
+		const W1aV1 = param.W1a - param.V1;
+		const lbPole = lb + 2 * W3U1;
+		const H123 = param.H1 + param.H2 + param.H3;
 		// step-5 : checks on the parameter values
-		if (W1aV1 < 1) {
+		if (W1a2V1 < 1) {
 			throw `err096: W1a ${param.W1a} is too small compare to V1 ${param.V1} mm`;
 		}
 		if (W1b2U1 < 1) {
@@ -126,6 +129,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `Inner size X: ${ffix(lbInner)} Y: ${ffix(laInner)} m, S: ${ffix(lbInner * laInner)} m2\n`;
 		rGeome.logstr += `Wall size X: ${ffix(lbWall)} Y: ${ffix(laWall)} m, S: ${ffix(lbWall * laWall)} m2\n`;
 		rGeome.logstr += `Roof size X: ${ffix(lbRoof)} Y: ${ffix(laRoof)} m, S: ${ffix(lbRoof * laRoof)} m2\n`;
+		rGeome.logstr += `Pole Horizontal B (W-E): W: ${ffix(param.W2)} H: ${ffix(param.H2)} L: ${ffix(lbPole)} mm x${param.Na * 2}\n`;
+		rGeome.logstr += `Pole Horizontal A (N-S): W: ${ffix(param.W3)} H: ${ffix(param.H3)} L: ${ffix(laPole)} mm x${param.Nb * 2}\n`;
+		rGeome.logstr += `Pole Vertical: W1a: ${ffix(param.W1a)} W1b: ${ffix(param.W1b)} H: ${ffix(H123)} mm x${param.Na * param.Nb}\n`;
 		// step-7 : drawing of the figures
 		// sub-functions
 		// figBase
@@ -133,8 +139,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		for (let jj = 0; jj < param.Na; jj++) {
 			for (let ii = 0; ii < param.Nb; ii++) {
 				figBase.addMainO(ctrRectangle(ii * stepX, yj, param.W1b, param.W1a));
-				figBase.addSecond(ctrRectangle(0, yj + param.V1 - param.W2, lb, param.W2));
-				figBase.addSecond(ctrRectangle(0, yj + param.W1a - param.V1, lb, param.W2));
+				figBase.addSecond(ctrRectangle(-W3U1, yj + param.V1 - param.W2, lbPole, param.W2));
+				figBase.addSecond(ctrRectangle(-W3U1, yj + W1aV1, lbPole, param.W2));
 			}
 			if (jj === 0) {
 				yj += param.W1a + (param.SecondPoleSouth ? param.Ka : param.La);
@@ -145,8 +151,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			}
 		}
 		for (let ii = 0; ii < param.Nb; ii++) {
-			figBase.addSecond(ctrRectangle(ii * stepX - W3U1, -param.Ja, param.W3, laJa));
-			figBase.addSecond(ctrRectangle(ii * stepX + W1bU1, -param.Ja, param.W3, laJa));
+			figBase.addSecond(ctrRectangle(ii * stepX - W3U1, -param.Ja, param.W3, laPole));
+			figBase.addSecond(ctrRectangle(ii * stepX + W1bU1, -param.Ja, param.W3, laPole));
 		}
 		// figPoleFace
 		const ctrPoleFace = contour(0, 0)
@@ -154,7 +160,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeR(0, param.H1)
 			.addSegStrokeR(-param.V1, 0)
 			.addSegStrokeR(0, H2H3)
-			.addSegStrokeR(-W1aV1, 0)
+			.addSegStrokeR(-W1a2V1, 0)
 			.addSegStrokeR(0, -H2H3)
 			.addSegStrokeR(-param.V1, 0)
 			.closeSegStroke();
