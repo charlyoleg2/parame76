@@ -22,6 +22,7 @@
 	"scripts": {
 		"desi76:dev": "npm -w desi76 run dev",
 		"desi76:ci": "npm -w desi76 run ci",
+		"desi76:build": "npm -w desi76 run build",
 		"desi76:svgo": "npm -w desi76 run svgo",
 		"desi76:clean": "npm -w desi76 run clean",
 		"desi76:version": "npm -w desi76 version patch",
@@ -45,6 +46,7 @@
 		"dev": "run-p desi76:dev desi76-ui:dev",
 		"ci": "run-s desi76:ci desi76-ui:ci desi76-cli:ci desi76-uis:ci",
 		"ci2": "run-s desi76:ci desi76-ui:ci",
+		"ci2b": "run-s desi76:build desi76-ui:ci",
 		"ci3": "run-s desi76:ci desi76-cli:ci",
 		"svgo": "run-s desi76:svgo",
 		"clean-root": "rimraf tmp output output2",
