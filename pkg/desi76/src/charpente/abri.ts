@@ -3,7 +3,7 @@
 
 import type {
 	tContour,
-	//tOuterInner,
+	tOuterInner,
 	tParamDef,
 	tParamVal,
 	tGeom,
@@ -54,7 +54,11 @@ const pDef: tParamDef = {
 		pNumber('W3', 'mm', 150, 5, 1000, 1),
 		pSectionSeparator('pole holes'),
 		pNumber('D2', 'mm', 20, 0, 200, 1),
-		pNumber('D3', 'mm', 20, 0, 200, 1)
+		pNumber('D3', 'mm', 20, 0, 200, 1),
+		pSectionSeparator('slope'),
+		pNumber('Ra', 'degree', 45 - 23.5, 10, 80, 0.5),
+		pNumber('ReS', 'mm', 500, 1, 5000, 1),
+		pNumber('ReN', 'mm', 500, 1, 5000, 1)
 	],
 	paramSvg: {
 		Na: 'abri_base.svg',
@@ -75,7 +79,10 @@ const pDef: tParamDef = {
 		W2: 'abri_base.svg',
 		W3: 'abri_base.svg',
 		D2: 'abri_base.svg',
-		D3: 'abri_base.svg'
+		D3: 'abri_base.svg',
+		Ra: 'abri_triangle.svg',
+		ReS: 'abri_triangle.svg',
+		ReN: 'abri_plank4.svg'
 	},
 	sim: {
 		tMax: 180,
@@ -178,21 +185,35 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figSouth
 		for (let ii = 0; ii < param.Nb; ii++) {
 			const ix = ii * stepX;
-			figSouth.addMainOI([ctrPole(ix, 0, param.H3), contourCircle(ix + W1a2, D2H, R2)]);
+			const ctrSouth: tOuterInner = [ctrPole(ix, 0, param.H3)];
+			if (R2 > 0) {
+				ctrSouth.push(contourCircle(ix + W1a2, D2H, R2));
+			}
+			figSouth.addMainOI(ctrSouth);
 			figSouth.addSecond(ctrRectangle(ix - W3U1, H1H2, param.W3, param.H3));
 			figSouth.addSecond(ctrRectangle(ix + W1bU1, H1H2, param.W3, param.H3));
 		}
 		figSouth.addSecond(ctrRectangle(-W3U1, param.H1, lbPole, param.H2));
 		// figEast
 		for (const ix of posA) {
-			figEast.addMainOI([ctrPole(ix, 0, H2H3), contourCircle(ix + W1a2, D3H, R3)]);
+			const ctrEast: tOuterInner = [ctrPole(ix, 0, H2H3)];
+			if (R3 > 0) {
+				ctrEast.push(contourCircle(ix + W1a2, D3H, R3));
+			}
+			figEast.addMainOI(ctrEast);
 			figEast.addSecond(ctrRectangle(ix - W2V1, param.H1, param.W2, param.H2));
 			figEast.addSecond(ctrRectangle(ix + W1aV1, param.H1, param.W2, param.H2));
 		}
 		figEast.addSecond(ctrRectangle(-param.Ja, H1H2, laPole, param.H3));
 		// figPoleSouth
-		figPoleSouth.addMainOI([ctrPole(0, 0, H2H3), contourCircle(W1a2, D3H, R3)]);
-		figPoleSouth.addSecond(ctrRectangle(-W2V1, H1H2R2, W1a2V1 + 2 * param.W2, 2 * R2));
+		const ctrPoleSouth: tOuterInner = [ctrPole(0, 0, H2H3)];
+		if (R3 > 0) {
+			ctrPoleSouth.push(contourCircle(W1a2, D3H, R3));
+		}
+		figPoleSouth.addMainOI(ctrPoleSouth);
+		if (R2 > 0) {
+			figPoleSouth.addSecond(ctrRectangle(-W2V1, H1H2R2, W1a2V1 + 2 * param.W2, 2 * R2));
+		}
 		figPoleSouth.addSecond(ctrRectangle(param.V1, H1H2, W1a2V1, param.H3));
 		figPoleSouth.addSecond(ctrRectangle(-W2V1, param.H1, param.W2, param.H2));
 		figPoleSouth.addSecond(ctrRectangle(W1aV1, param.H1, param.W2, param.H2));
