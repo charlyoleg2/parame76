@@ -24,8 +24,8 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
      inkscape:zoom="1.5696829"
-     inkscape:cx="349.75217"
-     inkscape:cy="1404.4238"
+     inkscape:cx="380.96867"
+     inkscape:cy="1278.2837"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="0"
@@ -43,6 +43,12 @@
   </sodipodi:namedview>
   <defs
      id="defs1">
+    <rect
+       x="254.19147"
+       y="1747.4867"
+       width="77.085632"
+       height="47.78035"
+       id="rect40" />
     <rect
        x="374.79724"
        y="1748.3031"
@@ -297,6 +303,26 @@
          sodipodi:nodetypes="ccc"
          id="path1-2-3" />
     </marker>
+    <marker
+       style="overflow:visible"
+       id="ArrowWide-62-5-7"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Wide arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:butt"
+         d="M 3,-3 0,0 3,3"
+         transform="rotate(180,0.125,0)"
+         sodipodi:nodetypes="ccc"
+         id="path1-17-9-5" />
+    </marker>
   </defs>
   <g
      inkscape:label="Layer 1"
@@ -313,6 +339,10 @@
        inkscape:export-filename="abri_plank4.svg"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;fill-opacity:0.3;stroke:#800080;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none;marker-end:url(#ArrowWide-62-5-7)"
+       d="m 77.443479,440.99466 0.005,-5.48866"
+       id="path58-4-3-6" />
     <path
        style="fill:none;fill-opacity:0.3;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none;marker-start:url(#ArrowWide-09-0);marker-end:url(#ArrowWide-09-0)"
        d="m 107.8766,411.57111 3.54564,-0.005"
@@ -411,7 +441,7 @@
        d="M 57.202923,426.35879 V 410.68286"
        id="path59" />
     <path
-       style="fill:none;fill-opacity:0.3;stroke:#cccccc;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none"
+       style="fill:none;fill-opacity:0.3;stroke:#800080;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none"
        d="M 60.134563,426.3585 V 410.68257"
        id="path59-8" />
     <path
@@ -428,12 +458,12 @@
        id="path58-5" />
     <text
        xml:space="preserve"
-       transform="matrix(0.26458333,0,0,0.26458333,-43.319524,1.8541431)"
+       transform="matrix(0.26458333,0,0,0.26458333,-47.55286,1.8541431)"
        id="text60"
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect60);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="376.50977"
          y="1538.7482"
-         id="tspan4">S4</tspan></text>
+         id="tspan4">S4+S4e</tspan></text>
     <text
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,-25.620886,5.2253123)"
@@ -510,5 +540,13 @@
        style="fill:none;stroke:#b3b3b3;stroke-width:0.264583;stroke-linejoin:round"
        d="m 105.36301,434.79259 6.43789,0.003 V 429.504"
        id="path65" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,3.5397277,-22.081158)"
+       id="text11"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect40);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="254.19141"
+         y="1761.7228"
+         id="tspan10">S4e2</tspan></text>
   </g>
 </svg>
