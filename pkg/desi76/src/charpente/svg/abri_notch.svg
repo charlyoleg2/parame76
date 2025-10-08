@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="285.13382"
+   width="355.6918"
    height="192.75854"
-   viewBox="0 0 75.441656 51.000698"
+   viewBox="0 0 94.110123 51.000698"
    version="1.1"
    id="svg1"
    inkscape:version="1.4.2 (1:1.4.2+202505120737+ebf0e940d0)"
@@ -25,7 +25,7 @@
      inkscape:document-units="px"
      inkscape:zoom="1.5696829"
      inkscape:cx="381.60574"
-     inkscape:cy="1686.0093"
+     inkscape:cy="2188.0215"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="0"
@@ -35,7 +35,7 @@
     <inkscape:page
        x="0"
        y="0"
-       width="75.441658"
+       width="94.110123"
        height="51.000698"
        id="page2"
        margin="0"
@@ -43,6 +43,12 @@
   </sodipodi:namedview>
   <defs
      id="defs1">
+    <rect
+       x="491.99026"
+       y="1858.0184"
+       width="61.624752"
+       height="51.921455"
+       id="rect54" />
     <rect
        x="396.93057"
        y="1787.7103"
@@ -115,19 +121,84 @@
          sodipodi:nodetypes="ccc"
          id="path1-17-0-6" />
     </marker>
+    <marker
+       style="overflow:visible"
+       id="ArrowWide-093"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Wide arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:butt"
+         d="M 3,-3 0,0 3,3"
+         transform="rotate(180,0.125,0)"
+         sodipodi:nodetypes="ccc"
+         id="path1-60" />
+    </marker>
+    <rect
+       x="426.20074"
+       y="1670.4011"
+       width="57.973492"
+       height="29.942352"
+       id="rect59-9" />
+    <marker
+       style="overflow:visible"
+       id="ArrowWide-093-7"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Wide arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:butt"
+         d="M 3,-3 0,0 3,3"
+         transform="rotate(180,0.125,0)"
+         sodipodi:nodetypes="ccc"
+         id="path1-60-3" />
+    </marker>
   </defs>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-31.556698,-466.10037)">
+     transform="translate(-34.202534,-466.10037)">
     <rect
        style="fill:#ffffff;stroke:#ffffff;stroke-width:0.264583;stroke-linejoin:round"
        id="rect66"
-       width="75.177071"
+       width="93.845535"
        height="50.736095"
-       x="31.68899"
-       y="466.23267" />
+       x="34.334827"
+       y="466.23267"
+       inkscape:export-filename="abri_notch.svg"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;fill-opacity:0.3;stroke:#cccccc;stroke-width:0.264584;stroke-linejoin:round;stroke-dasharray:none"
+       d="M 80.570936,485.11123 H 122.49513"
+       id="path53-0-3-1-2" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-7.0436329,52.806377)"
+       id="text59-23"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect59-9);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="426.20117"
+         y="1684.6368"
+         id="tspan2">P41</tspan></text>
+    <path
+       style="fill:none;fill-opacity:0.3;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none;marker-start:url(#ArrowWide-093);marker-end:url(#ArrowWide-093)"
+       d="m 104.61251,494.28485 0.005,5.70824"
+       id="path58-1" />
     <path
        style="fill:none;fill-opacity:0.3;stroke:#800080;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none"
        d="M 83.74594,494.2134 V 472.13224"
@@ -171,7 +242,7 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect50);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="402.62891"
          y="1823.0489"
-         id="tspan1">S4</tspan></text>
+         id="tspan3">S4</tspan></text>
     <text
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,-26.463678,-5.0567538)"
@@ -179,6 +250,26 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect51);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="396.92969"
          y="1801.9474"
-         id="tspan2">S4e</tspan></text>
+         id="tspan4">S4e</tspan></text>
+    <path
+       style="fill:none;fill-opacity:0.3;stroke:#cccccc;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none"
+       d="m 100.6294,494.21341 h 12.979"
+       id="path53-0-3" />
+    <path
+       style="fill:none;fill-opacity:0.3;stroke:#cccccc;stroke-width:0.264584;stroke-linejoin:round;stroke-dasharray:none"
+       d="M 83.745941,500.28207 H 122.49513"
+       id="path53-0-3-1" />
+    <path
+       style="fill:none;fill-opacity:0.3;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none;marker-start:url(#ArrowWide-093-7);marker-end:url(#ArrowWide-093-7)"
+       d="m 119.32011,485.23949 0.005,15.02999"
+       id="path58-1-3" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-9.5250005,-1.0583333)"
+       id="text12"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect54);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="491.99023"
+         y="1872.254"
+         id="tspan5">H7</tspan></text>
   </g>
 </svg>
