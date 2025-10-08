@@ -108,7 +108,7 @@ const pDef: tParamDef = {
 		W4: 'abri_plank4.svg',
 		B4: 'abri_triangle.svg',
 		D4: 'abri_plank4.svg',
-		P41: 'abri_plank4.svg',
+		P41: 'abri_top_details.svg',
 		P42: 'abri_plank4.svg',
 		S4: 'abri_plank4.svg',
 		S4e: 'abri_notch.svg',
@@ -119,7 +119,7 @@ const pDef: tParamDef = {
 		W5a: 'abri_triangle.svg',
 		W5bs: 'abri_plank5b.svg',
 		D5: 'abri_triangle.svg',
-		W6: 'abri_triangle.svg',
+		W6: 'abri_top_details.svg',
 		H6: 'abri_triangle.svg',
 		peak6: 'abri_triangle.svg'
 	},
