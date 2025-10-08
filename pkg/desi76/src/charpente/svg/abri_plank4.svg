@@ -24,8 +24,8 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
      inkscape:zoom="1.5696829"
-     inkscape:cx="349.1151"
-     inkscape:cy="1635.6807"
+     inkscape:cx="349.75217"
+     inkscape:cy="1404.4238"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="0"
@@ -43,6 +43,12 @@
   </sodipodi:namedview>
   <defs
      id="defs1">
+    <rect
+       x="374.79724"
+       y="1748.3031"
+       width="84.531731"
+       height="47.300133"
+       id="rect65" />
     <rect
        x="338.28488"
        y="1551.2687"
@@ -271,6 +277,26 @@
        width="27.712605"
        height="22.297497"
        id="rect38-0" />
+    <marker
+       style="overflow:visible"
+       id="ArrowWide-09-0"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Wide arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:butt"
+         d="M 3,-3 0,0 3,3"
+         transform="rotate(180,0.125,0)"
+         sodipodi:nodetypes="ccc"
+         id="path1-2-3" />
+    </marker>
   </defs>
   <g
      inkscape:label="Layer 1"
@@ -284,14 +310,26 @@
        height="47.196369"
        x="43.488079"
        y="403.19183"
-       inkscape:export-filename="abri_plank4.png"
+       inkscape:export-filename="abri_plank4.svg"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
     <path
+       style="fill:none;fill-opacity:0.3;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none;marker-start:url(#ArrowWide-09-0);marker-end:url(#ArrowWide-09-0)"
+       d="m 107.8766,411.57111 3.54564,-0.005"
+       id="path58-5-3" />
+    <path
+       style="fill:none;fill-opacity:0.3;stroke:#cccccc;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none"
+       d="M 107.73114,426.35463 V 411.57111"
+       id="path59-3-0-4-3-8" />
+    <path
+       style="fill:none;fill-opacity:0.3;stroke:#cccccc;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none"
+       d="M 111.7959,426.35395 V 411.57043"
+       id="path59-3-0-4-3" />
+    <path
        style="fill:#ffd5d5;fill-opacity:0.3;stroke:#ff0000;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none"
-       d="m 46.747597,426.36041 1.786813,1.83325 -2.337046,2.5235 4.123684,4.02758 27.197363,0.0358 v -2.00867 h 6.236666 v 2.01372 l 28.045823,0.009 -0.005,-8.44063 -6.71061,6.7e-4 v 1.43047 h -2.93165 v -1.43018 l -12.051933,0.001 v 1.42899 h -2.93164 v -1.4287 l -12.051931,0.001 -2e-6,1.4275 h -2.93164 l -10e-7,-1.42721 -12.05193,10e-4 v 1.42602 h -2.93164 v -1.42573 z"
+       d="m 46.747597,426.36041 1.786813,1.83325 -2.337046,2.5235 4.123684,4.02758 27.197363,0.0358 v -2.00867 h 6.236666 v 2.01372 l 21.607933,0.007 6.43789,-4.76043 -0.005,-3.67813 -6.71061,6.7e-4 v 1.43047 h -2.93165 v -1.43018 l -12.051933,0.001 v 1.42899 h -2.93164 v -1.4287 l -12.051931,10e-4 -2e-6,1.4275 h -2.93164 l -10e-7,-1.42721 -12.05193,10e-4 v 1.42602 h -2.93164 v -1.42573 z"
        id="path42-9"
-       sodipodi:nodetypes="ccccccccccccccccccccccccccc" />
+       sodipodi:nodetypes="cccccccccccccccccccccccccccc" />
     <text
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,-25.439787,114.26534)"
@@ -418,7 +456,7 @@
        id="path58-4-3-8" />
     <text
        xml:space="preserve"
-       transform="matrix(0.26458333,0,0,0.26458333,-1.6522453,-26.149138)"
+       transform="matrix(0.26458333,0,0,0.26458333,-0.59391193,-26.149138)"
        id="text59-2"
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect59-6);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="426.20117"
@@ -460,5 +498,17 @@
        style="fill:none;fill-opacity:0.3;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none;marker-start:url(#ArrowWide)"
        d="m 88.998866,432.18388 -2.0227,6.91092"
        id="path62" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,4.1354483,-57.036603)"
+       id="text64"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect65);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="374.79688"
+         y="1762.5392"
+         id="tspan9">Q4Min</tspan></text>
+    <path
+       style="fill:none;stroke:#b3b3b3;stroke-width:0.264583;stroke-linejoin:round"
+       d="m 105.36301,434.79259 6.43789,0.003 V 429.504"
+       id="path65" />
   </g>
 </svg>
