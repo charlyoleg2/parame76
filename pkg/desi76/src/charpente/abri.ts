@@ -16,8 +16,8 @@ import {
 	contourCircle,
 	ctrRectangle,
 	figure,
-	//degToRad,
-	//radToDeg,
+	degToRad,
+	radToDeg,
 	ffix,
 	pNumber,
 	pCheckbox,
@@ -170,6 +170,53 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const W1aV1 = param.W1a - param.V1;
 		const lbPole = lb + 2 * W3U1;
 		const H123 = H1H2 + param.H3;
+		// minimum Ja
+		const H32 = param.H3 / 2;
+		const W42 = param.W4 / 2;
+		const Ra = degToRad(param.Ra);
+		const pi = Math.PI;
+		const pi2 = pi / 2;
+		function JaMin(iRa: number): number {
+			const rMin = H32 + W42 / Math.cos(iRa - pi2) + H32 / Math.tan(iRa);
+			return rMin;
+		}
+		// RdSouth
+		const laIn = la - 2 * param.W1a;
+		const laSouth = (laIn * param.Rt) / 100;
+		const laNorth = laIn - laSouth;
+		const laSide = param.Ja - H32 + param.W1a;
+		const W47 = W42 - param.P41 + param.H7;
+		const Xsouth = laSouth + laSide;
+		const RdSouth1 = Xsouth / Math.cos(Ra) + W47 / Math.tan(Ra);
+		const RdSouth = RdSouth1 + param.ReS;
+		// RdNorth
+		const hypS = Math.sqrt(RdSouth1 ** 2 + W47 ** 2);
+		const Ytop = Math.sqrt(hypS ** 2 - Xsouth ** 2);
+		const Xnorth = laNorth + laSide;
+		const hypN = Math.sqrt(Ytop ** 2 + Xnorth ** 2);
+		const RdNorth1 = Math.sqrt(W47 ** 2 + hypN ** 2);
+		const RdNorth = RdNorth1 + param.ReN;
+		// RaNorth
+		const aT1 = Math.atan2(W47, RdSouth1);
+		const aT2 = Math.atan2(Xsouth, Ytop);
+		const aT3 = Math.atan2(Xnorth, Ytop);
+		const aT4 = Math.atan2(W47, hypN);
+		const aTop = aT1 + aT2 + aT3 + aT4;
+		const RaNorth = pi - Ra - aTop;
+		// p1Sx, p1Sy
+		const p1Sx = W42 * Math.cos(Ra - pi2);
+		const p1Sy = W42 * Math.sin(Ra - pi2);
+		// p2Sx, p2Sy
+		const R4 = param.D4 / 2;
+		const p2Sy = H32 + R4;
+		const p2Sx = p2Sy / Math.tan(Ra);
+		// p1Nx, p1Ny
+		const p1Nx = W42 * Math.cos(-pi2 - RaNorth);
+		const p1Ny = W42 * Math.sin(-pi2 - RaNorth);
+		// p2Nx, p2Ny
+		const p2Ny = p2Sy;
+		const p2Nx = -p2Ny / Math.tan(RaNorth);
+		// p2Nx, p2Ny
 		// step-5 : checks on the parameter values
 		if (W1a2V1 < 1) {
 			throw `err096: W1a ${param.W1a} is too small compare to V1 ${param.V1} mm`;
@@ -180,6 +227,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (param.Na < poleNbWEmin) {
 			throw `err103: Na ${param.Na} must be bigger than ${poleNbWEmin} poles`;
 		}
+		if (param.Ja < JaMin(Ra)) {
+			throw `err191: South Ja ${ffix(param.Ja)} must be bigger than JaMin ${ffix(JaMin(Ra))} mm`;
+		}
+		if (param.Ja < JaMin(RaNorth)) {
+			throw `err234: North Ja ${ffix(param.Ja)} must be bigger than JaMin ${ffix(JaMin(RaNorth))} mm`;
+		}
 		// step-6 : any logs
 		rGeome.logstr += `Inner size X: ${ffix(lbInner)} Y: ${ffix(laInner)} m, S: ${ffix(lbInner * laInner)} m2\n`;
 		rGeome.logstr += `Wall size X: ${ffix(lbWall)} Y: ${ffix(laWall)} m, S: ${ffix(lbWall * laWall)} m2\n`;
@@ -187,6 +240,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `Pole Horizontal B (W-E): W: ${ffix(param.W2)} H: ${ffix(param.H2)} L: ${ffix(lbPole)} mm x${param.Na * 2}\n`;
 		rGeome.logstr += `Pole Horizontal A (N-S): W: ${ffix(param.W3)} H: ${ffix(param.H3)} L: ${ffix(laPole)} mm x${param.Nb * 2}\n`;
 		rGeome.logstr += `Pole Vertical: W1a: ${ffix(param.W1a)} W1b: ${ffix(param.W1b)} H: ${ffix(H123)} mm x${param.Na * param.Nb}\n`;
+		rGeome.logstr += `Top position: laSouth: ${ffix(laSouth)} laNorth: ${ffix(laNorth)} Ytop ${ffix(Ytop)} mm\n`;
+		rGeome.logstr += `Roof south: RdSouth1: ${ffix(RdSouth1)} RdSouth: ${ffix(RdSouth)} mm\n`;
+		rGeome.logstr += `Roof north: RdNorth1: ${ffix(RdNorth1)} RdNorth: ${ffix(RdNorth)} mm RaNorth ${ffix(radToDeg(RaNorth))} degree\n`;
+		rGeome.logstr += `Top angle: ${ffix(radToDeg(aTop))} degree\n`;
 		// step-7 : drawing of the figures
 		// sub-functions
 		function ctrPole(ix: number, iy: number, ih23: number): tContour {
@@ -246,6 +303,44 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			figEast.addSecond(ctrRectangle(ix + W1aV1, param.H1, param.W2, param.H2));
 		}
 		figEast.addSecond(ctrRectangle(-param.Ja, H1H2, laPole, param.H3));
+		const p0Sx = -param.Ja + H32;
+		const p0Sy = D3H;
+		figEast.addSecond(contourCircle(p0Sx, p0Sy, R4));
+		figEast.addSecond(contourCircle(p0Sx + p2Sx, p0Sy + p2Sy, R4));
+		figEast.addSecond(
+			ctrRectangle(0, 0, RdSouth1, W42 + W47)
+				.rotate(0, 0, Ra)
+				.translate(p0Sx + p1Sx, p0Sy + p1Sy)
+		);
+		figEast.addSecond(
+			ctrRectangle(0, 0, RdSouth1, 2 * W42)
+				.rotate(0, 0, Ra)
+				.translate(p0Sx + p1Sx, p0Sy + p1Sy)
+		);
+		figEast.addSecond(
+			ctrRectangle(0, 0, param.ReS, 2 * W42)
+				.rotate(0, 0, Ra + pi)
+				.translate(p0Sx - p1Sx, p0Sy - p1Sy)
+		);
+		const p0Nx = la + param.Ja - H32;
+		const p0Ny = D3H;
+		figEast.addSecond(contourCircle(p0Nx, p0Ny, R4));
+		figEast.addSecond(contourCircle(p0Nx + p2Nx, p0Ny + p2Ny, R4));
+		figEast.addSecond(
+			ctrRectangle(0, -W42 - W47, RdNorth1, W42 + W47)
+				.rotate(0, 0, pi - RaNorth)
+				.translate(p0Nx + p1Nx, p0Ny + p1Ny)
+		);
+		figEast.addSecond(
+			ctrRectangle(0, -2 * W42, RdNorth1, 2 * W42)
+				.rotate(0, 0, pi - RaNorth)
+				.translate(p0Nx + p1Nx, p0Ny + p1Ny)
+		);
+		figEast.addSecond(
+			ctrRectangle(0, 0, param.ReN, 2 * W42)
+				.rotate(0, 0, -RaNorth)
+				.translate(p0Nx + p1Nx, p0Ny + p1Ny)
+		);
 		// figPoleSouth
 		const ctrPoleSouth: tOuterInner = [ctrPole(0, 0, H2H3)];
 		if (R3 > 0) {
