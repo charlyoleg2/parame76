@@ -187,14 +187,16 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const laSide = param.Ja - H32 + param.W1a;
 		const W47 = W42 - param.P41 + param.H7;
 		const Xsouth = laSouth + laSide;
-		const RdSouth1 = Xsouth / Math.cos(Ra) + W47 / Math.tan(Ra);
+		const RdSouth1 = Xsouth / Math.cos(Ra) + W47 * Math.tan(Ra);
 		const RdSouth = RdSouth1 + param.ReS;
 		// RdNorth
-		const hypS = Math.sqrt(RdSouth1 ** 2 + W47 ** 2);
-		const Ytop = Math.sqrt(hypS ** 2 - Xsouth ** 2);
+		const hypS2 = RdSouth1 ** 2 + W47 ** 2;
+		const Ytop2 = hypS2 - Xsouth ** 2;
+		const Ytop = Math.sqrt(Ytop2);
 		const Xnorth = laNorth + laSide;
-		const hypN = Math.sqrt(Ytop ** 2 + Xnorth ** 2);
-		const RdNorth1 = Math.sqrt(W47 ** 2 + hypN ** 2);
+		const hypN2 = Ytop2 + Xnorth ** 2;
+		const hypN = Math.sqrt(hypN2);
+		const RdNorth1 = Math.sqrt(hypN2 - W47 ** 2);
 		const RdNorth = RdNorth1 + param.ReN;
 		// RaNorth
 		const aT1 = Math.atan2(W47, RdSouth1);
@@ -322,6 +324,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.rotate(0, 0, Ra + pi)
 				.translate(p0Sx - p1Sx, p0Sy - p1Sy)
 		);
+		//const ctrTriS = contour(p0Sx, p0Sy)
+		//	.addSegStrokeR(Xsouth, 0)
+		//	.addSegStrokeR(0, Ytop)
+		//	.closeSegStroke();
+		//figEast.addSecond(ctrTriS);
 		const p0Nx = la + param.Ja - H32;
 		const p0Ny = D3H;
 		figEast.addSecond(contourCircle(p0Nx, p0Ny, R4));
@@ -341,6 +348,16 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.rotate(0, 0, -RaNorth)
 				.translate(p0Nx + p1Nx, p0Ny + p1Ny)
 		);
+		//const ctrTriN = contour(p0Nx, p0Ny)
+		//	.addSegStrokeR(-Xnorth, 0)
+		//	.addSegStrokeR(0, Ytop)
+		//	.closeSegStroke();
+		//figEast.addSecond(ctrTriN);
+		//const ctrTriN2 = contour(p0Nx, p0Ny, 'green')
+		//	.addSegStrokeRP(pi2 - RaNorth, W47)
+		//	.addSegStrokeRP(pi - RaNorth, RdNorth1)
+		//	.closeSegStroke();
+		//figEast.addSecond(ctrTriN2);
 		// figPoleSouth
 		const ctrPoleSouth: tOuterInner = [ctrPole(0, 0, H2H3)];
 		if (R3 > 0) {
