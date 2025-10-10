@@ -225,7 +225,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const aMid = -RaNorth - aTop / 2;
 		const topD1 = (param.H7 - param.P41) / Math.sin(aTop / 2);
 		const topD2 = param.W4 / Math.sin(aTop / 2);
-		//const topYmid = (topD1 + topD2 / 2) * Math.sin(aMid);
+		const topYmid = (topD1 + topD2 / 2) * Math.sin(aMid);
 		const topYlow = (topD1 + topD2) * Math.sin(aMid);
 		const topXlow = (topD1 + topD2) * Math.cos(aMid);
 		// pl5Sx, pl5Sy, pl5Nx, pl5Ny
@@ -239,6 +239,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const ptPl5y0 = H123;
 		const pl5Nl = ptPl5y2 - ptPl5y0;
 		const R5 = param.D5 / 2;
+		// W62, pl6Sy, pl6Ny, ptPl6x0, ptPl6y0
+		const W62 = param.W6 / 2;
+		const pl6Sy = W62 * Math.tan(Ra);
+		const pl6Ny = W62 * Math.tan(RaNorth);
+		const ptPl6x0 = pTopx - W62;
+		const ptPl6y0 = pTopy + topYmid;
 		// step-5 : checks on the parameter values
 		if (W1a2V1 < 1) {
 			throw `err096: W1a ${param.W1a} is too small compare to V1 ${param.V1} mm`;
@@ -286,6 +292,15 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.addSegStrokeR(0, pl5Nl)
 				.addSegStrokeR(-pl5Nx, pl5Ny)
 				.addSegStrokeR(-pl5Sx, -pl5Sy)
+				.closeSegStroke();
+			return rCtr;
+		}
+		function ctrPlank6(ix: number, iy: number): tContour {
+			const rCtr = contour(ix, iy)
+				.addSegStrokeR(param.W6, 0)
+				.addSegStrokeR(0, -topYmid - pl6Ny)
+				.addSegStrokeR(-W62, pl6Ny)
+				.addSegStrokeR(-W62, -pl6Sy)
 				.closeSegStroke();
 			return rCtr;
 		}
@@ -390,6 +405,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figEast.addSecond(ctrPlank5(ptPl5x0, ptPl5y0));
 		figEast.addSecond(contourCircle(ptPl5x0 + pl5Sx, ptPl5y0 - H32, R5));
 		figEast.addSecond(contourCircle(ptPl5x0 + pl5Sx, ptPl5y0 + R5, R5));
+		figEast.addSecond(ctrPlank6(ptPl6x0, ptPl6y0));
 		// figPoleSouth
 		const ctrPoleSouth: tOuterInner = [ctrPole(0, 0, H2H3)];
 		if (R3 > 0) {
