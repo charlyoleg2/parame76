@@ -56,7 +56,7 @@ const pDef: tParamDef = {
 		pNumber('D2', 'mm', 20, 0, 200, 1),
 		pNumber('D3', 'mm', 20, 0, 200, 1),
 		pSectionSeparator('slope'),
-		pNumber('Ra', 'degree', 45 - 23.5, 10, 80, 0.5),
+		pNumber('Ra', 'degree', 30, 10, 80, 0.5), // 50 + 23.5 = 73.5 that's very steep!
 		pNumber('Rt', '%', 50, 0, 100, 1),
 		pNumber('ReS', 'mm', 500, 1, 5000, 1),
 		pNumber('ReN', 'mm', 500, 1, 5000, 1),
@@ -218,7 +218,27 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// p2Nx, p2Ny
 		const p2Ny = p2Sy;
 		const p2Nx = -p2Ny / Math.tan(RaNorth);
-		// p2Nx, p2Ny
+		// pTopx, pTopy
+		const pTopx = param.W1a + laSouth;
+		const pTopy = H123 - H32 + Ytop;
+		// topYmid, topYlow, topXlow
+		const aMid = -RaNorth - aTop / 2;
+		const topD1 = (param.H7 - param.P41) / Math.sin(aTop / 2);
+		const topD2 = param.W4 / Math.sin(aTop / 2);
+		//const topYmid = (topD1 + topD2 / 2) * Math.sin(aMid);
+		const topYlow = (topD1 + topD2) * Math.sin(aMid);
+		const topXlow = (topD1 + topD2) * Math.cos(aMid);
+		// pl5Sx, pl5Sy, pl5Nx, pl5Ny
+		const pl5Sx = param.W5a / 2;
+		const pl5Sy = pl5Sx * Math.tan(Ra);
+		const pl5Nx = param.W5a / 2;
+		const pl5Ny = pl5Nx * Math.tan(RaNorth);
+		// ptPl5x0, ptPl5y0, pl5Nl
+		const ptPl5x0 = pTopx + topXlow - pl5Sx;
+		const ptPl5y2 = pTopy + topYlow - pl5Ny;
+		const ptPl5y0 = H123;
+		const pl5Nl = ptPl5y2 - ptPl5y0;
+		const R5 = param.D5 / 2;
 		// step-5 : checks on the parameter values
 		if (W1a2V1 < 1) {
 			throw `err096: W1a ${param.W1a} is too small compare to V1 ${param.V1} mm`;
@@ -257,6 +277,15 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.addSegStrokeR(-W1b2U1, 0)
 				.addSegStrokeR(0, -ih23)
 				.addSegStrokeR(-param.U1, 0)
+				.closeSegStroke();
+			return rCtr;
+		}
+		function ctrPlank5(ix: number, iy: number): tContour {
+			const rCtr = contour(ix, iy)
+				.addSegStrokeR(param.W5a, 0)
+				.addSegStrokeR(0, pl5Nl)
+				.addSegStrokeR(-pl5Nx, pl5Ny)
+				.addSegStrokeR(-pl5Sx, -pl5Sy)
 				.closeSegStroke();
 			return rCtr;
 		}
@@ -358,6 +387,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		//	.addSegStrokeRP(pi - RaNorth, RdNorth1)
 		//	.closeSegStroke();
 		//figEast.addSecond(ctrTriN2);
+		figEast.addSecond(ctrPlank5(ptPl5x0, ptPl5y0));
+		figEast.addSecond(contourCircle(ptPl5x0 + pl5Sx, ptPl5y0 - H32, R5));
+		figEast.addSecond(contourCircle(ptPl5x0 + pl5Sx, ptPl5y0 + R5, R5));
 		// figPoleSouth
 		const ctrPoleSouth: tOuterInner = [ctrPole(0, 0, H2H3)];
 		if (R3 > 0) {
