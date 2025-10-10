@@ -80,7 +80,7 @@ const pDef: tParamDef = {
 		pSectionSeparator('plank-6'),
 		pNumber('W6', 'mm', 100, 1, 1000, 1),
 		pNumber('H6', 'mm', 100, 1, 1000, 1),
-		pDropdown('peak6', ['square', 'peak'])
+		pDropdown('peak6', ['peak', 'square'])
 	],
 	paramSvg: {
 		Na: 'abri_base.svg',
@@ -296,12 +296,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			return rCtr;
 		}
 		function ctrPlank6(ix: number, iy: number): tContour {
-			const rCtr = contour(ix, iy)
+			const ctrPeak = contour(ix, iy)
 				.addSegStrokeR(param.W6, 0)
 				.addSegStrokeR(0, -topYmid - pl6Ny)
 				.addSegStrokeR(-W62, pl6Ny)
 				.addSegStrokeR(-W62, -pl6Sy)
 				.closeSegStroke();
+			const ctrSquare = ctrRectangle(ix, iy, param.W6, param.H6);
+			const rCtr = param.peak6 ? ctrSquare : ctrPeak;
 			return rCtr;
 		}
 		// figBase

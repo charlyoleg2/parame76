@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
-     inkscape:zoom="1.5696829"
-     inkscape:cx="380.96867"
-     inkscape:cy="1278.2837"
+     inkscape:zoom="2.2198668"
+     inkscape:cx="151.36043"
+     inkscape:cy="3637.8309"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="0"
@@ -52,8 +52,8 @@
     <rect
        x="368.22723"
        y="1095.1256"
-       width="204.49991"
-       height="26.119926"
+       width="259.45816"
+       height="32.426613"
        id="rect39" />
     <rect
        x="392.97665"
@@ -312,8 +312,7 @@
     <path
        id="rect12-3-2-4-3-1"
        style="fill:#ffe6d5;stroke:#d45500;stroke-width:0.264583;stroke-linejoin:round"
-       transform="rotate(-90)"
-       d="m -298.57465,129.61308 h 1.65239 l 1.51703,1.10401 -1.51703,1.50865 h -1.65239 z"
+       d="m 111.01962,298.33627 v -1.65239 l 1.10401,-1.51703 1.50865,1.51703 v 1.65239 z"
        sodipodi:nodetypes="cccccc" />
     <path
        style="fill:#fff6d5;stroke:#cccccc;stroke-width:0.264583;stroke-linejoin:round"
@@ -703,19 +702,19 @@
        id="path49" />
     <text
        xml:space="preserve"
-       transform="matrix(0.26458333,0,0,0.26458333,-7.4083337,0)"
+       transform="matrix(0.26458333,0,0,0.26458333,-8.4666671,0)"
        id="text4"
-       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect39);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect39);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="368.22656"
          y="1109.3614"
-         id="tspan16">peak6:[square,peak]</tspan></text>
+         id="tspan16">peak6:[peak,square]</tspan></text>
     <rect
        style="fill:#ffe6d5;stroke:#d45500;stroke-width:0.264583;stroke-linejoin:round"
        id="rect12-3-2-4-3"
        width="2.7107201"
        height="2.6126559"
-       x="-298.64511"
-       y="114.16916"
+       x="-297.92999"
+       y="125.13454"
        transform="rotate(-90)" />
     <path
        style="fill:#ffffff;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide)"
@@ -739,7 +738,7 @@
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,-10.820382,-10.618034)"
        id="text63"
-       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect64);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect64);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="545.07812"
          y="1368.381"
          id="tspan17">B4</tspan></text>
