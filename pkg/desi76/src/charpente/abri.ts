@@ -228,17 +228,24 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const topYmid = (topD1 + topD2 / 2) * Math.sin(aMid);
 		const topYlow = (topD1 + topD2) * Math.sin(aMid);
 		const topXlow = (topD1 + topD2) * Math.cos(aMid);
-		// pl5Sx, pl5Sy, pl5Nx, pl5Ny
-		const pl5Sx = param.W5a / 2;
-		const pl5Sy = pl5Sx * Math.tan(Ra);
-		const pl5Nx = param.W5a / 2;
-		const pl5Ny = pl5Nx * Math.tan(RaNorth);
+		// W52, pl5Sy, pl5Ny
+		const W52 = param.W5a / 2;
+		const pl5Sy = W52 * Math.tan(Ra);
+		const pl5Ny = W52 * Math.tan(RaNorth);
 		// ptPl5x0, ptPl5y0, pl5Nl
-		const ptPl5x0 = pTopx + topXlow - pl5Sx;
+		const ptPl5x0 = pTopx + topXlow - W52;
 		const ptPl5y2 = pTopy + topYlow - pl5Ny;
 		const ptPl5y0 = H123;
 		const pl5Nl = ptPl5y2 - ptPl5y0;
 		const R5 = param.D5 / 2;
+		// pl5yN, pl5yM, pl5yS, pl5Nl2, ptPl5x00
+		const pl5yN = W52 * Math.tan(RaNorth);
+		const pl5yS = W52 * Math.tan(Ra);
+		const pl5yMN = (W42 + W47) / Math.cos(RaNorth);
+		const pl5yMS = (W42 + W47) / Math.cos(Ra);
+		const pl5yM = pl5yMN - pl5yMS;
+		const pl5Nl2 = Ytop - H32 - pl5yMN - pl5yN;
+		const ptPl5x00 = param.top_opt ? pTopx - W52 : ptPl5x0;
 		// W62, pl6Sy, pl6Ny, ptPl6x0, ptPl6y0
 		const W62 = param.W6 / 2;
 		const pl6Sy = W62 * Math.tan(Ra);
@@ -287,12 +294,20 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			return rCtr;
 		}
 		function ctrPlank5(ix: number, iy: number): tContour {
-			const rCtr = contour(ix, iy)
+			const ctrShifted = contour(ix, iy)
 				.addSegStrokeR(param.W5a, 0)
 				.addSegStrokeR(0, pl5Nl)
-				.addSegStrokeR(-pl5Nx, pl5Ny)
-				.addSegStrokeR(-pl5Sx, -pl5Sy)
+				.addSegStrokeR(-W52, pl5Ny)
+				.addSegStrokeR(-W52, -pl5Sy)
 				.closeSegStroke();
+			const ctrAligned = contour(ix, iy)
+				.addSegStrokeR(param.W5a, 0)
+				.addSegStrokeR(0, pl5Nl2)
+				.addSegStrokeR(-W52, pl5yN)
+				.addSegStrokeR(0, pl5yM)
+				.addSegStrokeR(-W52, -pl5yS)
+				.closeSegStroke();
+			const rCtr = param.top_opt ? ctrAligned : ctrShifted;
 			return rCtr;
 		}
 		function ctrPlank6(ix: number, iy: number): tContour {
@@ -404,9 +419,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		//	.addSegStrokeRP(pi - RaNorth, RdNorth1)
 		//	.closeSegStroke();
 		//figEast.addSecond(ctrTriN2);
-		figEast.addSecond(ctrPlank5(ptPl5x0, ptPl5y0));
-		figEast.addSecond(contourCircle(ptPl5x0 + pl5Sx, ptPl5y0 - H32, R5));
-		figEast.addSecond(contourCircle(ptPl5x0 + pl5Sx, ptPl5y0 + R5, R5));
+		figEast.addSecond(ctrPlank5(ptPl5x00, ptPl5y0));
+		figEast.addSecond(contourCircle(ptPl5x00 + W52, ptPl5y0 - H32, R5));
+		figEast.addSecond(contourCircle(ptPl5x00 + W52, ptPl5y0 + R5, R5));
 		figEast.addSecond(ctrPlank6(ptPl6x0, ptPl6y0));
 		// figPoleSouth
 		const ctrPoleSouth: tOuterInner = [ctrPole(0, 0, H2H3)];
