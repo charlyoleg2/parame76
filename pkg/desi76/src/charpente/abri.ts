@@ -12,6 +12,10 @@ import type {
 	//tSubDesign
 } from 'geometrix';
 import {
+	//withinZeroPi,
+	//withinPiPi,
+	//ShapePoint,
+	point,
 	contour,
 	contourCircle,
 	ctrRectangle,
@@ -212,12 +216,19 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const R4 = param.D4 / 2;
 		const p2Sy = H32 + R4;
 		const p2Sx = p2Sy / Math.tan(Ra);
+		// p3Sx, p3Sy
+		const W441 = W42 - param.P41;
+		const p3Sx = W441 * Math.cos(pi2 + Ra) - param.ReS * Math.cos(Ra);
+		const p3Sy = W441 * Math.sin(pi2 + Ra) - param.ReS * Math.sin(Ra);
 		// p1Nx, p1Ny
 		const p1Nx = W42 * Math.cos(-pi2 - RaNorth);
 		const p1Ny = W42 * Math.sin(-pi2 - RaNorth);
 		// p2Nx, p2Ny
 		const p2Ny = p2Sy;
 		const p2Nx = -p2Ny / Math.tan(RaNorth);
+		// p3Nx, p3Ny
+		const p3Nx = W441 * Math.cos(pi2 - RaNorth) + param.ReS * Math.cos(Ra);
+		const p3Ny = W441 * Math.sin(pi2 - RaNorth) - param.ReS * Math.sin(Ra);
 		// pTopx, pTopy
 		const pTopx = param.W1a + laSouth;
 		const pTopy = H123 - H32 + Ytop;
@@ -252,6 +263,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const pl6Ny = W62 * Math.tan(RaNorth);
 		const ptPl6x0 = pTopx - W62;
 		const ptPl6y0 = pTopy + topYmid;
+		// n7S, o7S, n7N, o7N
+		const notch7W = param.S4 + param.S4e;
+		const step7 = param.S4 + param.Q4;
+		const n7S = Math.floor((RdSouth - param.S4) / step7);
+		const o7S = (RdSouth - param.S4 - n7S * step7) / 2;
+		const n7N = Math.floor((RdNorth - param.S4) / step7);
+		const o7N = (RdNorth - param.S4 - n7N * step7) / 2;
 		// step-5 : checks on the parameter values
 		if (W1a2V1 < 1) {
 			throw `err096: W1a ${param.W1a} is too small compare to V1 ${param.V1} mm`;
@@ -267,6 +285,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		if (param.Ja < JaMin(RaNorth)) {
 			throw `err234: North Ja ${ffix(param.Ja)} must be bigger than JaMin ${ffix(JaMin(RaNorth))} mm`;
+		}
+		if (param.P41 > W42 + R4) {
+			throw `err287: P41 ${ffix(param.P41)} is too big compare to W4 ${ffix(param.W4)} and D4 ${ffix(param.D4)} mm`;
+		}
+		if (param.P41 > param.H7) {
+			throw `err291: P41 ${ffix(param.P41)} is too big compare to H7 ${ffix(param.H7)} mm`;
 		}
 		// step-6 : any logs
 		rGeome.logstr += `Inner size X: ${ffix(lbInner)} Y: ${ffix(laInner)} m, S: ${ffix(lbInner * laInner)} m2\n`;
@@ -423,6 +447,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figEast.addSecond(contourCircle(ptPl5x00 + W52, ptPl5y0 - H32, R5));
 		figEast.addSecond(contourCircle(ptPl5x00 + W52, ptPl5y0 + R5, R5));
 		figEast.addSecond(ctrPlank6(ptPl6x0, ptPl6y0));
+		for (let ii = 0; ii < n7S + 1; ii++) {
+			const ipt = point(p0Sx + p3Sx, p0Sy + p3Sy).translatePolar(Ra, o7S + ii * step7);
+			const iCtr = ctrRectangle(0, 0, notch7W, param.H7).rotate(0, 0, Ra);
+			figEast.addSecond(iCtr.translate(ipt.cx, ipt.cy));
+		}
+		for (let ii = 0; ii < n7N + 1; ii++) {
+			const aa = pi - RaNorth;
+			const ipt = point(p0Nx + p3Nx, p0Ny + p3Ny).translatePolar(aa, o7N + ii * step7);
+			const iCtr = ctrRectangle(0, -param.H7, notch7W, param.H7).rotate(0, 0, aa);
+			figEast.addSecond(iCtr.translate(ipt.cx, ipt.cy));
+		}
 		// figPoleSouth
 		const ctrPoleSouth: tOuterInner = [ctrPole(0, 0, H2H3)];
 		if (R3 > 0) {
