@@ -38,15 +38,16 @@ const pDef: tParamDef = {
 		//pNumber(name, unit, init, min, max, step)
 		pNumber('Nb1', 'pole', 3, 2, 20, 1),
 		pNumber('Nb2', 'pole', 0, 0, 20, 1),
-		pNumber('Lb', 'mm', 3000, 500, 10000, 1),
-		pNumber('La', 'mm', 3000, 500, 10000, 1),
+		pNumber('Lb', 'mm', 3000, 10, 10000, 1),
+		pNumber('La', 'mm', 3000, 10, 10000, 1),
 		pCheckbox('SecondPoleNorth', false),
-		pNumber('KaNorth', 'mm', 1000, 0, 10000, 1),
+		pNumber('KaNorth', 'mm', 1000, 10, 10000, 1),
+		pNumber('JaNorth', 'mm', 1000, 10, 10000, 1),
 		pCheckbox('SecondPoleSouth', false),
-		pNumber('KaSouth', 'mm', 1000, 0, 10000, 1),
-		pNumber('Ja', 'mm', 1000, 0, 10000, 1),
+		pNumber('KaSouth', 'mm', 1000, 10, 10000, 1),
+		pNumber('JaSouth', 'mm', 1000, 10, 10000, 1),
 		pSectionSeparator('West East Sides'),
-		pNumber('H1', 'mm', 2500, 1500, 5000, 1),
+		pNumber('H1', 'mm', 2500, 10, 5000, 1),
 		pNumber('H2', 'mm', 300, 10, 1000, 1),
 		pNumber('H3', 'mm', 300, 10, 1000, 1),
 		pCheckbox('aMidSplit', false),
@@ -97,7 +98,8 @@ const pDef: tParamDef = {
 		KaNorth: 'abri_base.svg',
 		SecondPoleSouth: 'abri_base.svg',
 		KaSouth: 'abri_base.svg',
-		Ja: 'abri_base.svg',
+		JaNorth: 'abri_base.svg',
+		JaSouth: 'abri_base.svg',
 		H1: 'abri_beam_heights.svg',
 		H2: 'abri_beam_heights.svg',
 		H3: 'abri_beam_heights.svg',
@@ -154,23 +156,29 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const H2H3 = param.H2 + param.H3;
 		const W1a2V1 = param.W1a - 2 * param.V1;
 		const W1b2U1 = param.W1b - 2 * param.U1;
-		const aPos: number[] = [0];
+		const aDist: number[] = [];
 		if (param.SecondPoleSouth === 1) {
-			aPos.push(param.KaSouth);
+			aDist.push(param.KaSouth);
 		}
-		aPos.push(param.La);
+		aDist.push(param.La);
 		if (param.SecondPoleNorth === 1) {
-			aPos.push(param.KaNorth);
+			aDist.push(param.KaNorth);
+		}
+		const aPos: number[] = [0];
+		let aDistAcc = 0;
+		for (const iDist of aDist) {
+			aDistAcc += iDist + param.W1a;
+			aPos.push(aDistAcc);
 		}
 		const Na = aPos.length;
-		const la = Na * param.W1a + aPos.reduce((acc, cur) => acc + cur, 0); // mm
+		const la = Na * param.W1a + aDist.reduce((acc, cur) => acc + cur, 0); // mm
 		const lb = param.Nb1 * param.W1b + (param.Nb1 - 1) * param.Lb; // mm
 		const lbWall = lb / 1000; // m
 		const laWall = la / 1000; // m
 		const lbInner = lbWall - (2 * param.W1b) / 1000;
 		const laInner = laWall - (2 * param.W1a) / 1000;
 		const lbRoof = lbWall;
-		const laRoof = laWall + (2 * param.Ja) / 1000;
+		const laRoof = laWall + (param.JaSouth + param.JaNorth) / 1000;
 		const stepX = param.W1b + param.Lb;
 		const W1a2 = param.W1a / 2;
 		const D2H = param.H1 + param.H2 / 2;
@@ -179,13 +187,15 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const R3 = param.D3 / 2;
 		const H1H2R2 = param.H1 + param.H2 / 2 - R2;
 		const H1H2 = param.H1 + param.H2;
-		const laPole = la + 2 * param.Ja;
+		const laPole = la + param.JaSouth + param.JaNorth;
 		const W3U1 = param.W3 - param.U1;
 		const W2V1 = param.W2 - param.V1;
 		const W1bU1 = param.W1b - param.U1;
 		const W1aV1 = param.W1a - param.V1;
 		const lbPole = lb + 2 * W3U1;
 		const H123 = H1H2 + param.H3;
+		const LaMin = 2 * (param.W3 - param.U1);
+		const LbMin = 2 * (param.W2 - param.V1);
 		// minimum Ja
 		const H32 = param.H3 / 2;
 		const W42 = param.W4 / 2;
@@ -200,16 +210,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const laIn = la - 2 * param.W1a;
 		const laSouth = (laIn * param.Rt) / 100;
 		const laNorth = laIn - laSouth;
-		const laSide = param.Ja - H32 + param.W1a;
+		const laSideS = param.JaSouth - H32 + param.W1a;
+		const laSideN = param.JaNorth - H32 + param.W1a;
 		const W47 = W42 - param.P41 + param.H7;
-		const Xsouth = laSouth + laSide;
+		const Xsouth = laSouth + laSideS;
 		const RdSouth1 = Xsouth / Math.cos(Ra) + W47 * Math.tan(Ra);
 		const RdSouth = RdSouth1 + param.ReS;
 		// RdNorth
 		const hypS2 = RdSouth1 ** 2 + W47 ** 2;
 		const Ytop2 = hypS2 - Xsouth ** 2;
 		const Ytop = Math.sqrt(Ytop2);
-		const Xnorth = laNorth + laSide;
+		const Xnorth = laNorth + laSideN;
 		const hypN2 = Ytop2 + Xnorth ** 2;
 		const hypN = Math.sqrt(hypN2);
 		const RdNorth1 = Math.sqrt(hypN2 - W47 ** 2);
@@ -283,23 +294,38 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const n7N = Math.floor((RdNorth - param.S4) / step7);
 		const o7N = (RdNorth - param.S4 - n7N * step7) / 2;
 		// step-5 : checks on the parameter values
+		if (param.aMidSplit === 1 && param.SecondPoleNorth + param.SecondPoleSouth < 2) {
+			throw `err296: aMidSplit ${param.aMidSplit} is active but inactive SecondPoleNorth ${param.SecondPoleNorth} or SecondPoleSouth ${param.SecondPoleSouth}`;
+		}
 		if (W1a2V1 < 1) {
 			throw `err096: W1a ${param.W1a} is too small compare to V1 ${param.V1} mm`;
 		}
 		if (W1b2U1 < 1) {
 			throw `err099: W1b ${param.W1b} is too small compare to U1 ${param.U1} mm`;
 		}
-		if (param.Ja < JaMin(Ra)) {
-			throw `err191: South Ja ${ffix(param.Ja)} must be bigger than JaMin ${ffix(JaMin(Ra))} mm`;
+		if (param.JaSouth < JaMin(Ra)) {
+			throw `err191: JaSouth ${ffix(param.JaSouth)} must be bigger than JaMin ${ffix(JaMin(Ra))} mm`;
 		}
-		if (param.Ja < JaMin(RaNorth)) {
-			throw `err234: North Ja ${ffix(param.Ja)} must be bigger than JaMin ${ffix(JaMin(RaNorth))} mm`;
+		if (param.JaNorth < JaMin(RaNorth)) {
+			throw `err234: JaNorth ${ffix(param.JaNorth)} must be bigger than JaMin ${ffix(JaMin(RaNorth))} mm`;
 		}
 		if (param.P41 > W42 + R4) {
 			throw `err287: P41 ${ffix(param.P41)} is too big compare to W4 ${ffix(param.W4)} and D4 ${ffix(param.D4)} mm`;
 		}
 		if (param.P41 > param.H7) {
 			throw `err291: P41 ${ffix(param.P41)} is too big compare to H7 ${ffix(param.H7)} mm`;
+		}
+		if (param.Lb < LbMin) {
+			throw `err318: Lb ${ffix(param.Lb)} is too small compare to LbMin ${ffix(LbMin)} mm`;
+		}
+		if (param.La < LaMin) {
+			throw `err322: La ${ffix(param.La)} is too small compare to LaMin ${ffix(LaMin)} mm`;
+		}
+		if (param.KaNorth < LaMin) {
+			throw `err325: KaNorth ${ffix(param.KaNorth)} is too small compare to LaMin ${ffix(LaMin)} mm`;
+		}
+		if (param.KaSouth < LaMin) {
+			throw `err328: KaSouth ${ffix(param.KaSouth)} is too small compare to LaMin ${ffix(LaMin)} mm`;
 		}
 		// step-6 : any logs
 		rGeome.logstr += `Inner size X: ${ffix(lbInner)} Y: ${ffix(laInner)} m, S: ${ffix(lbInner * laInner)} m2\n`;
@@ -363,8 +389,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			}
 		}
 		for (let ii = 0; ii < param.Nb1; ii++) {
-			figBase.addSecond(ctrRectangle(ii * stepX - W3U1, -param.Ja, param.W3, laPole));
-			figBase.addSecond(ctrRectangle(ii * stepX + W1bU1, -param.Ja, param.W3, laPole));
+			figBase.addSecond(ctrRectangle(ii * stepX - W3U1, -param.JaSouth, param.W3, laPole));
+			figBase.addSecond(ctrRectangle(ii * stepX + W1bU1, -param.JaSouth, param.W3, laPole));
 		}
 		// figSouth
 		for (let ii = 0; ii < param.Nb1; ii++) {
@@ -388,8 +414,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			figEast.addSecond(ctrRectangle(ix - W2V1, param.H1, param.W2, param.H2));
 			figEast.addSecond(ctrRectangle(ix + W1aV1, param.H1, param.W2, param.H2));
 		}
-		figEast.addSecond(ctrRectangle(-param.Ja, H1H2, laPole, param.H3));
-		const p0Sx = -param.Ja + H32;
+		figEast.addSecond(ctrRectangle(-param.JaSouth, H1H2, laPole, param.H3));
+		const p0Sx = -param.JaSouth + H32;
 		const p0Sy = D3H;
 		figEast.addSecond(contourCircle(p0Sx, p0Sy, R4));
 		figEast.addSecond(contourCircle(p0Sx + p2Sx, p0Sy + p2Sy, R4));
@@ -413,7 +439,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		//	.addSegStrokeR(0, Ytop)
 		//	.closeSegStroke();
 		//figEast.addSecond(ctrTriS);
-		const p0Nx = la + param.Ja - H32;
+		const p0Nx = la + param.JaNorth - H32;
 		const p0Ny = D3H;
 		figEast.addSecond(contourCircle(p0Nx, p0Ny, R4));
 		figEast.addSecond(contourCircle(p0Nx + p2Nx, p0Ny + p2Ny, R4));
