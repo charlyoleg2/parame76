@@ -36,19 +36,22 @@ const pDef: tParamDef = {
 	partName: 'abri',
 	params: [
 		//pNumber(name, unit, init, min, max, step)
-		pNumber('Na', 'pole', 2, 2, 20, 1),
-		pNumber('Nb', 'pole', 3, 2, 20, 1),
+		pNumber('Nb1', 'pole', 3, 2, 20, 1),
+		pNumber('Nb2', 'pole', 0, 0, 20, 1),
 		pNumber('Lb', 'mm', 3000, 500, 10000, 1),
 		pNumber('La', 'mm', 3000, 500, 10000, 1),
-		pNumber('Ka', 'mm', 1000, 0, 10000, 1),
-		pNumber('Ja', 'mm', 1000, 0, 10000, 1),
-		pSectionSeparator('Side options'),
 		pCheckbox('SecondPoleNorth', false),
+		pNumber('KaNorth', 'mm', 1000, 0, 10000, 1),
 		pCheckbox('SecondPoleSouth', false),
-		pSectionSeparator('pole heights'),
+		pNumber('KaSouth', 'mm', 1000, 0, 10000, 1),
+		pNumber('Ja', 'mm', 1000, 0, 10000, 1),
+		pSectionSeparator('West East Sides'),
 		pNumber('H1', 'mm', 2500, 1500, 5000, 1),
 		pNumber('H2', 'mm', 300, 10, 1000, 1),
 		pNumber('H3', 'mm', 300, 10, 1000, 1),
+		pCheckbox('aMidSplit', false),
+		pNumber('H3s', 'mm', 300, 10, 1000, 1),
+		pNumber('H3arc', 'mm', 0, 0, 2000, 1),
 		pSectionSeparator('pole widths'),
 		pNumber('W1a', 'mm', 300, 10, 1000, 1),
 		pNumber('W1b', 'mm', 300, 10, 1000, 1),
@@ -56,7 +59,6 @@ const pDef: tParamDef = {
 		pNumber('U1', 'mm', 40, 0, 1000, 1),
 		pNumber('W2', 'mm', 150, 5, 1000, 1),
 		pNumber('W3', 'mm', 150, 5, 1000, 1),
-		pSectionSeparator('pole holes'),
 		pNumber('D2', 'mm', 20, 0, 200, 1),
 		pNumber('D3', 'mm', 20, 0, 200, 1),
 		pSectionSeparator('slope'),
@@ -87,17 +89,21 @@ const pDef: tParamDef = {
 		pDropdown('peak6', ['peak', 'square'])
 	],
 	paramSvg: {
-		Na: 'abri_base.svg',
-		Nb: 'abri_base.svg',
+		Nb1: 'abri_base.svg',
+		Nb2: 'abri_base.svg',
 		Lb: 'abri_base.svg',
 		La: 'abri_base.svg',
-		Ka: 'abri_base.svg',
-		Ja: 'abri_base.svg',
 		SecondPoleNorth: 'abri_base.svg',
+		KaNorth: 'abri_base.svg',
 		SecondPoleSouth: 'abri_base.svg',
+		KaSouth: 'abri_base.svg',
+		Ja: 'abri_base.svg',
 		H1: 'abri_beam_heights.svg',
 		H2: 'abri_beam_heights.svg',
 		H3: 'abri_beam_heights.svg',
+		aMidSplit: 'abri_beam_heights.svg',
+		H3s: 'abri_beam_heights.svg',
+		H3arc: 'abri_beam_heights.svg',
 		W1a: 'abri_base.svg',
 		W1b: 'abri_base.svg',
 		V1: 'abri_base.svg',
@@ -148,12 +154,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const H2H3 = param.H2 + param.H3;
 		const W1a2V1 = param.W1a - 2 * param.V1;
 		const W1b2U1 = param.W1b - 2 * param.U1;
-		const poleSecondNb = (param.SecondPoleNorth ? 1 : 0) + (param.SecondPoleSouth ? 1 : 0);
-		const poleNbWEmin = 2 + poleSecondNb;
-		const lb = param.Nb * param.W1b + (param.Nb - 1) * param.Lb; // mm
+		const aPos: number[] = [0];
+		if (param.SecondPoleSouth === 1) {
+			aPos.push(param.KaSouth);
+		}
+		aPos.push(param.La);
+		if (param.SecondPoleNorth === 1) {
+			aPos.push(param.KaNorth);
+		}
+		const Na = aPos.length;
+		const la = Na * param.W1a + aPos.reduce((acc, cur) => acc + cur, 0); // mm
+		const lb = param.Nb1 * param.W1b + (param.Nb1 - 1) * param.Lb; // mm
 		const lbWall = lb / 1000; // m
-		const laPre = param.Na * param.W1a + (param.Na - 1 - poleSecondNb) * param.La; // mm
-		const la = laPre + poleSecondNb * param.Ka; // mm
 		const laWall = la / 1000; // m
 		const lbInner = lbWall - (2 * param.W1b) / 1000;
 		const laInner = laWall - (2 * param.W1a) / 1000;
@@ -277,9 +289,6 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (W1b2U1 < 1) {
 			throw `err099: W1b ${param.W1b} is too small compare to U1 ${param.U1} mm`;
 		}
-		if (param.Na < poleNbWEmin) {
-			throw `err103: Na ${param.Na} must be bigger than ${poleNbWEmin} poles`;
-		}
 		if (param.Ja < JaMin(Ra)) {
 			throw `err191: South Ja ${ffix(param.Ja)} must be bigger than JaMin ${ffix(JaMin(Ra))} mm`;
 		}
@@ -296,9 +305,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `Inner size X: ${ffix(lbInner)} Y: ${ffix(laInner)} m, S: ${ffix(lbInner * laInner)} m2\n`;
 		rGeome.logstr += `Wall size X: ${ffix(lbWall)} Y: ${ffix(laWall)} m, S: ${ffix(lbWall * laWall)} m2\n`;
 		rGeome.logstr += `Roof size X: ${ffix(lbRoof)} Y: ${ffix(laRoof)} m, S: ${ffix(lbRoof * laRoof)} m2\n`;
-		rGeome.logstr += `Pole Horizontal B (W-E): W: ${ffix(param.W2)} H: ${ffix(param.H2)} L: ${ffix(lbPole)} mm x${param.Na * 2}\n`;
-		rGeome.logstr += `Pole Horizontal A (N-S): W: ${ffix(param.W3)} H: ${ffix(param.H3)} L: ${ffix(laPole)} mm x${param.Nb * 2}\n`;
-		rGeome.logstr += `Pole Vertical: W1a: ${ffix(param.W1a)} W1b: ${ffix(param.W1b)} H: ${ffix(H123)} mm x${param.Na * param.Nb}\n`;
+		rGeome.logstr += `Pole Horizontal B (W-E): W: ${ffix(param.W2)} H: ${ffix(param.H2)} L: ${ffix(lbPole)} mm x${Na * 2}\n`;
+		rGeome.logstr += `Pole Horizontal A (N-S): W: ${ffix(param.W3)} H: ${ffix(param.H3)} L: ${ffix(laPole)} mm x${param.Nb1 * 2}\n`;
+		rGeome.logstr += `Pole Vertical: W1a: ${ffix(param.W1a)} W1b: ${ffix(param.W1b)} H: ${ffix(H123)} mm x${Na * param.Nb1}\n`;
 		rGeome.logstr += `Top position: laSouth: ${ffix(laSouth)} laNorth: ${ffix(laNorth)} Ytop ${ffix(Ytop)} mm\n`;
 		rGeome.logstr += `Roof south: RdSouth1: ${ffix(RdSouth1)} RdSouth: ${ffix(RdSouth)} mm\n`;
 		rGeome.logstr += `Roof north: RdNorth1: ${ffix(RdNorth1)} RdNorth: ${ffix(RdNorth)} mm RaNorth ${ffix(radToDeg(RaNorth))} degree\n`;
@@ -346,29 +355,19 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			return rCtr;
 		}
 		// figBase
-		let yj = 0;
-		const posA: number[] = [];
-		for (let jj = 0; jj < param.Na; jj++) {
-			posA.push(yj);
-			for (let ii = 0; ii < param.Nb; ii++) {
+		for (const yj of aPos) {
+			for (let ii = 0; ii < param.Nb1; ii++) {
 				figBase.addMainO(ctrRectangle(ii * stepX, yj, param.W1b, param.W1a));
 				figBase.addSecond(ctrRectangle(-W3U1, yj + param.V1 - param.W2, lbPole, param.W2));
 				figBase.addSecond(ctrRectangle(-W3U1, yj + W1aV1, lbPole, param.W2));
 			}
-			if (jj === 0) {
-				yj += param.W1a + (param.SecondPoleSouth ? param.Ka : param.La);
-			} else if (jj === param.Na - 2) {
-				yj += param.W1a + (param.SecondPoleNorth ? param.Ka : param.La);
-			} else {
-				yj += param.W1a + param.La;
-			}
 		}
-		for (let ii = 0; ii < param.Nb; ii++) {
+		for (let ii = 0; ii < param.Nb1; ii++) {
 			figBase.addSecond(ctrRectangle(ii * stepX - W3U1, -param.Ja, param.W3, laPole));
 			figBase.addSecond(ctrRectangle(ii * stepX + W1bU1, -param.Ja, param.W3, laPole));
 		}
 		// figSouth
-		for (let ii = 0; ii < param.Nb; ii++) {
+		for (let ii = 0; ii < param.Nb1; ii++) {
 			const ix = ii * stepX;
 			const ctrSouth: tOuterInner = [ctrPole(ix, 0, param.H3)];
 			if (R2 > 0) {
@@ -380,7 +379,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		figSouth.addSecond(ctrRectangle(-W3U1, param.H1, lbPole, param.H2));
 		// figEast
-		for (const ix of posA) {
+		for (const ix of aPos) {
 			const ctrEast: tOuterInner = [ctrPole(ix, 0, H2H3)];
 			if (R3 > 0) {
 				ctrEast.push(contourCircle(ix + W1a2, D3H, R3));
