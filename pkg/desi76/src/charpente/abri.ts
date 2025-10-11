@@ -78,6 +78,8 @@ const pDef: tParamDef = {
 		pNumber('S4e2', 'mm', 0, 0, 20, 0.1),
 		pNumber('Q4', 'mm', 500, 0, 2000, 1),
 		pNumber('Q4Init', 'mm', 50, 0, 2000, 1),
+		pNumber('dropLastN', 'notch', 0, 0, 10, 1),
+		pNumber('dropLastS', 'notch', 0, 0, 10, 1),
 		pNumber('H7', 'mm', 60, 0, 200, 1),
 		pSectionSeparator('plank-5'),
 		pNumber('W5a', 'mm', 200, 1, 1000, 1),
@@ -128,6 +130,8 @@ const pDef: tParamDef = {
 		S4e2: 'abri_plank4.svg',
 		Q4: 'abri_plank4.svg',
 		Q4Init: 'abri_plank4.svg',
+		dropLastN: 'abri_top_opt_shifted.svg',
+		dropLastS: 'abri_top_opt_aligned.svg',
 		H7: 'abri_triangle.svg',
 		W5a: 'abri_triangle.svg',
 		W5bs: 'abri_plank5b.svg',
@@ -289,8 +293,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// n7S, n7N
 		const notch7W = param.S4 + param.S4e;
 		const step7 = param.S4 + param.Q4;
-		const n7S = Math.floor((RdSouth - param.S4 - param.Q4Init) / step7);
-		const n7N = Math.floor((RdNorth - param.S4 - param.Q4Init) / step7);
+		const n7S = Math.floor((RdSouth - param.S4 - param.Q4Init) / step7) + 1 - param.dropLastS;
+		const n7N = Math.floor((RdNorth - param.S4 - param.Q4Init) / step7) + 1 - param.dropLastN;
 		// step-5 : checks on the parameter values
 		if (param.aMidSplit === 1 && param.SecondPoleNorth + param.SecondPoleSouth < 2) {
 			throw `err296: aMidSplit ${param.aMidSplit} is active but inactive SecondPoleNorth ${param.SecondPoleNorth} or SecondPoleSouth ${param.SecondPoleSouth}`;
@@ -470,13 +474,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figEast.addSecond(contourCircle(ptPl5x00 + W52, ptPl5y0 - H32, R5));
 		figEast.addSecond(contourCircle(ptPl5x00 + W52, ptPl5y0 + R5, R5));
 		figEast.addSecond(ctrPlank6(ptPl6x0, ptPl6y0));
-		for (let ii = 0; ii < n7S + 1; ii++) {
+		for (let ii = 0; ii < n7S; ii++) {
 			const ll = param.Q4Init + ii * step7;
 			const ipt = point(p0Sx + p3Sx, p0Sy + p3Sy).translatePolar(Ra, ll);
 			const iCtr = ctrRectangle(0, 0, notch7W, param.H7).rotate(0, 0, Ra);
 			figEast.addSecond(iCtr.translate(ipt.cx, ipt.cy));
 		}
-		for (let ii = 0; ii < n7N + 1; ii++) {
+		for (let ii = 0; ii < n7N; ii++) {
 			const aa = pi - RaNorth;
 			const ll = param.Q4Init + ii * step7;
 			const ipt = point(p0Nx + p3Nx, p0Ny + p3Ny).translatePolar(aa, ll);

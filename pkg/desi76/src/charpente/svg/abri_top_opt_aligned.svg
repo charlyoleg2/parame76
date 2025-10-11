@@ -24,8 +24,8 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
      inkscape:zoom="1.1099334"
-     inkscape:cx="374.79725"
-     inkscape:cy="2496.0957"
+     inkscape:cx="209.02155"
+     inkscape:cy="1729.383"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="0"
@@ -43,6 +43,18 @@
   </sodipodi:namedview>
   <defs
      id="defs1">
+    <rect
+       x="21.622919"
+       y="2473.1213"
+       width="100.90696"
+       height="33.335335"
+       id="rect98" />
+    <rect
+       x="19.821009"
+       y="2434.8308"
+       width="145.05376"
+       height="41.894405"
+       id="rect78" />
     <rect
        x="143.25185"
        y="2719.9829"
@@ -254,7 +266,7 @@
        height="100.11863"
        x="1.4302659"
        y="641.95105"
-       inkscape:export-filename="abri_top_details.svg"
+       inkscape:export-filename="abri_top_opt_aligned.svg"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
     <path
@@ -598,5 +610,33 @@
          x="76.220703"
          y="3336.0568"
          id="tspan13">top_opt: [aligned]</tspan></text>
+    <path
+       style="fill:#c8ab37;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide)"
+       d="M 65.911425,674.72797 71.632489,660.6637"
+       id="path64" />
+    <path
+       style="fill:#c8ab37;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide)"
+       d="m 80.214083,670.67556 -6.317007,-9.89269"
+       id="path66" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,56.13794,10.726995)"
+       id="text66"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect78);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="19.820312"
+         y="2449.0665"
+         id="tspan14">dropLastS</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,100.357,2.0262102)"
+       id="text98"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect98);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="21.623047"
+         y="2487.3575"
+         id="tspan15">dropLastN</tspan></text>
+    <path
+       style="fill:#c8ab37;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide)"
+       d="m 107.86589,676.27743 7.86646,-15.13698"
+       id="path99" />
   </g>
 </svg>
