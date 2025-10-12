@@ -278,7 +278,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// ptPl5x0, ptPl5y0, pl5Nl
 		const ptPl5x0 = pTopx + topXlow - W52;
 		const ptPl5y2 = pTopy + topYlow - pl5Ny;
-		const ptPl5y0 = H123;
+		const l81y = param.aMidSplit ? param.H3s + param.H3arc : 0;
+		const ptPl5y0 = H123 + l81y;
 		const pl5Nl = ptPl5y2 - ptPl5y0;
 		const R5 = param.D5 / 2;
 		// pl5yN, pl5yM, pl5yS, pl5Nl2, ptPl5x00
@@ -301,19 +302,27 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const n7S = Math.floor((RdSouth - param.S4 - param.Q4Init) / step7) + 1 - param.dropLastS;
 		const n7N = Math.floor((RdNorth - param.S4 - param.Q4Init) / step7) + 1 - param.dropLastN;
 		// l8S1, l8S2, l8S2, l8S32, l8S33
-		const l8S1x = Xsouth - H32 / Math.tan(Ra) - W52 + (param.top_opt ? 0 : topXlow);
+		const l82y = l81y + H32;
+		const l8S1x = Xsouth - l82y / Math.tan(Ra) - W52 + (param.top_opt ? 0 : topXlow);
 		const l8S1 = l8S1x * Math.sin(Ra) - W42 + param.P42;
 		const l8S2 = param.W8 / Math.tan(Ra);
 		const l8S3 = param.W8 / Math.sin(Ra);
 		const l8S32 = param.P5 / Math.tan(Ra);
 		const l8S33 = l8S3 - l8S32;
 		// l8N1, l8N2, l8N2, l8N32, l8N33
-		const l8N1x = Xnorth - H32 / Math.tan(RaNorth) - W52 - (param.top_opt ? 0 : topXlow);
+		const l8N1x = Xnorth - l82y / Math.tan(RaNorth) - W52 - (param.top_opt ? 0 : topXlow);
 		const l8N1 = l8N1x * Math.sin(RaNorth) - W42 + param.P42;
 		const l8N2 = param.W8 / Math.tan(RaNorth);
 		const l8N3 = param.W8 / Math.sin(RaNorth);
 		const l8N32 = param.P5 / Math.tan(RaNorth);
 		const l8N33 = l8N3 - l8N32;
+		// pl3Sx0, pl3Mx0, pl3Nx0, pl3S, pl3M, pl3N
+		const pl3Sx0 = -param.JaSouth;
+		const pl3S = param.JaSouth + 2 * param.W1a + param.KaSouth + param.W2 - param.V1;
+		const pl3Mx0 = param.W1a + param.KaSouth - param.W2 + param.V1;
+		const pl3M = 2 * (param.W1a + param.W2 - param.V1) + param.La;
+		const pl3Nx0 = 2 * param.W1a + param.KaSouth + param.La - param.W2 + param.V1;
+		const pl3N = param.W2 - param.V1 + 2 * param.W1a + param.KaNorth + param.JaNorth;
 		// step-5 : checks on the parameter values
 		if (param.aMidSplit === 1 && param.SecondPoleNorth + param.SecondPoleSouth < 2) {
 			throw `err296: aMidSplit ${param.aMidSplit} is active but inactive SecondPoleNorth ${param.SecondPoleNorth} or SecondPoleSouth ${param.SecondPoleSouth}`;
@@ -361,8 +370,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `Top angle: ${ffix(radToDeg(aTop))} degree\n`;
 		// step-7 : drawing of the figures
 		// sub-functions
-		function ctrPole(ix: number, iy: number, ih23: number): tContour {
-			const rCtr = contour(ix, 0)
+		function ctrPlank1a(ix: number, iy: number, ih23: number): tContour {
+			const rCtr = contour(ix, iy)
 				.addSegStrokeR(param.W1b, 0)
 				.addSegStrokeR(0, H123 - ih23)
 				.addSegStrokeR(-param.U1, 0)
@@ -371,6 +380,29 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.addSegStrokeR(0, -ih23)
 				.addSegStrokeR(-param.U1, 0)
 				.closeSegStroke();
+			return rCtr;
+		}
+		function ctrPlank3M(ix: number, iy: number): tContour {
+			let rCtr = ctrRectangle(ix, iy, pl3M, param.H3s);
+			if (param.H3arc > 0) {
+				const lx1 = param.W1a + 2 * (param.W2 - param.V1);
+				const lx2 = param.La - 2 * (param.W2 - param.V1);
+				const lx3 = param.W1a + param.W2 - 2 * param.V1;
+				const lx4 = param.La + 2 * param.V1;
+				rCtr = contour(ix, iy)
+					.addSegStrokeR(lx1, 0)
+					.addPointR(lx2 / 2, param.H3arc)
+					.addPointR(lx2, 0)
+					.addSegArc2()
+					.addSegStrokeR(lx1, 0)
+					.addSegStrokeR(0, param.H3s)
+					.addSegStrokeR(-lx3, 0)
+					.addPointR(-lx4 / 2, param.H3arc)
+					.addPointR(-lx4, 0)
+					.addSegArc2()
+					.addSegStrokeR(-lx3, 0)
+					.closeSegStroke();
+			}
 			return rCtr;
 		}
 		function ctrPlank5(ix: number, iy: number): tContour {
@@ -448,7 +480,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figSouth
 		for (let ii = 0; ii < param.Nb1; ii++) {
 			const ix = ii * stepX;
-			const ctrSouth: tOuterInner = [ctrPole(ix, 0, param.H3)];
+			const ctrSouth: tOuterInner = [ctrPlank1a(ix, 0, param.H3)];
 			if (R2 > 0) {
 				ctrSouth.push(contourCircle(ix + W1a2, D2H, R2));
 			}
@@ -459,7 +491,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figSouth.addSecond(ctrRectangle(-W3U1, param.H1, lbPole, param.H2));
 		// figEast
 		for (const ix of aPos) {
-			const ctrEast: tOuterInner = [ctrPole(ix, 0, H2H3)];
+			const ctrEast: tOuterInner = [ctrPlank1a(ix, 0, H2H3)];
 			if (R3 > 0) {
 				ctrEast.push(contourCircle(ix + W1a2, D3H, R3));
 			}
@@ -467,7 +499,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			figEast.addSecond(ctrRectangle(ix - W2V1, param.H1, param.W2, param.H2));
 			figEast.addSecond(ctrRectangle(ix + W1aV1, param.H1, param.W2, param.H2));
 		}
-		figEast.addSecond(ctrRectangle(-param.JaSouth, H1H2, laPole, param.H3));
+		if (param.aMidSplit) {
+			figEast.addSecond(ctrRectangle(pl3Sx0, H1H2, pl3S, param.H3));
+			figEast.addSecond(ctrPlank3M(pl3Mx0, H123));
+			figEast.addSecond(ctrRectangle(pl3Nx0, H1H2, pl3N, param.H3));
+		} else {
+			figEast.addSecond(ctrRectangle(pl3Sx0, H1H2, laPole, param.H3));
+		}
 		const p0Sx = -param.JaSouth + H32;
 		const p0Sy = D3H;
 		figEast.addSecond(contourCircle(p0Sx, p0Sy, R4));
@@ -541,7 +579,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figEast.addSecond(ctrPlank8Splaced(ptPl5x00, ptPl5y0, Ra - pi2));
 		figEast.addSecond(ctrPlank8Nplaced(ptPl5x00 + 2 * W52, ptPl5y0, pi2 - RaNorth));
 		// figPoleSouth
-		const ctrPoleSouth: tOuterInner = [ctrPole(0, 0, H2H3)];
+		const ctrPoleSouth: tOuterInner = [ctrPlank1a(0, 0, H2H3)];
 		if (R3 > 0) {
 			ctrPoleSouth.push(contourCircle(W1a2, D3H, R3));
 		}
