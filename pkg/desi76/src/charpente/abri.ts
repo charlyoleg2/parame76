@@ -82,7 +82,7 @@ const pDef: tParamDef = {
 		pNumber('H7', 'mm', 60, 0, 200, 1),
 		pSectionSeparator('plank-5 plank-8'),
 		pNumber('W5a', 'mm', 200, 1, 1000, 1),
-		pNumber('W5bs', 'mm', 0, 1, 1000, 1),
+		pNumber('W5bs', 'mm', 0, 0, 1000, 1),
 		pNumber('D5', 'mm', 20, 0, 200, 1),
 		pDropdown('top_opt', ['shifted', 'aligned']),
 		pNumber('G5Min', 'mm', 200, 1, 1000, 1),
@@ -259,8 +259,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const p2Ny = p2Sy;
 		const p2Nx = -p2Ny / Math.tan(RaNorth);
 		// p3Nx, p3Ny
-		const p3Nx = W441 * Math.cos(pi2 - RaNorth) + param.ReS * Math.cos(Ra);
-		const p3Ny = W441 * Math.sin(pi2 - RaNorth) - param.ReS * Math.sin(Ra);
+		const p3Nx = W441 * Math.cos(pi2 - RaNorth) + param.ReN * Math.cos(RaNorth);
+		const p3Ny = W441 * Math.sin(pi2 - RaNorth) - param.ReN * Math.sin(RaNorth);
 		// pTopx, pTopy
 		const pTopx = param.W1a + laSouth;
 		const pTopy = H123 - H32 + Ytop;
@@ -300,10 +300,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const step7 = param.S4 + param.Q4;
 		const n7S = Math.floor((RdSouth - param.S4 - param.Q4Init) / step7) + 1 - param.dropLastS;
 		const n7N = Math.floor((RdNorth - param.S4 - param.Q4Init) / step7) + 1 - param.dropLastN;
-		// l8S1, l8S2, w8S2, w8S3
-		const l8S1x = (Xsouth * (Ytop - H32)) / Ytop - W52 - (param.top_opt ? 0 : topXlow);
+		// l8S1, l8S2, l8S2, l8S32, l8S33
+		const l8S1x = Xsouth - H32 / Math.tan(Ra) - W52 + (param.top_opt ? 0 : topXlow);
 		const l8S1 = l8S1x * Math.sin(Ra) - W42 + param.P42;
 		const l8S2 = param.W8 / Math.tan(Ra);
+		const l8S3 = param.W8 / Math.sin(Ra);
+		const l8S32 = param.P5 / Math.tan(Ra);
+		const l8S33 = l8S3 - l8S32;
 		rGeome.logstr += `dbg307: l8S1x ${ffix(l8S1x)} l8S1 ${ffix(l8S1)} mm\n`;
 		// step-5 : checks on the parameter values
 		if (param.aMidSplit === 1 && param.SecondPoleNorth + param.SecondPoleSouth < 2) {
@@ -395,7 +398,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		function ctrPlank8(ix: number, iy: number): tContour {
 			const rCtr = contour(ix, iy)
 				.addSegStrokeR(l8S1 + l8S2, 0)
-				.addSegStrokeR(-l8S2, param.W8)
+				//.addSegStrokeR(-l8S2, param.W8)
+				.addSegStrokeRP(pi2 - Ra, param.P5)
+				.addSegStrokeRP(pi - Ra, l8S33)
+				.addSegStrokeRP(-pi2 - Ra, param.P5)
+				.addSegStrokeRP(pi - Ra, l8S32)
 				.addSegStrokeR(-l8S1, 0)
 				.closeSegStroke();
 			return rCtr;
