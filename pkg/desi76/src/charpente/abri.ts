@@ -307,7 +307,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const l8S3 = param.W8 / Math.sin(Ra);
 		const l8S32 = param.P5 / Math.tan(Ra);
 		const l8S33 = l8S3 - l8S32;
-		rGeome.logstr += `dbg307: l8S1x ${ffix(l8S1x)} l8S1 ${ffix(l8S1)} mm\n`;
+		// l8N1, l8N2, l8N2, l8N32, l8N33
+		const l8N1x = Xnorth - H32 / Math.tan(RaNorth) - W52 - (param.top_opt ? 0 : topXlow);
+		const l8N1 = l8N1x * Math.sin(RaNorth) - W42 + param.P42;
+		const l8N2 = param.W8 / Math.tan(RaNorth);
+		const l8N3 = param.W8 / Math.sin(RaNorth);
+		const l8N32 = param.P5 / Math.tan(RaNorth);
+		const l8N33 = l8N3 - l8N32;
 		// step-5 : checks on the parameter values
 		if (param.aMidSplit === 1 && param.SecondPoleNorth + param.SecondPoleSouth < 2) {
 			throw `err296: aMidSplit ${param.aMidSplit} is active but inactive SecondPoleNorth ${param.SecondPoleNorth} or SecondPoleSouth ${param.SecondPoleSouth}`;
@@ -395,7 +401,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const rCtr = param.peak6 ? ctrSquare : ctrPeak;
 			return rCtr;
 		}
-		function ctrPlank8(ix: number, iy: number): tContour {
+		function ctrPlank8S(ix: number, iy: number): tContour {
 			const rCtr = contour(ix, iy)
 				.addSegStrokeR(l8S1 + l8S2, 0)
 				//.addSegStrokeR(-l8S2, param.W8)
@@ -407,8 +413,24 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.closeSegStroke();
 			return rCtr;
 		}
-		function ctrPlank8placed(ix: number, iy: number, ia: number): tContour {
-			const rCtr = ctrPlank8(ix - l8S1, iy - param.W8).rotate(ix, iy, ia);
+		function ctrPlank8Splaced(ix: number, iy: number, ia: number): tContour {
+			const rCtr = ctrPlank8S(ix - l8S1, iy - param.W8).rotate(ix, iy, ia);
+			return rCtr;
+		}
+		function ctrPlank8N(ix: number, iy: number): tContour {
+			const rCtr = contour(ix, iy)
+				.addSegStrokeR(l8N1, 0)
+				//.addSegStrokeR(l8N2, param.W8)
+				.addSegStrokeRP(RaNorth, l8N32)
+				.addSegStrokeRP(RaNorth - pi2, param.P5)
+				.addSegStrokeRP(RaNorth, l8N33)
+				.addSegStrokeRP(RaNorth + pi2, param.P5)
+				.addSegStrokeR(-l8N1 - l8N2, 0)
+				.closeSegStroke();
+			return rCtr;
+		}
+		function ctrPlank8Nplaced(ix: number, iy: number, ia: number): tContour {
+			const rCtr = ctrPlank8N(ix - l8N1, iy).rotate(ix, iy, pi + ia);
 			return rCtr;
 		}
 		// figBase
@@ -516,7 +538,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const iCtr = ctrRectangle(0, -param.H7, notch7W, param.H7).rotate(0, 0, aa);
 			figEast.addSecond(iCtr.translate(ipt.cx, ipt.cy));
 		}
-		figEast.addSecond(ctrPlank8placed(ptPl5x00, ptPl5y0, Ra - pi2));
+		figEast.addSecond(ctrPlank8Splaced(ptPl5x00, ptPl5y0, Ra - pi2));
+		figEast.addSecond(ctrPlank8Nplaced(ptPl5x00 + 2 * W52, ptPl5y0, pi2 - RaNorth));
 		// figPoleSouth
 		const ctrPoleSouth: tOuterInner = [ctrPole(0, 0, H2H3)];
 		if (R3 > 0) {
