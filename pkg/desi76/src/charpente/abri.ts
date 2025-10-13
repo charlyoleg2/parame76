@@ -730,19 +730,27 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.vol = {
 			extrudes: [
 				{
-					outName: `subpax_${designName}_top`,
+					outName: `subpax_${designName}_pl1a`,
 					face: `${designName}_facePlank1a`,
 					extrudeMethod: EExtrude.eLinearOrtho,
-					length: 10,
+					length: param.W1b,
 					rotate: [0, 0, 0],
 					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_pl1b`,
+					face: `${designName}_facePlank1b`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.W1a,
+					rotate: [pi2, 0, 0],
+					translate: [0, param.W1b, 0]
 				}
 			],
 			volumes: [
 				{
 					outName: `pax_${designName}`,
-					boolMethod: EBVolume.eIdentity,
-					inList: [`subpax_${designName}_top`]
+					boolMethod: EBVolume.eIntersection,
+					inList: [`subpax_${designName}_pl1a`, `subpax_${designName}_pl1b`]
 				}
 			]
 		};
