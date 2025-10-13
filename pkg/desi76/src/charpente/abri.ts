@@ -271,6 +271,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const topYmid = (topD1 + topD2 / 2) * Math.sin(aMid);
 		const topYlow = (topD1 + topD2) * Math.sin(aMid);
 		const topXlow = (topD1 + topD2) * Math.cos(aMid);
+		// pl3S1, pl3N1, pl3x1, pl3x2, pl3x4
+		const pl3S1 = param.SecondPoleSouth ? param.KaSouth + param.W1a : 0;
+		const pl3N1 = param.SecondPoleNorth ? param.KaNorth + param.W1a : 0;
+		const pl3x1 = param.W1a + 2 * (param.W2 - param.V1);
+		const pl3x2 = laSouth - pl3S1 - param.W2 + param.V1;
+		const pl3x4 = laNorth - pl3N1 - param.W2 + param.V1;
 		// W52, pl5Sy, pl5Ny
 		const W52 = param.W5a / 2;
 		const pl5Sy = W52 * Math.tan(Ra);
@@ -389,24 +395,20 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		function ctrPlank3M(ix: number, iy: number): tContour {
 			let rCtr = ctrRectangle(ix, iy, pl3M, param.H3s);
 			if (param.H3arc > 0) {
-				const lx1 = param.W1a + 2 * (param.W2 - param.V1);
-				const lx2 = laSouth - param.KaSouth - param.W1a - param.W2 + param.V1;
-				const lx3 = param.W1a + param.W2 - 2 * param.V1;
-				const lx4 = laNorth - param.KaNorth - param.W1a - param.W2 + param.V1;
 				rCtr = contour(ix, iy)
-					.addSegStrokeR(lx1, 0)
-					.addPointR(lx2, param.H3arc)
+					.addSegStrokeR(pl3x1, 0)
+					.addPointR(pl3x2, param.H3arc)
 					.addSegArc3(pi, false)
-					.addPointR(lx4, -param.H3arc)
+					.addPointR(pl3x4, -param.H3arc)
 					.addSegArc3(0, true)
-					.addSegStrokeR(lx1, 0)
+					.addSegStrokeR(pl3x1, 0)
 					.addSegStrokeR(0, param.H3s)
-					.addSegStrokeR(-lx3, 0)
-					.addPointR(-lx4 - param.W2, param.H3arc)
+					.addSegStrokeR(-pl3x1 + param.W2, 0)
+					.addPointR(-pl3x4 - param.W2, param.H3arc)
 					.addSegArc3(0, false)
-					.addPointR(-lx2 - param.W2, -param.H3arc)
+					.addPointR(-pl3x2 - param.W2, -param.H3arc)
 					.addSegArc3(pi, true)
-					.addSegStrokeR(-lx3, 0)
+					.addSegStrokeR(-pl3x1 + param.W2, 0)
 					.closeSegStroke();
 			}
 			return rCtr;
@@ -416,7 +418,26 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			return rCtr;
 		}
 		function ctrPlank3One(ix: number, iy: number): tContour {
-			const rCtr = ctrRectangle(ix, iy, pl3La, param.H3);
+			let rCtr = ctrRectangle(ix, iy, pl3La, param.H3);
+			if (param.H3arc > 0) {
+				const lS2 = param.JaSouth + param.W1a + pl3S1 + param.W2 - param.V1;
+				const lN2 = param.JaNorth + param.W1a + pl3N1 + param.W2 - param.V1;
+				rCtr = contour(ix, iy)
+					.addSegStrokeR(lS2, 0)
+					.addPointR(pl3x2, param.H3arc)
+					.addSegArc3(pi, false)
+					.addPointR(pl3x4, -param.H3arc)
+					.addSegArc3(0, true)
+					.addSegStrokeR(lN2, 0)
+					.addSegStrokeR(0, param.H3s)
+					.addSegStrokeR(-lN2 + param.W2, 0)
+					.addPointR(-pl3x4 - param.W2, param.H3arc)
+					.addSegArc3(0, false)
+					.addPointR(-pl3x2 - param.W2, -param.H3arc)
+					.addSegArc3(pi, true)
+					.addSegStrokeR(-lS2 + param.W2, 0)
+					.closeSegStroke();
+			}
 			return rCtr;
 		}
 		function ctrPlank5(ix: number, iy: number): tContour {
