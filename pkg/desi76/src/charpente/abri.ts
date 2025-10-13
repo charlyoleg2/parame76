@@ -47,16 +47,16 @@ const pDef: tParamDef = {
 		pNumber('KaSouth', 'mm', 1000, 10, 10000, 1),
 		pNumber('JaSouth', 'mm', 1000, 10, 10000, 1),
 		pSectionSeparator('West East Sides'),
+		pNumber('Ra', 'degree', 30, 10, 80, 0.5), // 50 + 23.5 = 73.5 that's very steep!
+		pNumber('Rt', '%', 50, 0, 100, 1),
+		pNumber('ReS', 'mm', 500, 1, 5000, 1),
+		pNumber('ReN', 'mm', 500, 1, 5000, 1),
 		pNumber('H1', 'mm', 2500, 10, 5000, 1),
 		pNumber('H2', 'mm', 300, 10, 1000, 1),
 		pNumber('H3', 'mm', 300, 10, 1000, 1),
 		pCheckbox('aMidSplit', false),
 		pNumber('H3s', 'mm', 300, 10, 1000, 1),
 		pNumber('H3arc', 'mm', 0, 0, 2000, 1),
-		pNumber('Ra', 'degree', 30, 10, 80, 0.5), // 50 + 23.5 = 73.5 that's very steep!
-		pNumber('Rt', '%', 50, 0, 100, 1),
-		pNumber('ReS', 'mm', 500, 1, 5000, 1),
-		pNumber('ReN', 'mm', 500, 1, 5000, 1),
 		pSectionSeparator('pole widths'),
 		pNumber('W1a', 'mm', 300, 10, 1000, 1),
 		pNumber('W1b', 'mm', 300, 10, 1000, 1),
@@ -104,16 +104,16 @@ const pDef: tParamDef = {
 		KaSouth: 'abri_base.svg',
 		JaNorth: 'abri_base.svg',
 		JaSouth: 'abri_base.svg',
+		Ra: 'abri_triangle.svg',
+		Rt: 'abri_triangle.svg',
+		ReS: 'abri_triangle.svg',
+		ReN: 'abri_plank4.svg',
 		H1: 'abri_beam_heights.svg',
 		H2: 'abri_beam_heights.svg',
 		H3: 'abri_beam_heights.svg',
 		aMidSplit: 'abri_beam_heights.svg',
 		H3s: 'abri_beam_heights.svg',
 		H3arc: 'abri_beam_heights.svg',
-		Ra: 'abri_triangle.svg',
-		Rt: 'abri_triangle.svg',
-		ReS: 'abri_triangle.svg',
-		ReN: 'abri_plank4.svg',
 		W1a: 'abri_base.svg',
 		W1b: 'abri_base.svg',
 		V1: 'abri_base.svg',
@@ -386,20 +386,22 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			let rCtr = ctrRectangle(ix, iy, pl3M, param.H3s);
 			if (param.H3arc > 0) {
 				const lx1 = param.W1a + 2 * (param.W2 - param.V1);
-				const lx2 = param.La - 2 * (param.W2 - param.V1);
+				const lx2 = laSouth - param.KaSouth - param.W1a - param.W2 + param.V1;
 				const lx3 = param.W1a + param.W2 - 2 * param.V1;
-				const lx4 = param.La + 2 * param.V1;
+				const lx4 = laNorth - param.KaNorth - param.W1a - param.W2 + param.V1;
 				rCtr = contour(ix, iy)
 					.addSegStrokeR(lx1, 0)
-					.addPointR(lx2 / 2, param.H3arc)
-					.addPointR(lx2, 0)
-					.addSegArc2()
+					.addPointR(lx2, param.H3arc)
+					.addSegArc3(pi, false)
+					.addPointR(lx4, -param.H3arc)
+					.addSegArc3(0, true)
 					.addSegStrokeR(lx1, 0)
 					.addSegStrokeR(0, param.H3s)
 					.addSegStrokeR(-lx3, 0)
-					.addPointR(-lx4 / 2, param.H3arc)
-					.addPointR(-lx4, 0)
-					.addSegArc2()
+					.addPointR(-lx4 - param.W2, param.H3arc)
+					.addSegArc3(0, false)
+					.addPointR(-lx2 - param.W2, -param.H3arc)
+					.addSegArc3(pi, true)
 					.addSegStrokeR(-lx3, 0)
 					.closeSegStroke();
 			}
