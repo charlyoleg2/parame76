@@ -158,7 +158,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const figBase = figure();
 	const figSouth = figure();
 	const figEast = figure();
-	const figPlank1b = figure();
+	const figPlank1a = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -324,9 +324,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const l8N3 = param.W8 / Math.sin(RaNorth);
 		const l8N32 = param.P5 / Math.tan(RaNorth);
 		const l8N33 = l8N3 - l8N32;
-		// pl5Lbottom
+		// pl5Lbottom, l8S4, l8N4
 		const pl5botMin = param.aMidSplit ? param.H3s : param.H3;
 		const pl5Lbottom = Math.max(Math.max(l8N3, l8S3) + param.G5Min, pl5botMin);
+		const l8S4 = pl5Lbottom - l8S3;
+		const l8N4 = pl5Lbottom - l8N3;
 		// pl3Sx0, pl3Mx0, pl3Nx0, pl3S, pl3M, pl3N
 		const pl3Sx0 = -param.JaSouth;
 		const pl3S = param.JaSouth + 2 * param.W1a + param.KaSouth + param.W2 - param.V1;
@@ -381,7 +383,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `Top angle: ${ffix(radToDeg(aTop))} degree\n`;
 		// step-7 : drawing of the figures
 		// sub-functions
-		function ctrPlank1a(ix: number, iy: number, ih23: number): tContour {
+		function ctrPlank1(ix: number, iy: number, ih23: number): tContour {
 			const rCtr = contour(ix, iy)
 				.addSegStrokeR(param.W1b, 0)
 				.addSegStrokeR(0, H123 - ih23)
@@ -447,17 +449,33 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		function ctrPlank5(ix: number, iy: number): tContour {
 			const ctrShifted = contour(ix, iy)
-				.addSegStrokeR(pl5Lbottom + pl5Nl, 0)
+				.addSegStrokeR(l8N4, 0)
+				.addSegStrokeR(0, param.P5)
+				.addSegStrokeR(l8N33, 0)
+				.addSegStrokeR(0, -param.P5)
+				.addSegStrokeR(l8N32 + pl5Nl, 0)
 				.addSegStrokeR(pl5Ny, W52)
 				.addSegStrokeR(-pl5Sy, W52)
-				.addSegStrokeR(-pl5Sl - pl5Lbottom, 0)
+				.addSegStrokeR(-pl5Sl - l8S32, 0)
+				.addSegStrokeR(0, -param.P5)
+				.addSegStrokeR(-l8S33, 0)
+				.addSegStrokeR(0, param.P5)
+				.addSegStrokeR(-l8S4, 0)
 				.closeSegStroke();
 			const ctrAligned = contour(ix, iy)
-				.addSegStrokeR(pl5Lbottom + pl5Nl2, 0)
+				.addSegStrokeR(l8N4, 0)
+				.addSegStrokeR(0, param.P5)
+				.addSegStrokeR(l8N33, 0)
+				.addSegStrokeR(0, -param.P5)
+				.addSegStrokeR(l8N32 + pl5Nl2, 0)
 				.addSegStrokeR(pl5yN, W52)
 				.addSegStrokeR(pl5yM, 0)
 				.addSegStrokeR(-pl5yS, W52)
-				.addSegStrokeR(-pl5Sl2 - pl5Lbottom, 0)
+				.addSegStrokeR(-pl5Sl2 - l8S32, 0)
+				.addSegStrokeR(0, -param.P5)
+				.addSegStrokeR(-l8S33, 0)
+				.addSegStrokeR(0, param.P5)
+				.addSegStrokeR(-l8S4, 0)
 				.closeSegStroke();
 			const rCtr = param.top_opt ? ctrAligned : ctrShifted;
 			return rCtr;
@@ -524,7 +542,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figSouth
 		for (let ii = 0; ii < param.Nb1; ii++) {
 			const ix = ii * stepX;
-			const ctrSouth: tOuterInner = [ctrPlank1a(ix, 0, param.H3)];
+			const ctrSouth: tOuterInner = [ctrPlank1(ix, 0, param.H3)];
 			if (R2 > 0) {
 				ctrSouth.push(contourCircle(ix + W1a2, D2H, R2));
 			}
@@ -535,7 +553,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figSouth.addSecond(ctrRectangle(-W3U1, param.H1, pl2Lb, param.H2));
 		// figEast
 		for (const ix of aPos) {
-			const ctrEast: tOuterInner = [ctrPlank1a(ix, 0, H2H3)];
+			const ctrEast: tOuterInner = [ctrPlank1(ix, 0, H2H3)];
 			if (R3 > 0) {
 				ctrEast.push(contourCircle(ix + W1a2, D3H, R3));
 			}
@@ -622,24 +640,24 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		figEast.addSecond(ctrPlank8Splaced(ptPl5x00, ptPl5y0, Ra - pi2));
 		figEast.addSecond(ctrPlank8Nplaced(ptPl5x00 + 2 * W52, ptPl5y0, pi2 - RaNorth));
-		// figPlank1b
-		const ctrPoleSouth: tOuterInner = [ctrPlank1a(0, 0, H2H3)];
+		// figPlank1a
+		const ctrPl1a: tOuterInner = [ctrPlank1(0, 0, H2H3)];
 		if (R3 > 0) {
-			ctrPoleSouth.push(contourCircle(W1a2, D3H, R3));
+			ctrPl1a.push(contourCircle(W1a2, D3H, R3));
 		}
-		figPlank1b.addMainOI(ctrPoleSouth);
+		figPlank1a.addMainOI(ctrPl1a);
 		if (R2 > 0) {
-			figPlank1b.addSecond(ctrRectangle(-W2V1, H1H2R2, W1a2V1 + 2 * param.W2, 2 * R2));
+			figPlank1a.addSecond(ctrRectangle(-W2V1, H1H2R2, W1a2V1 + 2 * param.W2, 2 * R2));
 		}
-		figPlank1b.addSecond(ctrRectangle(param.V1, H1H2, W1a2V1, param.H3));
-		figPlank1b.addSecond(ctrRectangle(-W2V1, param.H1, param.W2, param.H2));
-		figPlank1b.addSecond(ctrRectangle(W1aV1, param.H1, param.W2, param.H2));
+		figPlank1a.addSecond(ctrRectangle(param.V1, H1H2, W1a2V1, param.H3));
+		figPlank1a.addSecond(ctrRectangle(-W2V1, param.H1, param.W2, param.H2));
+		figPlank1a.addSecond(ctrRectangle(W1aV1, param.H1, param.W2, param.H2));
 		// final figure list
 		rGeome.fig = {
 			faceEast: figEast,
 			faceBase: figBase,
 			faceSouth: figSouth,
-			facePlank1b: figPlank1b
+			facePlank1a: figPlank1a
 		};
 		// volume
 		const designName = rGeome.partName;
@@ -647,7 +665,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			extrudes: [
 				{
 					outName: `subpax_${designName}_top`,
-					face: `${designName}_facePlank1b`,
+					face: `${designName}_facePlank1a`,
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: 10,
 					rotate: [0, 0, 0],
