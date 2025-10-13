@@ -284,7 +284,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// ptPl5x0, ptPl5y0, pl5Nl
 		const ptPl5x0 = pTopx + topXlow - W52;
 		const ptPl5y2 = pTopy + topYlow - pl5Ny;
-		const l81y = param.aMidSplit ? param.H3s + param.H3arc : 0;
+		const l81y = param.H3arc + (param.aMidSplit ? param.H3s : 0);
 		const ptPl5y0 = H123 + l81y;
 		const pl5Nl = ptPl5y2 - ptPl5y0;
 		const R5 = param.D5 / 2;
