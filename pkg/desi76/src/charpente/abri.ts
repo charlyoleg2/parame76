@@ -160,6 +160,15 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const figEast = figure();
 	const figPlank1a = figure();
 	const figPlank1b = figure();
+	const figPlank3One = figure();
+	const figPlank3S = figure();
+	const figPlank3M = figure();
+	const figPlank3N = figure();
+	const figPlank5a = figure();
+	const figPlank5b = figure();
+	const figPlank6c = figure();
+	const figPlank8S = figure();
+	const figPlank8N = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -467,7 +476,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			}
 			return rCtr;
 		}
-		function ctrPlank5(ix: number, iy: number): tContour {
+		function ctrPlank5a(ix: number, iy: number): tContour {
 			const ctrShifted = contour(ix, iy)
 				.addSegStrokeR(l8N4, 0)
 				.addSegStrokeR(0, param.P5)
@@ -500,11 +509,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const rCtr = param.top_opt ? ctrAligned : ctrShifted;
 			return rCtr;
 		}
-		function ctrPlank5placed(ix: number, iy: number): tContour {
-			const rCtr = ctrPlank5(ix - pl5Lbottom, iy - param.W5a).rotate(ix, iy, pi2);
+		function ctrPlank5aPlaced(ix: number, iy: number): tContour {
+			const rCtr = ctrPlank5a(ix - pl5Lbottom, iy - param.W5a).rotate(ix, iy, pi2);
 			return rCtr;
 		}
-		function ctrPlank6(ix: number, iy: number): tContour {
+		function ctrPlank6c(ix: number, iy: number): tContour {
 			const ctrPeak = contour(ix, iy)
 				.addSegStrokeR(param.W6, 0)
 				.addSegStrokeR(0, -topYmid - pl6Ny)
@@ -641,10 +650,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		//	.addSegStrokeRP(pi - RaNorth, RdNorth1)
 		//	.closeSegStroke();
 		//figEast.addSecond(ctrTriN2);
-		figEast.addSecond(ctrPlank5placed(ptPl5x00, ptPl5y0));
+		figEast.addSecond(ctrPlank5aPlaced(ptPl5x00, ptPl5y0));
 		figEast.addSecond(contourCircle(ptPl5x00 + W52, ptPl5y0 - H32, R5));
 		figEast.addSecond(contourCircle(ptPl5x00 + W52, ptPl5y0 + R5, R5));
-		figEast.addSecond(ctrPlank6(ptPl6x0, ptPl6y0));
+		figEast.addSecond(ctrPlank6c(ptPl6x0, ptPl6y0));
 		for (let ii = 0; ii < n7S; ii++) {
 			const ll = param.Q4Init + ii * step7;
 			const ipt = point(p0Sx + p3Sx, p0Sy + p3Sy).translatePolar(Ra, ll);
@@ -682,13 +691,39 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		figPlank1b.addSecond(ctrRectangle(H1H2, -W3U1, param.H3, param.W3));
 		figPlank1b.addSecond(ctrRectangle(H1H2, W1bU1, param.H3, param.W3));
+		// figPlank3One
+		figPlank3One.addMainO(ctrPlank3One(0, 0));
+		// figPlank3S
+		figPlank3S.addMainO(ctrPlank3S(0, 0));
+		// figPlank3M
+		figPlank3M.addMainO(ctrPlank3M(0, 0));
+		// figPlank3N
+		figPlank3N.addMainO(ctrPlank3N(0, 0));
+		// figPlank5a
+		figPlank5a.addMainO(ctrPlank5a(0, 0));
+		// figPlank5b
+		// figPlank6c
+		figPlank6c.addMainO(ctrPlank6c(0, 0));
+		// figPlank8S
+		figPlank8S.addMainO(ctrPlank8S(0, 0));
+		// figPlank8N
+		figPlank8N.addMainO(ctrPlank8N(0, 0));
 		// final figure list
 		rGeome.fig = {
 			faceEast: figEast,
 			faceBase: figBase,
 			faceSouth: figSouth,
 			facePlank1a: figPlank1a,
-			facePlank1b: figPlank1b
+			facePlank1b: figPlank1b,
+			facePlank3One: figPlank3One,
+			facePlank3S: figPlank3S,
+			facePlank3M: figPlank3M,
+			facePlank3N: figPlank3N,
+			facePlank5a: figPlank5a,
+			facePlank5b: figPlank5b,
+			facePlank6c: figPlank6c,
+			facePlank8S: figPlank8S,
+			facePlank8N: figPlank8N
 		};
 		// volume
 		const designName = rGeome.partName;
