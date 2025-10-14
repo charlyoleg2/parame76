@@ -37,7 +37,7 @@ const pDef: tParamDef = {
 	params: [
 		//pNumber(name, unit, init, min, max, step)
 		pNumber('Nb1', 'poleTriangles', 3, 2, 20, 1),
-		pNumber('Nb2', 'triangles', 0, 0, 20, 1),
+		pNumber('Nb2', 'slotTriangles', 0, 0, 20, 1),
 		pNumber('Lb', 'mm', 3000, 10, 10000, 1),
 		pNumber('La', 'mm', 3000, 10, 10000, 1),
 		pCheckbox('SecondPoleNorth', false),
@@ -54,10 +54,11 @@ const pDef: tParamDef = {
 		pNumber('H1', 'mm', 2500, 10, 5000, 1),
 		pNumber('H2', 'mm', 300, 10, 1000, 1),
 		pNumber('H3', 'mm', 300, 10, 1000, 1),
+		pDropdown('bSlot', ['High', 'HighLow', 'HighHighLow']),
 		pCheckbox('aMidSplit', false),
 		pNumber('H3s', 'mm', 300, 10, 1000, 1),
 		pNumber('H3arc', 'mm', 0, 0, 2000, 1),
-		pSectionSeparator('pole widths'),
+		pSectionSeparator('plank-1'),
 		pNumber('W1a', 'mm', 300, 10, 1000, 1),
 		pNumber('W1b', 'mm', 300, 10, 1000, 1),
 		pNumber('V1', 'mm', 40, 0, 1000, 1),
@@ -91,7 +92,45 @@ const pDef: tParamDef = {
 		pSectionSeparator('plank-6'),
 		pNumber('W6', 'mm', 100, 1, 1000, 1),
 		pNumber('H6', 'mm', 100, 1, 1000, 1),
-		pDropdown('peak6', ['peak', 'square'])
+		pDropdown('peak6', ['peak', 'square']),
+		pSectionSeparator('Diagonals'),
+		pNumber('dbW', 'mm', 100, 1, 500, 1),
+		pNumber('dbX', 'mm', 1000, 1, 2000, 1),
+		pNumber('dbY', 'mm', 1000, 1, 2000, 1),
+		pNumber('dbP', 'mm', 50, 1, 200, 1),
+		pNumber('dbD', 'mm', 20, 1, 200, 1),
+		pNumber('daW', 'mm', 100, 1, 500, 1),
+		pNumber('daX', 'mm', 1000, 1, 2000, 1),
+		pNumber('daY', 'mm', 1000, 1, 2000, 1),
+		pNumber('daP', 'mm', 50, 1, 200, 1),
+		pNumber('daD', 'mm', 20, 1, 200, 1),
+		pNumber('dtW', 'mm', 100, 1, 500, 1),
+		pNumber('dtX', 'mm', 1000, 1, 2000, 1),
+		pNumber('dtY', 'mm', 1000, 1, 2000, 1),
+		pNumber('dtP', 'mm', 50, 1, 200, 1),
+		pNumber('dtQ', 'mm', 20, 1, 200, 1),
+		pSectionSeparator('3D Export'),
+		pCheckbox('d3Plank1', false),
+		pCheckbox('d3Plank1short', false),
+		pDropdown('d3Plank1West', ['Low', 'High', 'End']),
+		pDropdown('d3Plank1East', ['Low', 'High', 'End']),
+		pDropdown('d3Plank1SN', ['P1', 'P2', 'P3', 'P4']),
+		pCheckbox('d3Plank2One', false),
+		pCheckbox('d3Plank2High', false),
+		pCheckbox('d3Plank2HighEnd', false),
+		pCheckbox('d3Plank2Low', false),
+		pCheckbox('d3Plank3One', false),
+		pCheckbox('d3Plank3S', false),
+		pCheckbox('d3Plank3M', false),
+		pCheckbox('d3Plank3N', false),
+		pCheckbox('d3Plank4S', false),
+		pCheckbox('d3Plank4N', false),
+		pCheckbox('d3Plank5', false),
+		pCheckbox('d3Plank6', false),
+		pCheckbox('d3Plank7', false),
+		pCheckbox('d3Plank8S', false),
+		pCheckbox('d3Plank8N', false),
+		pCheckbox('d3Assembly', true)
 	],
 	paramSvg: {
 		Nb1: 'abri_base.svg',
@@ -111,6 +150,7 @@ const pDef: tParamDef = {
 		H1: 'abri_beam_heights.svg',
 		H2: 'abri_beam_heights.svg',
 		H3: 'abri_beam_heights.svg',
+		bSlot: 'abri_beam_heights.svg',
 		aMidSplit: 'abri_beam_heights.svg',
 		H3s: 'abri_beam_heights.svg',
 		H3arc: 'abri_beam_heights.svg',
@@ -144,7 +184,43 @@ const pDef: tParamDef = {
 		W8: 'abri_triangle.svg',
 		W6: 'abri_top_opt_aligned.svg',
 		H6: 'abri_triangle.svg',
-		peak6: 'abri_triangle.svg'
+		peak6: 'abri_triangle.svg',
+		dbW: 'abri_diagonal_b.svg',
+		dbX: 'abri_diagonal_b.svg',
+		dbY: 'abri_diagonal_b.svg',
+		dbP: 'abri_diagonal_b.svg',
+		dbD: 'abri_diagonal_b.svg',
+		daW: 'abri_diagonal_a.svg',
+		daX: 'abri_diagonal_a.svg',
+		daY: 'abri_diagonal_a.svg',
+		daP: 'abri_diagonal_a.svg',
+		daD: 'abri_diagonal_a.svg',
+		dtW: 'abri_diagonal_top.svg',
+		dtX: 'abri_diagonal_top.svg',
+		dtY: 'abri_diagonal_top.svg',
+		dtP: 'abri_diagonal_top.svg',
+		dtQ: 'abri_diagonal_top.svg',
+		d3Plank1: 'abri_3d_export.svg',
+		d3Plank1short: 'abri_3d_export.svg',
+		d3Plank1West: 'abri_3d_export.svg',
+		d3Plank1East: 'abri_3d_export.svg',
+		d3Plank1SN: 'abri_3d_export.svg',
+		d3Plank2One: 'abri_3d_export.svg',
+		d3Plank2High: 'abri_3d_export.svg',
+		d3Plank2HighEnd: 'abri_3d_export.svg',
+		d3Plank2Low: 'abri_3d_export.svg',
+		d3Plank3One: 'abri_3d_export.svg',
+		d3Plank3S: 'abri_3d_export.svg',
+		d3Plank3M: 'abri_3d_export.svg',
+		d3Plank3N: 'abri_3d_export.svg',
+		d3Plank4S: 'abri_3d_export.svg',
+		d3Plank4N: 'abri_3d_export.svg',
+		d3Plank5: 'abri_3d_export.svg',
+		d3Plank6: 'abri_3d_export.svg',
+		d3Plank7: 'abri_3d_export.svg',
+		d3Plank8S: 'abri_3d_export.svg',
+		d3Plank8N: 'abri_3d_export.svg',
+		d3Assembly: 'abri_3d_export.svg'
 	},
 	sim: {
 		tMax: 180,
@@ -727,6 +803,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		};
 		// volume
 		const designName = rGeome.partName;
+		const exportList: string[] = [];
+		if (param.d3Plank1) {
+			exportList.push(`pax_${designName}_pl1`);
+		}
 		rGeome.vol = {
 			extrudes: [
 				{
@@ -734,23 +814,28 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					face: `${designName}_facePlank1a`,
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: param.W1b,
-					rotate: [0, -pi2, 0],
-					translate: [param.W1a, 0, 0]
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
 				},
 				{
 					outName: `subpax_${designName}_pl1b`,
 					face: `${designName}_facePlank1b`,
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: param.W1a,
-					rotate: [pi2, -pi2, 0],
-					translate: [param.W1a, param.W1b, 0]
+					rotate: [pi2, 0, 0],
+					translate: [0, param.W1b, 0]
 				}
 			],
 			volumes: [
 				{
-					outName: `pax_${designName}`,
+					outName: `pax_${designName}_pl1`,
 					boolMethod: EBVolume.eIntersection,
 					inList: [`subpax_${designName}_pl1a`, `subpax_${designName}_pl1b`]
+				},
+				{
+					outName: `pax_${designName}`,
+					boolMethod: EBVolume.eUnion,
+					inList: exportList
 				}
 			]
 		};
