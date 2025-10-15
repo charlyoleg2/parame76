@@ -272,8 +272,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const laRoof = laWall + (param.JaSouth + param.JaNorth) / 1000;
 		const stepX = param.W1b + param.Lb;
 		const W1a2 = param.W1a / 2;
+		const H12c = param.H1 + param.H2 * (param.bSplit ? 2 : 1);
+		const H123c = H12c + param.H3;
 		const D2H = param.H1 + param.H2 / 2;
-		const D3H = param.H1 + param.H2 + param.H3 / 2;
+		const D3H = H12c + param.H3 / 2;
 		const R2 = param.D2 / 2;
 		const R3 = param.D3 / 2;
 		const H1H2 = param.H1 + param.H2;
@@ -417,6 +419,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const pl3M = 2 * (param.W1a + param.W2 - param.V1) + param.La;
 		const pl3Nx0 = 2 * param.W1a + param.KaSouth + param.La - param.W2 + param.V1;
 		const pl3N = param.W2 - param.V1 + 2 * param.W1a + param.KaNorth + param.JaNorth;
+		// d3Plank1SN
+		const d3P1P1234 = 1 + param.d3Plank1SN;
+		const d3P1P23 = d3P1P1234 === 2 || d3P1P1234 === 3 ? true : false;
 		// step-5 : checks on the parameter values
 		if (param.aSplit === 1 && param.SecondPoleNorth + param.SecondPoleSouth < 2) {
 			throw `err296: aSplit ${param.aSplit} is active but inactive SecondPoleNorth ${param.SecondPoleNorth} or SecondPoleSouth ${param.SecondPoleSouth}`;
@@ -466,12 +471,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// sub-functions
 		function ctrPlank1a(ix: number, iy: number, iP1234: number): tContour {
 			const H3sc = (iP1234 === 2 || iP1234 === 3) && param.aSplit === 1 ? param.H3s : 0;
+			const H2H3c = H2H3 + (param.bSplit === 1 ? param.H2 : 0);
 			const rCtr = contour(ix, iy)
 				.addSegStrokeR(param.H1, 0)
 				.addSegStrokeR(0, param.V1)
-				.addSegStrokeR(H2H3 + H3sc, 0)
+				.addSegStrokeR(H2H3c + H3sc, 0)
 				.addSegStrokeR(0, W1a2V1)
-				.addSegStrokeR(-H2H3 - H3sc, 0)
+				.addSegStrokeR(-H2H3c - H3sc, 0)
 				.addSegStrokeR(0, param.V1)
 				.addSegStrokeR(-param.H1, 0)
 				.closeSegStroke();
@@ -758,29 +764,43 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figEast.addSecond(ctrPlank8Splaced(ptPl5x00, ptPl5y0, Ra - pi2));
 		figEast.addSecond(ctrPlank8Nplaced(ptPl5x00 + 2 * W52, ptPl5y0, pi2 - RaNorth));
 		// figPlank1a
-		const ctrPl1a: tOuterInner = [ctrPlank1a(0, 0, 1 + param.d3Plank1SN)];
+		const ctrPl1a: tOuterInner = [ctrPlank1a(0, 0, d3P1P1234)];
 		if (R3 > 0) {
-			ctrPl1a.push(contourCircle(D3H, W1a2, R3));
+			ctrPl1a.push(contourCircle(H12c + param.H3 / 2, W1a2, R3));
+			if (param.aSplit === 1 && d3P1P23) {
+				ctrPl1a.push(contourCircle(H123c + param.H3s / 2, W1a2, R3));
+			}
 		}
 		figPlank1a.addMainOI(ctrPl1a);
 		if (R2 > 0) {
+			const D2H2 = D2H + param.H2;
 			figPlank1a.addSecond(ctrRectangle(D2H - R2, -W2V1, 2 * R2, W1a2V1 + 2 * param.W2));
+			if (param.bSplit === 1) {
+				figPlank1a.addSecond(ctrRectangle(D2H2 - R2, -W2V1, 2 * R2, W1a2V1 + 2 * param.W2));
+			}
 		}
 		figPlank1a.addSecond(ctrRectangle(param.H1, -W2V1, param.H2, param.W2));
 		figPlank1a.addSecond(ctrRectangle(param.H1, W1aV1, param.H2, param.W2));
+		if (param.bSplit === 1) {
+			figPlank1a.addSecond(ctrRectangle(H1H2, -W2V1, param.H2, param.W2));
+			figPlank1a.addSecond(ctrRectangle(H1H2, W1aV1, param.H2, param.W2));
+		}
 		// figPlank1b
 		const ctrPl1b: tOuterInner = [
-			ctrPlank1b(0, 0, param.d3Plank1West, param.d3Plank1East, 1 + param.d3Plank1SN)
+			ctrPlank1b(0, 0, param.d3Plank1West, param.d3Plank1East, d3P1P1234)
 		];
 		if (R2 > 0) {
 			ctrPl1b.push(contourCircle(D2H, W1a2, R2));
+			if (param.bSplit === 1) {
+				ctrPl1b.push(contourCircle(D2H + param.H2, W1a2, R2));
+			}
 		}
 		figPlank1b.addMainOI(ctrPl1b);
 		if (R3 > 0) {
 			figPlank1b.addSecond(ctrRectangle(D3H - R3, -W3U1, 2 * R3, W1b2U1 + 2 * param.W3));
 		}
-		figPlank1b.addSecond(ctrRectangle(H1H2, -W3U1, param.H3, param.W3));
-		figPlank1b.addSecond(ctrRectangle(H1H2, W1bU1, param.H3, param.W3));
+		figPlank1b.addSecond(ctrRectangle(H12c, -W3U1, param.H3, param.W3));
+		figPlank1b.addSecond(ctrRectangle(H12c, W1bU1, param.H3, param.W3));
 		// figPlank3One
 		figPlank3One.addMainO(ctrPlank3One(0, 0));
 		// figPlank3S
