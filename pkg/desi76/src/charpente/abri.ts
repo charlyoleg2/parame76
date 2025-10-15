@@ -464,36 +464,52 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `Top angle: ${ffix(radToDeg(aTop))} degree\n`;
 		// step-7 : drawing of the figures
 		// sub-functions
-		function ctrPlank1a(ix: number, iy: number): tContour {
+		function ctrPlank1a(ix: number, iy: number, iP1234: number): tContour {
+			const H3sc = (iP1234 === 2 || iP1234 === 3) && param.aSplit === 1 ? param.H3s : 0;
 			const rCtr = contour(ix, iy)
 				.addSegStrokeR(param.H1, 0)
 				.addSegStrokeR(0, param.V1)
-				.addSegStrokeR(H2H3, 0)
+				.addSegStrokeR(H2H3 + H3sc, 0)
 				.addSegStrokeR(0, W1a2V1)
-				.addSegStrokeR(-H2H3, 0)
+				.addSegStrokeR(-H2H3 - H3sc, 0)
 				.addSegStrokeR(0, param.V1)
 				.addSegStrokeR(-param.H1, 0)
 				.closeSegStroke();
 			return rCtr;
 		}
-		function ctrPlank1aPlaced(ix: number, iy: number): tContour {
-			const rCtr = ctrPlank1a(ix, iy - param.W1a).rotate(ix, iy, pi2);
+		function ctrPlank1aPlaced(ix: number, iy: number, iP1234: number): tContour {
+			const rCtr = ctrPlank1a(ix, iy - param.W1a, iP1234).rotate(ix, iy, pi2);
 			return rCtr;
 		}
-		function ctrPlank1b(ix: number, iy: number): tContour {
+		function ctrPlank1b(
+			ix: number,
+			iy: number,
+			iSideW: number,
+			iSideE: number,
+			iP1234: number
+		): tContour {
+			const H3sc = (iP1234 === 2 || iP1234 === 3) && param.aSplit === 1 ? param.H3s : 0;
+			const H3c = param.H3 + H3sc;
+			const H2sc = param.bSplit === 1 ? param.H2 : 0;
 			const rCtr = contour(ix, iy)
-				.addSegStrokeR(H1H2, 0)
+				.addSegStrokeR(H1H2 + H2sc, 0)
 				.addSegStrokeR(0, param.U1)
-				.addSegStrokeR(param.H3, 0)
+				.addSegStrokeR(H3c, 0)
 				.addSegStrokeR(0, W1b2U1)
-				.addSegStrokeR(-param.H3, 0)
+				.addSegStrokeR(-H3c, 0)
 				.addSegStrokeR(0, param.U1)
-				.addSegStrokeR(-H1H2, 0)
+				.addSegStrokeR(-H1H2 - H2sc, 0)
 				.closeSegStroke();
 			return rCtr;
 		}
-		function ctrPlank1bPlaced(ix: number, iy: number): tContour {
-			const rCtr = ctrPlank1b(ix, iy - param.W1b).rotate(ix, iy, pi2);
+		function ctrPlank1bPlaced(
+			ix: number,
+			iy: number,
+			iSideW: number,
+			iSideE: number,
+			iP1234: number
+		): tContour {
+			const rCtr = ctrPlank1b(ix, iy - param.W1b, iSideW, iSideE, iP1234).rotate(ix, iy, pi2);
 			return rCtr;
 		}
 		function ctrPlank3S(ix: number, iy: number): tContour {
@@ -643,7 +659,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figSouth
 		for (let ii = 0; ii < param.Nb1; ii++) {
 			const ix = ii * stepX;
-			const ctrSouth: tOuterInner = [ctrPlank1bPlaced(ix, 0)];
+			const ctrSouth: tOuterInner = [ctrPlank1bPlaced(ix, 0, 0, 0, 1)];
 			if (R2 > 0) {
 				ctrSouth.push(contourCircle(ix + W1a2, D2H, R2));
 			}
@@ -653,8 +669,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		figSouth.addSecond(ctrRectangle(-W3U1, param.H1, pl2Lb, param.H2));
 		// figEast
-		for (const ix of aPos) {
-			const ctrEast: tOuterInner = [ctrPlank1aPlaced(ix, 0)];
+		for (const [idx, ix] of aPos.entries()) {
+			const ctrEast: tOuterInner = [ctrPlank1aPlaced(ix, 0, 1 + idx)];
 			if (R3 > 0) {
 				ctrEast.push(contourCircle(ix + W1a2, D3H, R3));
 			}
@@ -742,7 +758,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figEast.addSecond(ctrPlank8Splaced(ptPl5x00, ptPl5y0, Ra - pi2));
 		figEast.addSecond(ctrPlank8Nplaced(ptPl5x00 + 2 * W52, ptPl5y0, pi2 - RaNorth));
 		// figPlank1a
-		const ctrPl1a: tOuterInner = [ctrPlank1a(0, 0)];
+		const ctrPl1a: tOuterInner = [ctrPlank1a(0, 0, 1 + param.d3Plank1SN)];
 		if (R3 > 0) {
 			ctrPl1a.push(contourCircle(D3H, W1a2, R3));
 		}
@@ -753,7 +769,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figPlank1a.addSecond(ctrRectangle(param.H1, -W2V1, param.H2, param.W2));
 		figPlank1a.addSecond(ctrRectangle(param.H1, W1aV1, param.H2, param.W2));
 		// figPlank1b
-		const ctrPl1b: tOuterInner = [ctrPlank1b(0, 0)];
+		const ctrPl1b: tOuterInner = [
+			ctrPlank1b(0, 0, param.d3Plank1West, param.d3Plank1East, 1 + param.d3Plank1SN)
+		];
 		if (R2 > 0) {
 			ctrPl1b.push(contourCircle(D2H, W1a2, R2));
 		}
