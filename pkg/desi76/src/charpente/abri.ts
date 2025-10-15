@@ -37,7 +37,7 @@ const pDef: tParamDef = {
 	params: [
 		//pNumber(name, unit, init, min, max, step)
 		pNumber('Nb1', 'poleTriangles', 3, 2, 20, 1),
-		pNumber('Nb2', 'slotTriangles', 0, 0, 20, 1),
+		//pNumber('Nb2', 'slotTriangles', 0, 0, 20, 1), // not yet implemented
 		pNumber('Lb', 'mm', 3000, 10, 10000, 1),
 		pNumber('La', 'mm', 3000, 10, 10000, 1),
 		pCheckbox('SecondPoleNorth', false),
@@ -54,8 +54,8 @@ const pDef: tParamDef = {
 		pNumber('H1', 'mm', 2500, 10, 5000, 1),
 		pNumber('H2', 'mm', 300, 10, 1000, 1),
 		pNumber('H3', 'mm', 300, 10, 1000, 1),
-		pDropdown('bSlot', ['High', 'HighLow', 'HighHighLow']),
-		pCheckbox('aMidSplit', false),
+		pCheckbox('bSplit', false),
+		pCheckbox('aSplit', false),
 		pNumber('H3s', 'mm', 300, 10, 1000, 1),
 		pNumber('H3arc', 'mm', 0, 0, 2000, 1),
 		pSectionSeparator('plank-1'),
@@ -111,17 +111,13 @@ const pDef: tParamDef = {
 		pNumber('dtQ', 'mm', 20, 1, 200, 1),
 		pSectionSeparator('3D Export'),
 		pCheckbox('d3Plank1', false),
-		pCheckbox('d3Plank1ShortH', false),
-		pCheckbox('d3Plank1ShortHL', false),
 		pDropdown('d3Plank1West', ['Low', 'High', 'End']),
 		pDropdown('d3Plank1East', ['Low', 'High', 'End']),
 		pDropdown('d3Plank1SN', ['P1', 'P2', 'P3', 'P4']),
-		pCheckbox('d3Plank2One', false),
-		pCheckbox('d3Plank2High', false),
-		pCheckbox('d3Plank2HighEnd', false),
-		pCheckbox('d3Plank2Low', false),
+		pCheckbox('d3Plank2EE', false),
+		pCheckbox('d3Plank2Slot', false),
 		pCheckbox('d3Plank2Short', false),
-		pCheckbox('d3Plank3One', false),
+		pCheckbox('d3Plank3EE', false),
 		pCheckbox('d3Plank3S', false),
 		pCheckbox('d3Plank3M', false),
 		pCheckbox('d3Plank3N', false),
@@ -136,7 +132,7 @@ const pDef: tParamDef = {
 	],
 	paramSvg: {
 		Nb1: 'abri_base.svg',
-		Nb2: 'abri_base.svg',
+		//Nb2: 'abri_base.svg',
 		Lb: 'abri_base.svg',
 		La: 'abri_base.svg',
 		SecondPoleNorth: 'abri_base.svg',
@@ -152,9 +148,9 @@ const pDef: tParamDef = {
 		H1: 'abri_beam_heights.svg',
 		H2: 'abri_beam_heights.svg',
 		H3: 'abri_beam_heights.svg',
-		bSlot: 'abri_beam_heights.svg',
-		aMidSplit: 'abri_beam_heights.svg',
-		H3s: 'abri_beam_heights.svg',
+		bSplit: 'abri_south_bSplit.svg',
+		aSplit: 'abri_beam_heights.svg',
+		H3s: 'abri_south_P2P3.svg',
 		H3arc: 'abri_beam_heights.svg',
 		W1a: 'abri_base.svg',
 		W1b: 'abri_base.svg',
@@ -203,15 +199,11 @@ const pDef: tParamDef = {
 		dtP: 'abri_diagonal_top.svg',
 		dtQ: 'abri_diagonal_top.svg',
 		d3Plank1: 'abri_3d_export.svg',
-		d3Plank1ShortH: 'abri_3d_export.svg',
-		d3Plank1ShortHL: 'abri_3d_export.svg',
 		d3Plank1West: 'abri_3d_export.svg',
 		d3Plank1East: 'abri_3d_export.svg',
 		d3Plank1SN: 'abri_3d_export.svg',
-		d3Plank2One: 'abri_3d_export.svg',
-		d3Plank2High: 'abri_3d_export.svg',
-		d3Plank2HighEnd: 'abri_3d_export.svg',
-		d3Plank2Low: 'abri_3d_export.svg',
+		d3Plank2EE: 'abri_3d_export.svg',
+		d3Plank2Slot: 'abri_3d_export.svg',
 		d3Plank2Short: 'abri_3d_export.svg',
 		d3Plank3One: 'abri_3d_export.svg',
 		d3Plank3S: 'abri_3d_export.svg',
@@ -373,7 +365,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// ptPl5x0, ptPl5y0, pl5Nl
 		const ptPl5x0 = pTopx + topXlow - W52;
 		const ptPl5y2 = pTopy + topYlow;
-		const l81y = param.H3arc + (param.aMidSplit ? param.H3s : 0);
+		const l81y = param.H3arc + (param.aSplit ? param.H3s : 0);
 		const ptPl5y0 = H123 + l81y;
 		const pl5Nl = ptPl5y2 - pl5Ny - ptPl5y0;
 		const pl5Sl = ptPl5y2 - pl5Sy - ptPl5y0;
@@ -414,7 +406,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const l8N32 = param.P5 / Math.tan(RaNorth);
 		const l8N33 = l8N3 - l8N32;
 		// pl5Lbottom, l8S4, l8N4
-		const pl5botMin = param.aMidSplit ? param.H3s : param.H3;
+		const pl5botMin = param.aSplit ? param.H3s : param.H3;
 		const pl5Lbottom = Math.max(Math.max(l8N3, l8S3) + param.G5Min, pl5botMin);
 		const l8S4 = pl5Lbottom - l8S3;
 		const l8N4 = pl5Lbottom - l8N3;
@@ -426,8 +418,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const pl3Nx0 = 2 * param.W1a + param.KaSouth + param.La - param.W2 + param.V1;
 		const pl3N = param.W2 - param.V1 + 2 * param.W1a + param.KaNorth + param.JaNorth;
 		// step-5 : checks on the parameter values
-		if (param.aMidSplit === 1 && param.SecondPoleNorth + param.SecondPoleSouth < 2) {
-			throw `err296: aMidSplit ${param.aMidSplit} is active but inactive SecondPoleNorth ${param.SecondPoleNorth} or SecondPoleSouth ${param.SecondPoleSouth}`;
+		if (param.aSplit === 1 && param.SecondPoleNorth + param.SecondPoleSouth < 2) {
+			throw `err296: aSplit ${param.aSplit} is active but inactive SecondPoleNorth ${param.SecondPoleNorth} or SecondPoleSouth ${param.SecondPoleSouth}`;
 		}
 		if (W1a2V1 < 1) {
 			throw `err096: W1a ${param.W1a} is too small compare to V1 ${param.V1} mm`;
@@ -670,7 +662,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			figEast.addSecond(ctrRectangle(ix - W2V1, param.H1, param.W2, param.H2));
 			figEast.addSecond(ctrRectangle(ix + W1aV1, param.H1, param.W2, param.H2));
 		}
-		if (param.aMidSplit) {
+		if (param.aSplit) {
 			figEast.addSecond(ctrPlank3S(pl3Sx0, H1H2));
 			figEast.addSecond(ctrPlank3M(pl3Mx0, H123));
 			figEast.addSecond(ctrPlank3N(pl3Nx0, H1H2));

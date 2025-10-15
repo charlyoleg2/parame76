@@ -9,6 +9,9 @@
    id="svg1"
    inkscape:version="1.4.2 (1:1.4.2+202505120737+ebf0e940d0)"
    sodipodi:docname="src_abri.svg"
+   inkscape:export-filename="abri_diagonal_b.svg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -24,12 +27,12 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
      inkscape:zoom="1.5696829"
-     inkscape:cx="304.52011"
-     inkscape:cy="939.36172"
+     inkscape:cx="169.46098"
+     inkscape:cy="4346.4194"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-x="66"
+     inkscape:window-y="32"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1">
     <inkscape:page
@@ -43,6 +46,12 @@
   </sodipodi:namedview>
   <defs
      id="defs1">
+    <rect
+       x="-145.25227"
+       y="839.0611"
+       width="93.012421"
+       height="38.186169"
+       id="rect82" />
     <rect
        x="37.587212"
        y="692.49658"
@@ -228,7 +237,7 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect28-9);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="410.83594"
          y="864.28722"
-         id="tspan2">H3s</tspan></text>
+         id="tspan1">H3s</tspan></text>
     <path
        style="fill:#ffe6d5;stroke:#ff9955;stroke-width:0.264583;stroke-linejoin:round"
        d="m 68.705527,210.21981 v 14.98118 h -1.517028 v 40.77064 h 7.395702 v -40.77064 h -1.517026 v -14.98118 z"
@@ -279,7 +288,7 @@
        id="path7" />
     <path
        style="fill:#ffe6d5;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none;marker-start:url(#ArrowWide-1);marker-end:url(#ArrowWide-1)"
-       d="m 52.509771,214.86943 -0.132292,9.91163"
+       d="m 63.093111,214.86943 -0.132292,9.91163"
        id="path7-4" />
     <path
        style="fill:#ffe6d5;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none;marker-start:url(#ArrowWide-1-3);marker-end:url(#ArrowWide-1-3)"
@@ -292,7 +301,7 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect10);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="327.04688"
          y="1025.1075"
-         id="tspan3">W1a</tspan></text>
+         id="tspan2">W1a</tspan></text>
     <text
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,-62.722054,-11.918883)"
@@ -300,15 +309,15 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect24);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="396.41992"
          y="980.96105"
-         id="tspan4">H1</tspan></text>
+         id="tspan3">H1</tspan></text>
     <text
        xml:space="preserve"
-       transform="matrix(0.26458333,0,0,0.26458333,-60.071169,-20.858045)"
+       transform="matrix(0.26458333,0,0,0.26458333,-49.487829,-20.858045)"
        id="text27"
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect27);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="403.17773"
          y="917.89464"
-         id="tspan5">H2</tspan></text>
+         id="tspan4">H2</tspan></text>
     <text
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,-54.19287,-14.727003)"
@@ -316,7 +325,7 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect28);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="410.83594"
          y="864.28722"
-         id="tspan6">H3</tspan></text>
+         id="tspan5">H3</tspan></text>
     <path
        style="fill:#ffe6d5;stroke:#b3b3b3;stroke-width:0.264584;stroke-linejoin:round"
        d="m 73.06718,199.60063 v 10.61918"
@@ -336,7 +345,7 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect29);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="152.48633"
          y="731.84777"
-         id="tspan7">V1</tspan></text>
+         id="tspan6">V1</tspan></text>
     <circle
        style="fill:#ffffff;stroke:#c87137;stroke-width:0.264584;stroke-linejoin:round;stroke-dasharray:none"
        id="path30"
@@ -366,7 +375,7 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect32);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="112.84375"
          y="755.2716"
-         id="tspan8">D3</tspan></text>
+         id="tspan7">D3</tspan></text>
     <text
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,35.995026,23.063038)"
@@ -374,7 +383,7 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect33);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="165.77539"
          y="755.49621"
-         id="tspan9">D2</tspan></text>
+         id="tspan8">D2</tspan></text>
     <rect
        style="fill:#e9c6af;stroke:#d4aa00;stroke-width:0.264583;stroke-linejoin:round"
        id="rect2-1-89-4-3-1-3-3"
@@ -396,15 +405,29 @@
        sodipodi:nodetypes="cc" />
     <text
        xml:space="preserve"
-       transform="matrix(0.26458333,0,0,0.26458333,27.980705,12.136209)"
+       transform="matrix(0.26458333,0,0,0.26458333,36.447377,12.136209)"
        id="text51"
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect75);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="37.587891"
          y="706.73253"
-         id="tspan10">aMidSplit</tspan></text>
+         id="tspan9">aSplit</tspan></text>
     <path
        style="fill:#ffd5d5;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-end:url(#ArrowWide)"
        d="m 61.355281,200.24745 6.405222,4.71964"
        id="path90" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,75.125708,-6.2510624)"
+       id="text36"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect82);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"
+       x="-27.277344"
+       y="0"><tspan
+         x="-145.25195"
+         y="853.29699"
+         id="tspan10">bSplit</tspan></text>
+    <path
+       style="fill:#000000;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-end:url(#ArrowWide)"
+       d="m 52.421684,217.9461 h 9.742628"
+       id="path136" />
   </g>
 </svg>
