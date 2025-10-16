@@ -1137,16 +1137,16 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					face: `${designName}_facePlank6c`,
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: pl6L,
-					rotate: [0, 0, 0],
-					translate: [0, 0, 0]
+					rotate: [pi2, 0, 0],
+					translate: [0, pl6L, 0]
 				},
 				{
 					outName: `subpax_${designName}_pl7`,
 					face: `${designName}_facePlank7c`,
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: pl6L,
-					rotate: [0, 0, 0],
-					translate: [0, 0, 0]
+					rotate: [pi2, 0, 0],
+					translate: [0, pl6L, 0]
 				},
 				{
 					outName: `subpax_${designName}_pl8s`,
