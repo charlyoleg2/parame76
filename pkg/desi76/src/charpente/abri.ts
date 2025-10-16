@@ -826,9 +826,24 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figPlank1b.addSecond(ctrRectangle(H12c, -W3U1, param.H3, param.W3));
 		figPlank1b.addSecond(ctrRectangle(H12c, W1bU1, param.H3, param.W3));
 		// figPlank2EE
-		figPlank2EE.addMainO(ctrPlank2EE(0, 0));
+		const ctrPl2EE: tOuterInner = [ctrPlank2EE(0, 0)];
+		if (R2 > 0) {
+			for (let ii = 0; ii < param.Nb1; ii++) {
+				const ix = W1b2 + W3U1 + ii * stepX;
+				ctrPl2EE.push(contourCircle(ix, param.H2 / 2, R2));
+			}
+		}
+		figPlank2EE.addMainOI(ctrPl2EE);
 		// figPlank2Slot
 		figPlank2Slot.addMainO(ctrPlank2Slot(0, 0));
+		const ctrPl2Slot: tOuterInner = [ctrPlank2Slot(0, 0)];
+		if (R2 > 0) {
+			for (let ii = 0; ii < 2; ii++) {
+				const ix = W1b2 + W3U1 + ii * stepX;
+				ctrPl2Slot.push(contourCircle(ix, param.H2 / 2, R2));
+			}
+		}
+		figPlank2Slot.addMainOI(ctrPl2Slot);
 		// figPlank2Short
 		const ctrPl2Short: tOuterInner = [ctrPlank2Short(0, 0)];
 		if (R2 > 0) {
@@ -836,13 +851,49 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		figPlank2Short.addMainOI(ctrPl2Short);
 		// figPlank3EE
-		figPlank3EE.addMainO(ctrPlank3EE(0, 0));
+		const ctrPl3EE: tOuterInner = [ctrPlank3EE(0, 0)];
+		if (R3 > 0) {
+			let ix = param.JaSouth + W1a2;
+			ctrPl3EE.push(contourCircle(ix, param.H3 / 2, R3));
+			ix += pl3S1;
+			if (pl3S1 > 0) {
+				ctrPl3EE.push(contourCircle(ix, param.H3 / 2, R3));
+			}
+			ix += param.La + param.W1a;
+			ctrPl3EE.push(contourCircle(ix, param.H3 / 2, R3));
+			ix += pl3N1;
+			if (pl3N1 > 0) {
+				ctrPl3EE.push(contourCircle(ix, param.H3 / 2, R3));
+			}
+		}
+		figPlank3EE.addMainOI(ctrPl3EE);
 		// figPlank3S
-		figPlank3S.addMainO(ctrPlank3S(0, 0));
+		const ctrPl3S: tOuterInner = [ctrPlank3S(0, 0)];
+		if (R3 > 0) {
+			let ix = param.JaSouth + W1a2;
+			ctrPl3S.push(contourCircle(ix, param.H3 / 2, R3));
+			ix += param.KaSouth + param.W1a;
+			ctrPl3S.push(contourCircle(ix, param.H3 / 2, R3));
+		}
+		figPlank3S.addMainOI(ctrPl3S);
 		// figPlank3M
-		figPlank3M.addMainO(ctrPlank3M(0, 0));
+		const ctrPl3M: tOuterInner = [ctrPlank3M(0, 0)];
+		if (R3 > 0) {
+			let ix = W1a2 + W2V1;
+			ctrPl3M.push(contourCircle(ix, param.H3 / 2, R3));
+			ix += param.La + param.W1a;
+			ctrPl3M.push(contourCircle(ix, param.H3 / 2, R3));
+		}
+		figPlank3M.addMainOI(ctrPl3M);
 		// figPlank3N
-		figPlank3N.addMainO(ctrPlank3N(0, 0));
+		const ctrPl3N: tOuterInner = [ctrPlank3N(0, 0)];
+		if (R3 > 0) {
+			let ix = W1a2 + W2V1;
+			ctrPl3N.push(contourCircle(ix, param.H3 / 2, R3));
+			ix += param.KaNorth + param.W1a;
+			ctrPl3N.push(contourCircle(ix, param.H3 / 2, R3));
+		}
+		figPlank3N.addMainOI(ctrPl3N);
 		// figPlank4S
 		// figPlank4N
 		// figPlank5a
