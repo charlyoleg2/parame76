@@ -631,6 +631,22 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const rCtr = ctrPlank5a(ix - pl5Lbottom, iy - param.W5a).rotate(ix, iy, pi2);
 			return rCtr;
 		}
+		function ctrPlank5b(ix: number, iy: number): tContour {
+			const rCtr = contour(ix + 10, iy)
+				.addSegStrokeR(20, 0)
+				.addSegStrokeR(0, 10)
+				.addSegStrokeR(10, 0)
+				.addSegStrokeR(0, 50)
+				.addSegStrokeR(-40, 0)
+				.addSegStrokeR(0, -50)
+				.addSegStrokeR(10, 0)
+				.closeSegStroke();
+			return rCtr;
+		}
+		function ctrPlank5bPlaced(ix: number, iy: number): tContour {
+			const rCtr = ctrPlank5b(ix - pl5Lbottom, iy - param.W5a).rotate(ix, iy, pi2);
+			return rCtr;
+		}
 		function ctrPlank6c(ix: number, iy: number): tContour {
 			const ctrPeak = contour(ix, iy)
 				.addSegStrokeR(param.W6, 0)
@@ -696,6 +712,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			figSouth.addMainOI(ctrSouth);
 			figSouth.addSecond(ctrRectangle(ix - W3U1, H1H2, param.W3, param.H3));
 			figSouth.addSecond(ctrRectangle(ix + W1bU1, H1H2, param.W3, param.H3));
+			figSouth.addSecond(ctrPlank5bPlaced(ix + W1b2, H123));
 		}
 		figSouth.addSecond(ctrRectangle(-W3U1, param.H1, pl2Lb, param.H2));
 		// figEast
@@ -897,8 +914,16 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figPlank4S
 		// figPlank4N
 		// figPlank5a
-		figPlank5a.addMainO(ctrPlank5a(0, 0));
+		const ctrPl5a: tOuterInner = [ctrPlank5a(0, 0)];
+		if (R5 > 0) {
+			let ix = H32;
+			ctrPl5a.push(contourCircle(ix, param.W5a / 2, R5));
+			ix += H32 + R5;
+			ctrPl5a.push(contourCircle(ix, param.W5a / 2, R5));
+		}
+		figPlank5a.addMainOI(ctrPl5a);
 		// figPlank5b
+		figPlank5b.addMainO(ctrPlank5b(0, 0));
 		// figPlank6c
 		figPlank6c.addMainO(ctrPlank6c(0, 0));
 		// figPlank7c
