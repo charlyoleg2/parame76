@@ -414,11 +414,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const l8N3 = param.W8 / Math.sin(RaNorth);
 		const l8N32 = param.P5 / Math.tan(RaNorth);
 		const l8N33 = l8N3 - l8N32;
-		// pl5Lbottom, l8S4, l8N4
+		// pl5Lbottom, l8S4, l8N4, l5l
 		const pl5botMin = param.aSplit ? param.H3s : param.H3;
 		const pl5Lbottom = Math.max(Math.max(l8N3, l8S3) + param.G5Min, pl5botMin);
 		const l8S4 = pl5Lbottom - l8S3;
 		const l8N4 = pl5Lbottom - l8N3;
+		const l5l = l8N4 + l8N33 + l8N32;
+		const l5W = param.W1b + 2 * (param.W5bs - param.U1);
 		// pl3Sx0, pl3Mx0, pl3Nx0, pl3S, pl3M, pl3N
 		const pl3Sx0 = -param.JaSouth;
 		const pl3S = param.JaSouth + 2 * param.W1a + param.KaSouth + param.W2 - param.V1;
@@ -632,19 +634,20 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			return rCtr;
 		}
 		function ctrPlank5b(ix: number, iy: number): tContour {
-			const rCtr = contour(ix + 10, iy)
-				.addSegStrokeR(20, 0)
-				.addSegStrokeR(0, 10)
-				.addSegStrokeR(10, 0)
-				.addSegStrokeR(0, 50)
-				.addSegStrokeR(-40, 0)
-				.addSegStrokeR(0, -50)
-				.addSegStrokeR(10, 0)
+			const l8h = Math.max(pl5Nl2 + Math.abs(pl5yM), pl5Nl + pl5Ny);
+			const rCtr = contour(ix, iy + param.W5bs)
+				.addSegStrokeR(l5l, 0)
+				.addSegStrokeR(0, -param.W5bs)
+				.addSegStrokeR(l8h, 0)
+				.addSegStrokeR(0, l5W)
+				.addSegStrokeR(-l8h, 0)
+				.addSegStrokeR(0, -param.W5bs)
+				.addSegStrokeR(-l5l, 0)
 				.closeSegStroke();
 			return rCtr;
 		}
 		function ctrPlank5bPlaced(ix: number, iy: number): tContour {
-			const rCtr = ctrPlank5b(ix - pl5Lbottom, iy - param.W5a).rotate(ix, iy, pi2);
+			const rCtr = ctrPlank5b(ix - l5l, iy - l5W / 2).rotate(ix, iy, pi2);
 			return rCtr;
 		}
 		function ctrPlank6c(ix: number, iy: number): tContour {
@@ -916,10 +919,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figPlank5a
 		const ctrPl5a: tOuterInner = [ctrPlank5a(0, 0)];
 		if (R5 > 0) {
-			let ix = H32;
+			const ix = l5l - (param.aSplit === 1 ? param.H3s : param.H3) / 2;
 			ctrPl5a.push(contourCircle(ix, param.W5a / 2, R5));
-			ix += H32 + R5;
-			ctrPl5a.push(contourCircle(ix, param.W5a / 2, R5));
+			ctrPl5a.push(contourCircle(l5l + R5, param.W5a / 2, R5));
 		}
 		figPlank5a.addMainOI(ctrPl5a);
 		// figPlank5b
@@ -1021,7 +1023,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: param.W1a,
 					rotate: [pi2, 0, 0],
-					translate: [0, param.W1b, 0]
+					translate: [0, param.W1a, 0]
 				},
 				{
 					outName: `subpax_${designName}_pl2ee`,
@@ -1105,11 +1107,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				},
 				{
 					outName: `subpax_${designName}_pl5b`,
-					face: `${designName}_facePlankba`,
+					face: `${designName}_facePlank5b`,
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: pl5bW,
-					rotate: [0, 0, 0],
-					translate: [0, 0, 0]
+					rotate: [pi2, 0, 0],
+					translate: [0, pl5bW, 0]
 				},
 				{
 					outName: `subpax_${designName}_pl6`,
