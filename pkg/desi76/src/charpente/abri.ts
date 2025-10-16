@@ -708,16 +708,27 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figSouth
 		for (let ii = 0; ii < param.Nb1; ii++) {
 			const ix = ii * stepX;
+			const H2alt = ii % 2 === 0 ? param.H2 : 0;
 			const ctrSouth: tOuterInner = [ctrPlank1bPlaced(ix, 0, 0, 0, 1)];
 			if (R2 > 0) {
 				ctrSouth.push(contourCircle(ix + W1a2, D2H, R2));
+				if (param.bSplit === 1) {
+					ctrSouth.push(contourCircle(ix + W1a2, D2H + param.H2, R2));
+				}
 			}
 			figSouth.addMainOI(ctrSouth);
-			figSouth.addSecond(ctrRectangle(ix - W3U1, H1H2, param.W3, param.H3));
-			figSouth.addSecond(ctrRectangle(ix + W1bU1, H1H2, param.W3, param.H3));
-			figSouth.addSecond(ctrPlank5bPlaced(ix + W1b2, H123));
+			figSouth.addSecond(ctrRectangle(ix - W3U1, H1H2 + H2alt, param.W3, param.H3));
+			figSouth.addSecond(ctrRectangle(ix + W1bU1, H1H2 + H2alt, param.W3, param.H3));
+			figSouth.addSecond(ctrPlank5bPlaced(ix + W1b2, H123 + H2alt));
 		}
-		figSouth.addSecond(ctrRectangle(-W3U1, param.H1, pl2Lb, param.H2));
+		if (param.bSplit === 1) {
+			for (let ii = 0; ii < param.Nb1 - 1; ii++) {
+				const H2alt = ii % 2 === 0 ? param.H2 : 0;
+				figSouth.addSecond(ctrPlank2Slot(-W3U1 + ii * stepX, param.H1 + H2alt));
+			}
+		} else {
+			figSouth.addSecond(ctrPlank2EE(-W3U1, param.H1));
+		}
 		// figEast
 		for (const [idx, ix] of aPos.entries()) {
 			const ctrEast: tOuterInner = [ctrPlank1aPlaced(ix, 0, 1 + idx)];
