@@ -353,7 +353,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const p3Ny = W441 * Math.sin(pi2 - RaNorth) - param.ReN * Math.sin(RaNorth);
 		// pTopx, pTopy
 		const pTopx = param.W1a + laSouth;
-		const pTopy = H123 - H32 + Ytop;
+		const H2c = param.bSplit === 1 ? param.H2 : 0;
+		const pTopy = H123 + H2c - H32 + Ytop;
 		// topYmid, topYlow, topXlow
 		const aMid = -RaNorth - aTop / 2;
 		const topD1 = (param.H7 - param.P41) / Math.sin(aTop / 2);
@@ -375,7 +376,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const ptPl5x0 = pTopx + topXlow - W52;
 		const ptPl5y2 = pTopy + topYlow;
 		const l81y = param.H3arc + (param.aSplit ? param.H3s : 0);
-		const ptPl5y0 = H123 + l81y;
+		const H3c = (param.H3 + param.H3s) / 2;
+		const ptPl5y0 = H123 + H2c + l81y;
 		const pl5Nl = ptPl5y2 - pl5Ny - ptPl5y0;
 		const pl5Sl = ptPl5y2 - pl5Sy - ptPl5y0;
 		const R5 = param.D5 / 2;
@@ -509,14 +511,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			iP1234: number
 		): tContour {
 			const H3sc = (iP1234 === 2 || iP1234 === 3) && param.aSplit === 1 ? param.H3s : 0;
-			const H3c = param.H3 + H3sc;
+			const H3c2 = param.H3 + H3sc;
 			const H2sc = param.bSplit === 1 ? param.H2 : 0;
 			const rCtr = contour(ix, iy)
 				.addSegStrokeR(H1H2 + H2sc, 0)
 				.addSegStrokeR(0, param.U1)
-				.addSegStrokeR(H3c, 0)
+				.addSegStrokeR(H3c2, 0)
 				.addSegStrokeR(0, W1b2U1)
-				.addSegStrokeR(-H3c, 0)
+				.addSegStrokeR(-H3c2, 0)
 				.addSegStrokeR(0, param.U1)
 				.addSegStrokeR(-H1H2 - H2sc, 0)
 				.closeSegStroke();
@@ -708,7 +710,6 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figSouth
 		for (let ii = 0; ii < param.Nb1; ii++) {
 			const ix = ii * stepX;
-			const H2alt = ii % 2 === 0 ? param.H2 : 0;
 			const ctrSouth: tOuterInner = [ctrPlank1bPlaced(ix, 0, 0, 0, 1)];
 			if (R2 > 0) {
 				ctrSouth.push(contourCircle(ix + W1a2, D2H, R2));
@@ -717,9 +718,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				}
 			}
 			figSouth.addMainOI(ctrSouth);
-			figSouth.addSecond(ctrRectangle(ix - W3U1, H1H2 + H2alt, param.W3, param.H3));
-			figSouth.addSecond(ctrRectangle(ix + W1bU1, H1H2 + H2alt, param.W3, param.H3));
-			figSouth.addSecond(ctrPlank5bPlaced(ix + W1b2, H123 + H2alt));
+			figSouth.addSecond(ctrRectangle(ix - W3U1, H1H2 + H2c, param.W3, param.H3));
+			figSouth.addSecond(ctrRectangle(ix + W1bU1, H1H2 + H2c, param.W3, param.H3));
+			figSouth.addSecond(ctrPlank5bPlaced(ix + W1b2, H123 + H2c));
 		}
 		if (param.bSplit === 1) {
 			for (let ii = 0; ii < param.Nb1 - 1; ii++) {
@@ -734,17 +735,24 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const ctrEast: tOuterInner = [ctrPlank1aPlaced(ix, 0, 1 + idx)];
 			if (R3 > 0) {
 				ctrEast.push(contourCircle(ix + W1a2, D3H, R3));
+				if ((idx === 1 || idx === 2) && param.aSplit === 1) {
+					ctrEast.push(contourCircle(ix + W1a2, D3H + H3c, R3));
+				}
 			}
 			figEast.addMainOI(ctrEast);
 			figEast.addSecond(ctrRectangle(ix - W2V1, param.H1, param.W2, param.H2));
 			figEast.addSecond(ctrRectangle(ix + W1aV1, param.H1, param.W2, param.H2));
+			if (param.bSplit === 1) {
+				figEast.addSecond(ctrRectangle(ix - W2V1, H1H2, param.W2, param.H2));
+				figEast.addSecond(ctrRectangle(ix + W1aV1, H1H2, param.W2, param.H2));
+			}
 		}
-		if (param.aSplit) {
-			figEast.addSecond(ctrPlank3S(pl3Sx0, H1H2));
-			figEast.addSecond(ctrPlank3M(pl3Mx0, H123));
-			figEast.addSecond(ctrPlank3N(pl3Nx0, H1H2));
+		if (param.aSplit === 1) {
+			figEast.addSecond(ctrPlank3S(pl3Sx0, H1H2 + H2c));
+			figEast.addSecond(ctrPlank3M(pl3Mx0, H123 + H2c));
+			figEast.addSecond(ctrPlank3N(pl3Nx0, H1H2 + H2c));
 		} else {
-			figEast.addSecond(ctrPlank3EE(pl3Sx0, H1H2));
+			figEast.addSecond(ctrPlank3EE(pl3Sx0, H1H2 + H2c));
 		}
 		const p0Sx = -param.JaSouth + H32;
 		const p0Sy = D3H;
