@@ -232,13 +232,19 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const figEast = figure();
 	const figPlank1a = figure();
 	const figPlank1b = figure();
-	const figPlank3One = figure();
+	const figPlank2EE = figure();
+	const figPlank2Slot = figure();
+	const figPlank2Short = figure();
+	const figPlank3EE = figure();
 	const figPlank3S = figure();
 	const figPlank3M = figure();
 	const figPlank3N = figure();
+	const figPlank4S = figure();
+	const figPlank4N = figure();
 	const figPlank5a = figure();
 	const figPlank5b = figure();
 	const figPlank6c = figure();
+	const figPlank7c = figure();
 	const figPlank8S = figure();
 	const figPlank8N = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
@@ -272,6 +278,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const laRoof = laWall + (param.JaSouth + param.JaNorth) / 1000;
 		const stepX = param.W1b + param.Lb;
 		const W1a2 = param.W1a / 2;
+		const W1b2 = param.W1b / 2;
 		const H12c = param.H1 + param.H2 * (param.bSplit ? 2 : 1);
 		const H123c = H12c + param.H3;
 		const D2H = param.H1 + param.H2 / 2;
@@ -422,6 +429,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// d3Plank1SN
 		const d3P1P1234 = 1 + param.d3Plank1SN;
 		const d3P1P23 = d3P1P1234 === 2 || d3P1P1234 === 3 ? true : false;
+		// Extrude thickness
+		const pl4W = param.W1b - 2 * param.U1;
+		const pl5aW = pl4W + 2 * param.W5bs;
+		const pl5bW = param.W5a;
+		const pl6L = lb;
 		// step-5 : checks on the parameter values
 		if (param.aSplit === 1 && param.SecondPoleNorth + param.SecondPoleSouth < 2) {
 			throw `err296: aSplit ${param.aSplit} is active but inactive SecondPoleNorth ${param.SecondPoleNorth} or SecondPoleSouth ${param.SecondPoleSouth}`;
@@ -518,6 +530,41 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const rCtr = ctrPlank1b(ix, iy - param.W1b, iSideW, iSideE, iP1234).rotate(ix, iy, pi2);
 			return rCtr;
 		}
+		function ctrPlank2EE(ix: number, iy: number): tContour {
+			const rCtr = ctrRectangle(ix, iy, pl2Lb, param.H2);
+			return rCtr;
+		}
+		function ctrPlank2Slot(ix: number, iy: number): tContour {
+			const rCtr = ctrRectangle(ix, iy, param.Lb + 2 * (param.W1b + W3U1), param.H2);
+			return rCtr;
+		}
+		function ctrPlank2Short(ix: number, iy: number): tContour {
+			const rCtr = ctrRectangle(ix, iy, param.W1b + 2 * W3U1, param.H2);
+			return rCtr;
+		}
+		function ctrPlank3EE(ix: number, iy: number): tContour {
+			let rCtr = ctrRectangle(ix, iy, pl3La, param.H3);
+			if (param.H3arc > 0) {
+				const lS2 = param.JaSouth + param.W1a + pl3S1 + param.W2 - param.V1;
+				const lN2 = param.JaNorth + param.W1a + pl3N1 + param.W2 - param.V1;
+				rCtr = contour(ix, iy)
+					.addSegStrokeR(lS2, 0)
+					.addPointR(pl3x2, param.H3arc)
+					.addSegArc3(pi, false)
+					.addPointR(pl3x4, -param.H3arc)
+					.addSegArc3(0, true)
+					.addSegStrokeR(lN2, 0)
+					.addSegStrokeR(0, param.H3s)
+					.addSegStrokeR(-lN2 + param.W2, 0)
+					.addPointR(-pl3x4 - param.W2, param.H3arc)
+					.addSegArc3(0, false)
+					.addPointR(-pl3x2 - param.W2, -param.H3arc)
+					.addSegArc3(pi, true)
+					.addSegStrokeR(-lS2 + param.W2, 0)
+					.closeSegStroke();
+			}
+			return rCtr;
+		}
 		function ctrPlank3S(ix: number, iy: number): tContour {
 			const rCtr = ctrRectangle(ix, iy, pl3S, param.H3);
 			return rCtr;
@@ -545,29 +592,6 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		function ctrPlank3N(ix: number, iy: number): tContour {
 			const rCtr = ctrRectangle(ix, iy, pl3N, param.H3);
-			return rCtr;
-		}
-		function ctrPlank3One(ix: number, iy: number): tContour {
-			let rCtr = ctrRectangle(ix, iy, pl3La, param.H3);
-			if (param.H3arc > 0) {
-				const lS2 = param.JaSouth + param.W1a + pl3S1 + param.W2 - param.V1;
-				const lN2 = param.JaNorth + param.W1a + pl3N1 + param.W2 - param.V1;
-				rCtr = contour(ix, iy)
-					.addSegStrokeR(lS2, 0)
-					.addPointR(pl3x2, param.H3arc)
-					.addSegArc3(pi, false)
-					.addPointR(pl3x4, -param.H3arc)
-					.addSegArc3(0, true)
-					.addSegStrokeR(lN2, 0)
-					.addSegStrokeR(0, param.H3s)
-					.addSegStrokeR(-lN2 + param.W2, 0)
-					.addPointR(-pl3x4 - param.W2, param.H3arc)
-					.addSegArc3(0, false)
-					.addPointR(-pl3x2 - param.W2, -param.H3arc)
-					.addSegArc3(pi, true)
-					.addSegStrokeR(-lS2 + param.W2, 0)
-					.closeSegStroke();
-			}
 			return rCtr;
 		}
 		function ctrPlank5a(ix: number, iy: number): tContour {
@@ -689,7 +713,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			figEast.addSecond(ctrPlank3M(pl3Mx0, H123));
 			figEast.addSecond(ctrPlank3N(pl3Nx0, H1H2));
 		} else {
-			figEast.addSecond(ctrPlank3One(pl3Sx0, H1H2));
+			figEast.addSecond(ctrPlank3EE(pl3Sx0, H1H2));
 		}
 		const p0Sx = -param.JaSouth + H32;
 		const p0Sy = D3H;
@@ -790,9 +814,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			ctrPlank1b(0, 0, param.d3Plank1West, param.d3Plank1East, d3P1P1234)
 		];
 		if (R2 > 0) {
-			ctrPl1b.push(contourCircle(D2H, W1a2, R2));
+			ctrPl1b.push(contourCircle(D2H, W1b2, R2));
 			if (param.bSplit === 1) {
-				ctrPl1b.push(contourCircle(D2H + param.H2, W1a2, R2));
+				ctrPl1b.push(contourCircle(D2H + param.H2, W1b2, R2));
 			}
 		}
 		figPlank1b.addMainOI(ctrPl1b);
@@ -801,19 +825,32 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		figPlank1b.addSecond(ctrRectangle(H12c, -W3U1, param.H3, param.W3));
 		figPlank1b.addSecond(ctrRectangle(H12c, W1bU1, param.H3, param.W3));
-		// figPlank3One
-		figPlank3One.addMainO(ctrPlank3One(0, 0));
+		// figPlank2EE
+		figPlank2EE.addMainO(ctrPlank2EE(0, 0));
+		// figPlank2Slot
+		figPlank2Slot.addMainO(ctrPlank2Slot(0, 0));
+		// figPlank2Short
+		const ctrPl2Short: tOuterInner = [ctrPlank2Short(0, 0)];
+		if (R2 > 0) {
+			ctrPl2Short.push(contourCircle(W1b2 + W3U1, param.H2 / 2, R2));
+		}
+		figPlank2Short.addMainOI(ctrPl2Short);
+		// figPlank3EE
+		figPlank3EE.addMainO(ctrPlank3EE(0, 0));
 		// figPlank3S
 		figPlank3S.addMainO(ctrPlank3S(0, 0));
 		// figPlank3M
 		figPlank3M.addMainO(ctrPlank3M(0, 0));
 		// figPlank3N
 		figPlank3N.addMainO(ctrPlank3N(0, 0));
+		// figPlank4S
+		// figPlank4N
 		// figPlank5a
 		figPlank5a.addMainO(ctrPlank5a(0, 0));
 		// figPlank5b
 		// figPlank6c
 		figPlank6c.addMainO(ctrPlank6c(0, 0));
+		// figPlank7c
 		// figPlank8S
 		figPlank8S.addMainO(ctrPlank8S(0, 0));
 		// figPlank8N
@@ -825,13 +862,19 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			faceSouth: figSouth,
 			facePlank1a: figPlank1a,
 			facePlank1b: figPlank1b,
-			facePlank3One: figPlank3One,
+			facePlank2EE: figPlank2EE,
+			facePlank2Slot: figPlank2Slot,
+			facePlank2Short: figPlank2Short,
+			facePlank3EE: figPlank3EE,
 			facePlank3S: figPlank3S,
 			facePlank3M: figPlank3M,
 			facePlank3N: figPlank3N,
+			facePlank4S: figPlank4S,
+			facePlank4N: figPlank4N,
 			facePlank5a: figPlank5a,
 			facePlank5b: figPlank5b,
 			facePlank6c: figPlank6c,
+			facePlank7c: figPlank7c,
 			facePlank8S: figPlank8S,
 			facePlank8N: figPlank8N
 		};
@@ -840,6 +883,51 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const exportList: string[] = [];
 		if (param.d3Plank1) {
 			exportList.push(`pax_${designName}_pl1`);
+		}
+		if (param.d3Plank2EE) {
+			exportList.push(`subpax_${designName}_pl2ee`);
+		}
+		if (param.d3Plank2Slot) {
+			exportList.push(`subpax_${designName}_pl2slot`);
+		}
+		if (param.d3Plank2short) {
+			exportList.push(`subpax_${designName}_pl2short`);
+		}
+		if (param.d3Plank3EE) {
+			exportList.push(`subpax_${designName}_pl3ee`);
+		}
+		if (param.d3Plank3S) {
+			exportList.push(`subpax_${designName}_pl3s`);
+		}
+		if (param.d3Plank3M) {
+			exportList.push(`subpax_${designName}_pl3m`);
+		}
+		if (param.d3Plank3N) {
+			exportList.push(`subpax_${designName}_pl3n`);
+		}
+		if (param.d3Plank4S) {
+			exportList.push(`subpax_${designName}_pl4s`);
+		}
+		if (param.d3Plank4N) {
+			exportList.push(`subpax_${designName}_pl4n`);
+		}
+		if (param.d3Plank5) {
+			exportList.push(`pax_${designName}_pl5`);
+		}
+		if (param.d3Plank6) {
+			exportList.push(`subpax_${designName}_pl6`);
+		}
+		if (param.d3Plank7) {
+			exportList.push(`subpax_${designName}_pl7`);
+		}
+		if (param.d3Plank8S) {
+			exportList.push(`subpax_${designName}_pl8s`);
+		}
+		if (param.d3Plank8N) {
+			exportList.push(`subpax_${designName}_pl8n`);
+		}
+		if (param.d3Assembly) {
+			exportList.push(`pax_${designName}_assembly`);
 		}
 		rGeome.vol = {
 			extrudes: [
@@ -858,6 +946,126 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					length: param.W1a,
 					rotate: [pi2, 0, 0],
 					translate: [0, param.W1b, 0]
+				},
+				{
+					outName: `subpax_${designName}_pl2ee`,
+					face: `${designName}_facePlank2EE`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.W2,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_pl2slot`,
+					face: `${designName}_facePlank2Slot`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.W2,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_pl2short`,
+					face: `${designName}_facePlank2Short`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.W2,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_pl3ee`,
+					face: `${designName}_facePlank3EE`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.W3,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_pl3s`,
+					face: `${designName}_facePlank3S`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.W3,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_pl3m`,
+					face: `${designName}_facePlank3M`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.W3,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_pl3n`,
+					face: `${designName}_facePlank3N`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.W3,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_pl4s`,
+					face: `${designName}_facePlank4S`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: pl4W,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_pl4n`,
+					face: `${designName}_facePlank4N`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: pl4W,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_pl5a`,
+					face: `${designName}_facePlank5a`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: pl5aW,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_pl5b`,
+					face: `${designName}_facePlankba`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: pl5bW,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_pl6`,
+					face: `${designName}_facePlank6c`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: pl6L,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_pl7`,
+					face: `${designName}_facePlank7c`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: pl6L,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_pl8s`,
+					face: `${designName}_facePlank8S`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: pl4W,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_pl8n`,
+					face: `${designName}_facePlank8N`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: pl4W,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
 				}
 			],
 			volumes: [
@@ -865,6 +1073,16 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					outName: `pax_${designName}_pl1`,
 					boolMethod: EBVolume.eIntersection,
 					inList: [`subpax_${designName}_pl1a`, `subpax_${designName}_pl1b`]
+				},
+				{
+					outName: `pax_${designName}_pl5`,
+					boolMethod: EBVolume.eIntersection,
+					inList: [`subpax_${designName}_pl5a`, `subpax_${designName}_pl5b`]
+				},
+				{
+					outName: `pax_${designName}_assembly`,
+					boolMethod: EBVolume.eUnion,
+					inList: [`pax_${designName}_pl1`, `subpax_${designName}_pl6`]
 				},
 				{
 					outName: `pax_${designName}`,
