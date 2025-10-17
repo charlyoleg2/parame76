@@ -372,8 +372,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const W52 = param.W5a / 2;
 		const pl5Sy = W52 * Math.tan(Ra);
 		const pl5Ny = W52 * Math.tan(RaNorth);
-		// ptPl5x0, ptPl5y0, pl5Nl
-		const ptPl5x0 = pTopx + topXlow - W52;
+		// ptPl5y0, pl5Nl
 		const ptPl5y2 = pTopy + topYlow;
 		const l81y = param.H3arc + (param.aSplit ? param.H3s : 0);
 		const H3c = (param.H3 + param.H3s) / 2;
@@ -389,7 +388,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const pl5yM = pl5yMN - pl5yMS;
 		const pl5Nl2 = Ytop - H32 - l81y - pl5yMN - pl5yN;
 		const pl5Sl2 = Ytop - H32 - l81y - pl5yMS - pl5yS;
-		const ptPl5x00 = param.top_opt ? pTopx - W52 : ptPl5x0;
+		const ptPl5x00 = param.top_opt ? pTopx - W52 : pTopx + topXlow - W52;
 		// W62, pl6Sy, pl6Ny, ptPl6x0, ptPl6y0
 		const W62 = param.W6 / 2;
 		const pl6Sy = W62 * Math.tan(Ra);
@@ -893,17 +892,25 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const ctrPl3EE: tOuterInner = [ctrPlank3EE(0, 0)];
 		if (R3 > 0) {
 			let ix = param.JaSouth + W1a2;
-			ctrPl3EE.push(contourCircle(ix, param.H3 / 2, R3));
+			ctrPl3EE.push(contourCircle(ix, H32, R3));
 			ix += pl3S1;
 			if (pl3S1 > 0) {
-				ctrPl3EE.push(contourCircle(ix, param.H3 / 2, R3));
+				ctrPl3EE.push(contourCircle(ix, H32, R3));
 			}
 			ix += param.La + param.W1a;
-			ctrPl3EE.push(contourCircle(ix, param.H3 / 2, R3));
+			ctrPl3EE.push(contourCircle(ix, H32, R3));
 			ix += pl3N1;
 			if (pl3N1 > 0) {
-				ctrPl3EE.push(contourCircle(ix, param.H3 / 2, R3));
+				ctrPl3EE.push(contourCircle(ix, H32, R3));
 			}
+		}
+		if (R4 > 0) {
+			ctrPl3EE.push(contourCircle(H32, H32, R4));
+			ctrPl3EE.push(contourCircle(pl3La - H32, H32, R4));
+		}
+		if (R5 > 0) {
+			const tx = param.JaSouth + param.W1a + laSouth;
+			ctrPl3EE.push(contourCircle(tx, param.H3arc + H32, R5));
 		}
 		figPlank3EE.addMainOI(ctrPl3EE);
 		// figPlank3S
@@ -914,6 +921,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			ix += param.KaSouth + param.W1a;
 			ctrPl3S.push(contourCircle(ix, param.H3 / 2, R3));
 		}
+		if (R4 > 0) {
+			ctrPl3S.push(contourCircle(H32, H32, R4));
+		}
 		figPlank3S.addMainOI(ctrPl3S);
 		// figPlank3M
 		const ctrPl3M: tOuterInner = [ctrPlank3M(0, 0)];
@@ -923,6 +933,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			ix += param.La + param.W1a;
 			ctrPl3M.push(contourCircle(ix, param.H3 / 2, R3));
 		}
+		if (R5 > 0) {
+			const tx = param.W2 + W1aV1 + laSouth - pl3S1;
+			ctrPl3M.push(contourCircle(tx, param.H3arc + H32, R5));
+		}
 		figPlank3M.addMainOI(ctrPl3M);
 		// figPlank3N
 		const ctrPl3N: tOuterInner = [ctrPlank3N(0, 0)];
@@ -931,6 +945,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			ctrPl3N.push(contourCircle(ix, param.H3 / 2, R3));
 			ix += param.KaNorth + param.W1a;
 			ctrPl3N.push(contourCircle(ix, param.H3 / 2, R3));
+		}
+		if (R4 > 0) {
+			ctrPl3N.push(contourCircle(pl3N - H32, H32, R4));
 		}
 		figPlank3N.addMainOI(ctrPl3N);
 		// figPlank4S
