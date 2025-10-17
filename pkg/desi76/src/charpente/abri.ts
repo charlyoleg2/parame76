@@ -438,6 +438,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const pl3Nz3 = pl3Nz2 / Math.tan(RaNorth);
 		const pl3Nx = Math.max(H32 + pl3Nz3, 1);
 		const pl3Ny = Math.min(pl3Nx * Math.tan(RaNorth), 2 * H32 - 1);
+		const pl3Sz1 = W441 / Math.cos(Ra);
+		const pl3Sz2 = H32 - pl3Sz1;
+		const pl3Sz3 = pl3Sz2 / Math.tan(Ra);
+		const pl3Sx = Math.max(H32 + pl3Sz3, 1);
+		const pl3Sy = Math.min(pl3Sx * Math.tan(Ra), 2 * H32 - 1);
 		// Extrude thickness
 		const pl4W = param.W1b - 2 * param.U1;
 		const pl5aW = pl4W + 2 * param.W5bs;
@@ -556,7 +561,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.addSegStrokeR(pl3La, 0)
 				.addSegStrokeR(0, param.H3 - pl3Ny)
 				.addSegStrokeR(-pl3Nx, pl3Ny)
-				.addSegStrokeR(-pl3La + pl3Nx, 0)
+				.addSegStrokeR(-pl3La + pl3Nx + pl3Sx, 0)
+				.addSegStrokeR(-pl3Sx, -pl3Sy)
 				.closeSegStroke();
 			if (param.H3arc > 0) {
 				const lS2 = param.JaSouth + param.W1a + pl3S1 + param.W2 - param.V1;
@@ -575,7 +581,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					.addSegArc3(0, false)
 					.addPointR(-pl3x2 - param.W2, -param.H3arc)
 					.addSegArc3(pi, true)
-					.addSegStrokeR(-lS2 + param.W2, 0)
+					.addSegStrokeR(-lS2 + param.W2 + pl3Sx, 0)
+					.addSegStrokeR(-pl3Sx, -pl3Sy)
 					.closeSegStroke();
 			}
 			return rCtr;
@@ -584,7 +591,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const rCtr = contour(ix, iy)
 				.addSegStrokeR(pl3S, 0)
 				.addSegStrokeR(0, param.H3)
-				.addSegStrokeR(-pl3S, 0)
+				.addSegStrokeR(-pl3S + pl3Sx, 0)
+				.addSegStrokeR(-pl3Sx, -pl3Sy)
 				.closeSegStroke();
 			return rCtr;
 		}
