@@ -342,6 +342,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const W441 = W42 - param.P41;
 		const p3Sx = W441 * Math.cos(pi2 + Ra) - param.ReS * Math.cos(Ra);
 		const p3Sy = W441 * Math.sin(pi2 + Ra) - param.ReS * Math.sin(Ra);
+		// p4Sx, p4Sy
+		const p4Sx = param.ReS * Math.cos(Ra + pi);
+		const p4Sy = param.ReS * Math.sin(Ra + pi);
 		// p1Nx, p1Ny
 		const p1Nx = W42 * Math.cos(-pi2 - RaNorth);
 		const p1Ny = W42 * Math.sin(-pi2 - RaNorth);
@@ -351,6 +354,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// p3Nx, p3Ny
 		const p3Nx = W441 * Math.cos(pi2 - RaNorth) + param.ReN * Math.cos(RaNorth);
 		const p3Ny = W441 * Math.sin(pi2 - RaNorth) - param.ReN * Math.sin(RaNorth);
+		// p4Nx, p4Ny
+		const p4Nx = param.ReN * Math.cos(-RaNorth);
+		const p4Ny = param.ReN * Math.sin(-RaNorth);
 		// pTopx, pTopy
 		const pTopx = param.W1a + laSouth;
 		const H2c = param.bSplit === 1 ? param.H2 : 0;
@@ -626,6 +632,30 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.closeSegStroke();
 			return rCtr;
 		}
+		function ctrPlank4S(ix: number, iy: number): tContour {
+			const rCtr = contour(ix, iy)
+				.addSegStrokeR(RdSouth, 0)
+				.addSegStrokeR(0, param.W4)
+				.addSegStrokeR(-RdSouth, 0)
+				.closeSegStroke();
+			return rCtr;
+		}
+		function ctrPlank4Splaced(ix: number, iy: number): tContour {
+			const rCtr = ctrPlank4S(ix, iy).rotate(ix, iy, Ra);
+			return rCtr;
+		}
+		function ctrPlank4N(ix: number, iy: number): tContour {
+			const rCtr = contour(ix, iy)
+				.addSegStrokeR(RdNorth, 0)
+				.addSegStrokeR(0, param.W4)
+				.addSegStrokeR(-RdNorth, 0)
+				.closeSegStroke();
+			return rCtr;
+		}
+		function ctrPlank4Nplaced(ix: number, iy: number): tContour {
+			const rCtr = ctrPlank4N(ix - RdNorth, iy).rotate(ix, iy, -RaNorth);
+			return rCtr;
+		}
 		function ctrPlank5a(ix: number, iy: number): tContour {
 			const ctrShifted = contour(ix, iy)
 				.addSegStrokeR(l8N4, 0)
@@ -791,16 +821,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.rotate(0, 0, Ra)
 				.translate(p0Sx + p1Sx, p0Sy + p1Sy)
 		);
-		figEast.addSecond(
-			ctrRectangle(0, 0, RdSouth1, 2 * W42)
-				.rotate(0, 0, Ra)
-				.translate(p0Sx + p1Sx, p0Sy + p1Sy)
-		);
-		figEast.addSecond(
-			ctrRectangle(0, 0, param.ReS, 2 * W42)
-				.rotate(0, 0, Ra + pi)
-				.translate(p0Sx - p1Sx, p0Sy - p1Sy)
-		);
+		//figEast.addSecond(
+		//	ctrRectangle(0, 0, RdSouth1, 2 * W42)
+		//		.rotate(0, 0, Ra)
+		//		.translate(p0Sx + p1Sx, p0Sy + p1Sy)
+		//);
+		//figEast.addSecond(
+		//	ctrRectangle(0, 0, param.ReS, 2 * W42)
+		//		.rotate(0, 0, Ra + pi)
+		//		.translate(p0Sx - p1Sx, p0Sy - p1Sy)
+		//);
+		figEast.addSecond(ctrPlank4Splaced(p0Sx + p1Sx + p4Sx, p0Sy + p1Sy + p4Sy));
 		//const ctrTriS = contour(p0Sx, p0Sy)
 		//	.addSegStrokeR(Xsouth, 0)
 		//	.addSegStrokeR(0, Ytop)
@@ -815,16 +846,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.rotate(0, 0, pi - RaNorth)
 				.translate(p0Nx + p1Nx, p0Ny + p1Ny)
 		);
-		figEast.addSecond(
-			ctrRectangle(0, -2 * W42, RdNorth1, 2 * W42)
-				.rotate(0, 0, pi - RaNorth)
-				.translate(p0Nx + p1Nx, p0Ny + p1Ny)
-		);
-		figEast.addSecond(
-			ctrRectangle(0, 0, param.ReN, 2 * W42)
-				.rotate(0, 0, -RaNorth)
-				.translate(p0Nx + p1Nx, p0Ny + p1Ny)
-		);
+		//figEast.addSecond(
+		//	ctrRectangle(0, -2 * W42, RdNorth1, 2 * W42)
+		//		.rotate(0, 0, pi - RaNorth)
+		//		.translate(p0Nx + p1Nx, p0Ny + p1Ny)
+		//);
+		//figEast.addSecond(
+		//	ctrRectangle(0, 0, param.ReN, 2 * W42)
+		//		.rotate(0, 0, -RaNorth)
+		//		.translate(p0Nx + p1Nx, p0Ny + p1Ny)
+		//);
+		figEast.addSecond(ctrPlank4Nplaced(p0Nx + p1Nx + p4Nx, p0Ny + p1Ny + p4Ny));
 		//const ctrTriN = contour(p0Nx, p0Ny)
 		//	.addSegStrokeR(-Xnorth, 0)
 		//	.addSegStrokeR(0, Ytop)
@@ -980,7 +1012,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		figPlank3N.addMainOI(ctrPl3N);
 		// figPlank4S
+		const ctrPl4S: tOuterInner = [ctrPlank4S(0, 0)];
+		if (R4 > 0) {
+			ctrPl4S.push(contourCircle(param.ReS, W42, R4));
+		}
+		figPlank4S.addMainOI(ctrPl4S);
 		// figPlank4N
+		const ctrPl4N: tOuterInner = [ctrPlank4N(0, 0)];
+		if (R4 > 0) {
+			ctrPl4N.push(contourCircle(RdNorth1, W42, R4));
+		}
+		figPlank4N.addMainOI(ctrPl4N);
 		// figPlank5a
 		const ctrPl5a: tOuterInner = [ctrPlank5a(0, 0)];
 		if (R5 > 0) {
