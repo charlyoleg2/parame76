@@ -633,10 +633,28 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			return rCtr;
 		}
 		function ctrPlank4S(ix: number, iy: number): tContour {
-			const rCtr = contour(ix, iy)
-				.addSegStrokeR(RdSouth, 0)
-				.addSegStrokeR(0, param.W4)
-				.addSegStrokeR(-RdSouth, 0)
+			const l4x0 = param.B4 / Math.sin(Ra);
+			const l4y0 = param.B4 / Math.cos(Ra);
+			const l3x0 = H32 + H32 / Math.tan(Ra) + W42 / Math.sin(Ra);
+			const l3x1 = param.JaSouth + param.W1a + laSouth + topXlow - W52 - l3x0;
+			const l4x2 = l3x1 * Math.cos(Ra);
+			const l4x1 = W42 / Math.tan(Ra) + H32 / Math.sin(Ra);
+			const l4x3 = param.ReS - l4x0 + l4x1 + l4x2 - param.W8 - param.S4e2 / 2;
+			const l4x4 = param.W8 + param.S4e2;
+			const l4x5 = RdSouth - l4x0 - l4x3 - l4x4;
+			const l4a1 = pi2 - aTop / 2;
+			const l4x6 = (param.H7 - param.P41) * Math.tan(l4a1);
+			const l4x7 = param.W4 * Math.tan(l4a1);
+			const l4x8 = l4x5 - l4x6 - l4x7;
+			const rCtr = contour(ix, iy + l4y0)
+				.addSegStrokeR(l4x0, -l4y0)
+				.addSegStrokeR(l4x3, 0)
+				.addSegStrokeR(0, param.P42)
+				.addSegStrokeR(l4x4, 0)
+				.addSegStrokeR(0, -param.P42)
+				.addSegStrokeR(l4x8, 0)
+				.addSegStrokeR(l4x7, param.W4)
+				.addSegStrokeR(l4x6 - RdSouth, 0)
 				.closeSegStroke();
 			return rCtr;
 		}
@@ -1015,12 +1033,16 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const ctrPl4S: tOuterInner = [ctrPlank4S(0, 0)];
 		if (R4 > 0) {
 			ctrPl4S.push(contourCircle(param.ReS, W42, R4));
+			const tx = (H32 + R4) / Math.sin(Ra);
+			ctrPl4S.push(contourCircle(param.ReS + tx, W42, R4));
 		}
 		figPlank4S.addMainOI(ctrPl4S);
 		// figPlank4N
 		const ctrPl4N: tOuterInner = [ctrPlank4N(0, 0)];
 		if (R4 > 0) {
 			ctrPl4N.push(contourCircle(RdNorth1, W42, R4));
+			const tx = (H32 + R4) / Math.sin(RaNorth);
+			ctrPl4N.push(contourCircle(RdNorth1 - tx, W42, R4));
 		}
 		figPlank4N.addMainOI(ctrPl4N);
 		// figPlank5a
