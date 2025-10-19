@@ -298,6 +298,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// minimum Ja
 		const H32 = param.H3 / 2;
 		const W42 = param.W4 / 2;
+		const H741 = param.H7 - param.P41;
 		const Ra = degToRad(param.Ra);
 		const pi = Math.PI;
 		const pi2 = pi / 2;
@@ -366,6 +367,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const topD1 = (param.H7 - param.P41) / Math.sin(aTop / 2);
 		const topD2 = param.W4 / Math.sin(aTop / 2);
 		const topYmid = (topD1 + topD2 / 2) * Math.sin(aMid);
+		const topXmid = (topD1 + topD2 / 2) * Math.cos(aMid);
 		const topYlow = (topD1 + topD2) * Math.sin(aMid);
 		const topXlow = (topD1 + topD2) * Math.cos(aMid);
 		// pl3S1, pl3N1, pl3x1, pl3x2, pl3x4
@@ -401,10 +403,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const pl6Ny = W62 * Math.tan(RaNorth);
 		const ptPl6x0 = pTopx - W62;
 		const ptPl6y0 = pTopy + topYmid;
+		// l4qS3
+		const l4qS3 = Math.sqrt(pl6Sy ** 2 + W62 ** 2) + H741 * Math.tan(Ra);
 		// n7S, n7N
 		const notch7W = param.S4 + param.S4e;
 		const step7 = param.S4 + param.Q4;
-		const n7S = Math.floor((RdSouth - param.S4 - param.Q4Init) / step7) + 1 - param.dropLastS;
+		const n7S =
+			Math.floor((RdSouth - param.S4 - param.Q4Init - l4qS3) / step7) + 1 - param.dropLastS;
 		const n7N = Math.floor((RdNorth - param.S4 - param.Q4Init) / step7) + 1 - param.dropLastN;
 		// l8S1, l8S2, l8S2, l8S32, l8S33
 		const l82y = l81y + H32;
@@ -643,9 +648,15 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const l4x4 = param.W8 + param.S4e2;
 			const l4x5 = RdSouth - l4x0 - l4x3 - l4x4;
 			const l4a1 = pi2 - aTop / 2;
-			const l4x6 = (param.H7 - param.P41) * Math.tan(l4a1);
+			const l4x6 = H741 * Math.tan(l4a1);
 			const l4x7 = param.W4 * Math.tan(l4a1);
 			const l4x8 = l4x5 - l4x6 - l4x7;
+			//const l4q1 = (param.W4 / 2 + H741) / param.W4;
+			const l4q2 = Math.sqrt(l4x7 ** 2 + param.W4 ** 2) / 2;
+			const l4a2 = aTop / 2;
+			const l4y1 = -topYmid - pl6Sy;
+			const l4y2 = H741 / Math.cos(Ra);
+			const l4q4 = RdSouth - l4qS3 - param.Q4Init - param.S4 - (n7S - 1) * step7;
 			const rCtr = contour(ix, iy + l4y0)
 				.addSegStrokeR(l4x0, -l4y0)
 				.addSegStrokeR(l4x3, 0)
@@ -653,8 +664,21 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.addSegStrokeR(l4x4, 0)
 				.addSegStrokeR(0, -param.P42)
 				.addSegStrokeR(l4x8, 0)
-				.addSegStrokeR(l4x7, param.W4)
-				.addSegStrokeR(l4x6 - RdSouth, 0)
+				.addSegStrokeRP(l4a2, l4q2)
+				.addSegStrokeRP(pi - Ra, topXmid + W62)
+				.addSegStrokeRP(pi2 - Ra, l4y1 - l4y2)
+				//.addSegStrokeR(l4qS3 - RdSouth, 0)
+				.addSegStrokeR(-l4q4 + param.S4e / 2, 0);
+			for (let ii = 0; ii < n7S - 1; ii++) {
+				rCtr.addSegStrokeR(0, -param.P41)
+					.addSegStrokeR(-notch7W, 0)
+					.addSegStrokeR(0, param.P41)
+					.addSegStrokeR(-param.Q4 + param.S4e, 0);
+			}
+			rCtr.addSegStrokeR(0, -param.P41)
+				.addSegStrokeR(-notch7W, 0)
+				.addSegStrokeR(0, param.P41)
+				.addSegStrokeR(-param.Q4Init + param.S4e / 2, 0)
 				.closeSegStroke();
 			return rCtr;
 		}
@@ -892,14 +916,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		for (let ii = 0; ii < n7S; ii++) {
 			const ll = param.Q4Init + ii * step7;
 			const ipt = point(p0Sx + p3Sx, p0Sy + p3Sy).translatePolar(Ra, ll);
-			const iCtr = ctrRectangle(0, 0, notch7W, param.H7).rotate(0, 0, Ra);
+			const iCtr = ctrRectangle(0, 0, param.S4, param.H7).rotate(0, 0, Ra);
 			figEast.addSecond(iCtr.translate(ipt.cx, ipt.cy));
 		}
 		for (let ii = 0; ii < n7N; ii++) {
 			const aa = pi - RaNorth;
 			const ll = param.Q4Init + ii * step7;
 			const ipt = point(p0Nx + p3Nx, p0Ny + p3Ny).translatePolar(aa, ll);
-			const iCtr = ctrRectangle(0, -param.H7, notch7W, param.H7).rotate(0, 0, aa);
+			const iCtr = ctrRectangle(0, -param.H7, param.S4, param.H7).rotate(0, 0, aa);
 			figEast.addSecond(iCtr.translate(ipt.cx, ipt.cy));
 		}
 		figEast.addSecond(ctrPlank8Splaced(ptPl5x00, ptPl5y0, Ra - pi2));
