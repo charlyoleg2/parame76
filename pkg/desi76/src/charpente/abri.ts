@@ -403,14 +403,15 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const pl6Ny = W62 * Math.tan(RaNorth);
 		const ptPl6x0 = pTopx - W62;
 		const ptPl6y0 = pTopy + topYmid;
-		// l4qS3
+		// l4qS3, l4qN3
 		const l4qS3 = Math.sqrt(pl6Sy ** 2 + W62 ** 2) + H741 * Math.tan(Ra);
+		const l4qN3 = Math.sqrt(pl6Ny ** 2 + W62 ** 2) + H741 * Math.tan(RaNorth);
 		// n7S, n7N
 		const notch7W = param.S4 + param.S4e;
 		const step7 = param.S4 + param.Q4;
-		const n7S =
-			Math.floor((RdSouth - param.S4 - param.Q4Init - l4qS3) / step7) + 1 - param.dropLastS;
-		const n7N = Math.floor((RdNorth - param.S4 - param.Q4Init) / step7) + 1 - param.dropLastN;
+		const SQ4Init = param.S4 + param.Q4Init;
+		const n7S = Math.floor((RdSouth - SQ4Init - l4qS3) / step7) + 1 - param.dropLastS;
+		const n7N = Math.floor((RdNorth - SQ4Init - l4qN3) / step7) + 1 - param.dropLastN;
 		// l8S1, l8S2, l8S2, l8S32, l8S33
 		const l82y = l81y + H32;
 		const l8S1x = Xsouth - l82y / Math.tan(Ra) - W52 + (param.top_opt ? 0 : topXlow);
@@ -687,10 +688,47 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			return rCtr;
 		}
 		function ctrPlank4N(ix: number, iy: number): tContour {
-			const rCtr = contour(ix, iy)
-				.addSegStrokeR(RdNorth, 0)
-				.addSegStrokeR(0, param.W4)
-				.addSegStrokeR(-RdNorth, 0)
+			const l4x0 = param.B4 / Math.sin(RaNorth);
+			const l4y0 = param.B4 / Math.cos(RaNorth);
+			const l3x0 = H32 + H32 / Math.tan(RaNorth) + W42 / Math.sin(RaNorth);
+			const l3x1 = param.JaNorth + param.W1a + laNorth - topXlow - W52 - l3x0;
+			const l4x2 = l3x1 * Math.cos(RaNorth);
+			const l4x1 = W42 / Math.tan(RaNorth) + H32 / Math.sin(RaNorth);
+			const l4x3 = param.ReN - l4x0 + l4x1 + l4x2 - param.W8 - param.S4e2 / 2;
+			const l4x4 = param.W8 + param.S4e2;
+			const l4x5 = RdNorth - l4x0 - l4x3 - l4x4;
+			const l4a1 = pi2 - aTop / 2;
+			const l4x6 = H741 * Math.tan(l4a1);
+			const l4x7 = param.W4 * Math.tan(l4a1);
+			const l4x8 = l4x5 - l4x6 - l4x7;
+			const l4x9 = l4x6 + l4x7;
+			//const l4q1 = (param.W4 / 2 + H741) / param.W4;
+			//const l4q2 = Math.sqrt(l4x7 ** 2 + param.W4 ** 2) / 2;
+			//const l4a2 = aTop / 2;
+			const l4y1 = -topYmid - pl6Ny;
+			const l4y2 = H741 / Math.cos(RaNorth);
+			const l4q4 = RdNorth - l4qN3 - param.Q4Init - param.S4 - (n7N - 1) * step7;
+			const rCtr = contour(ix + l4x9, iy)
+				.addSegStrokeR(l4x8, 0)
+				.addSegStrokeR(0, param.P42)
+				.addSegStrokeR(l4x4, 0)
+				.addSegStrokeR(0, -param.P42)
+				.addSegStrokeR(l4x3, 0)
+				.addSegStrokeR(l4x0, l4y0)
+				.addSegStrokeR(0, param.W4 - l4y0)
+				.addSegStrokeR(-param.Q4Init + param.S4e / 2, 0)
+				.addSegStrokeR(0, -param.P41)
+				.addSegStrokeR(-notch7W, 0)
+				.addSegStrokeR(0, param.P41);
+			for (let ii = 0; ii < n7N - 1; ii++) {
+				rCtr.addSegStrokeR(-param.Q4 + param.S4e, 0)
+					.addSegStrokeR(0, -param.P41)
+					.addSegStrokeR(-notch7W, 0)
+					.addSegStrokeR(0, param.P41);
+			}
+			rCtr.addSegStrokeR(-l4q4 + param.S4e / 2, 0)
+				.addSegStrokeRP(-pi2 + RaNorth, l4y1 - l4y2)
+				.addSegStrokeRP(pi + RaNorth, W62 - topXmid)
 				.closeSegStroke();
 			return rCtr;
 		}
