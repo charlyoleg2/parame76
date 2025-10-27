@@ -7,7 +7,7 @@
    viewBox="0 0 127.02053 148.48307"
    version="1.1"
    id="svg1"
-   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   inkscape:version="1.4.2 (1:1.4.2+202505120737+ebf0e940d0)"
    sodipodi:docname="src_abri.svg"
    inkscape:export-filename="abri_diagonal_b.svg"
    inkscape:export-xdpi="96"
@@ -26,13 +26,13 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
-     inkscape:zoom="2.2198668"
-     inkscape:cx="289.43178"
-     inkscape:cy="4313.5471"
-     inkscape:window-width="2880"
-     inkscape:window-height="1514"
-     inkscape:window-x="2869"
-     inkscape:window-y="-11"
+     inkscape:zoom="0.78484143"
+     inkscape:cx="304.52011"
+     inkscape:cy="7958.9325"
+     inkscape:window-width="1854"
+     inkscape:window-height="1131"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1">
     <inkscape:page
@@ -46,6 +46,12 @@
   </sodipodi:namedview>
   <defs
      id="defs1">
+    <rect
+       x="482.52676"
+       y="676.56976"
+       width="39.871746"
+       height="27.39407"
+       id="rect102" />
     <rect
        x="301.56958"
        y="629.31702"
@@ -458,6 +464,26 @@
        width="85.665733"
        height="24.274406"
        id="rect20-1" />
+    <marker
+       style="overflow:visible"
+       id="ArrowWide-7-8-9-0"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Wide arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:butt"
+         d="M 3,-3 0,0 3,3"
+         transform="rotate(180,0.125,0)"
+         sodipodi:nodetypes="ccc"
+         id="path1-4-6-5-9" />
+    </marker>
   </defs>
   <g
      inkscape:label="Layer 1"
@@ -474,6 +500,13 @@
        inkscape:export-filename="abri_base.svg"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
+    <rect
+       style="opacity:0.3;fill:#e5ffd5;stroke:#44aa00;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none"
+       id="rect17-8-3"
+       width="96.259407"
+       height="3.5181806"
+       x="31.276848"
+       y="96.398903" />
     <rect
        style="opacity:0.3;fill:#ffd5d5;stroke:#ff8080;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none"
        id="rect19-7"
@@ -630,6 +663,10 @@
        id="path4-3-0" />
     <path
        style="fill:#ffb380;stroke:#b3b3b3;stroke-width:0.264583;stroke-linejoin:round"
+       d="M 127.53625,106.66868 V 99.917084"
+       id="path4-3-0-1" />
+    <path
+       style="fill:#ffb380;stroke:#b3b3b3;stroke-width:0.264583;stroke-linejoin:round"
        d="M 47.943264,45.92625 V 57.818874"
        id="path4-6" />
     <path
@@ -640,6 +677,10 @@
        style="fill:#ffb380;stroke:#1a1a1a;stroke-width:0.264582;stroke-linejoin:round;stroke-dasharray:none;marker-start:url(#ArrowWide-7-8-9);marker-end:url(#ArrowWide-7-8-9)"
        d="M 47.686062,51.067283 H 40.664748"
        id="path5-5-3-7" />
+    <path
+       style="fill:#ffb380;stroke:#1a1a1a;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none;marker-start:url(#ArrowWide-7-8-9-0);marker-end:url(#ArrowWide-7-8-9-0)"
+       d="M 127.37352,102.23454 H 115.84028"
+       id="path5-5-3-7-2" />
     <path
        style="fill:#ffb380;stroke:#1a1a1a;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none;marker-start:url(#ArrowWide-7-1);marker-end:url(#ArrowWide-7-1)"
        d="M 75.343998,45.92625 H 48.155485"
@@ -1056,7 +1097,7 @@
          id="tspan14">SecondPoleNorth</tspan></text>
     <text
        xml:space="preserve"
-       transform="scale(0.26458333)"
+       transform="matrix(0.26458333,0,0,0.26458333,0,2.1166667)"
        id="text22"
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect25);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="200.04102"
@@ -1068,7 +1109,7 @@
        id="path25" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide)"
-       d="m 48.881953,109.563 4.21396,-6.74234"
+       d="m 48.881953,109.56879 4.21396,-4.85939"
        id="path26" />
     <text
        xml:space="preserve"
@@ -1189,9 +1230,17 @@
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,-2.3169992,-4.1807315)"
        id="text25"
-       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect81);fill:#999999;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect81);display:inline;fill:#999999;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="301.57031"
          y="643.55285"
          id="tspan22">(not yet implemented)</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-9.9449494,-76.717593)"
+       id="text40"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect102);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="482.52734"
+         y="690.80675"
+         id="tspan23">dtF</tspan></text>
   </g>
 </svg>
