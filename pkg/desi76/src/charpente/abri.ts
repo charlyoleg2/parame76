@@ -135,6 +135,9 @@ const pDef: tParamDef = {
 		pCheckbox('d3Plank7', false),
 		pCheckbox('d3Plank8S', false),
 		pCheckbox('d3Plank8N', false),
+		pCheckbox('d3PlankDiagTop', false),
+		pCheckbox('d3PlankDiagA', false),
+		pCheckbox('d3PlankDiagB', false),
 		pCheckbox('d3Assembly', true)
 	],
 	paramSvg: {
@@ -230,6 +233,9 @@ const pDef: tParamDef = {
 		d3Plank7: 'abri_3d_export.svg',
 		d3Plank8S: 'abri_3d_export.svg',
 		d3Plank8N: 'abri_3d_export.svg',
+		d3PlankDiagTop: 'abri_3d_export.svg',
+		d3PlankDiagA: 'abri_3d_export.svg',
+		d3PlankDiagB: 'abri_3d_export.svg',
 		d3Assembly: 'abri_3d_export.svg'
 	},
 	sim: {
@@ -262,6 +268,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const figPlank7c = figure();
 	const figPlank8S = figure();
 	const figPlank8N = figure();
+	const figPlankDiagTop = figure();
+	const figPlankDiagA = figure();
+	const figPlankDiagB = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -317,6 +326,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const Ra = degToRad(param.Ra);
 		const pi = Math.PI;
 		const pi2 = pi / 2;
+		const pi4 = pi2 / 2;
 		function JaMin(iRa: number): number {
 			const rMin = H32 + W42 / Math.cos(iRa - pi2) + H32 / Math.tan(iRa);
 			return rMin;
@@ -885,6 +895,54 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const rCtr = ctrPlank8N(ix - l8N1, iy).rotate(ix, iy, pi + ia);
 			return rCtr;
 		}
+		function ctrPlankDiagTop(ix: number, iy: number, ik: number): tContour {
+			const rCtr = contour(ix, iy)
+				.addSegStrokeR(l8N1 * ik, 0)
+				//.addSegStrokeR(l8N2, param.W8)
+				.addSegStrokeRP(RaNorth, l8N32)
+				.addSegStrokeRP(RaNorth - pi2, param.P5)
+				.addSegStrokeRP(RaNorth, l8N33)
+				.addSegStrokeRP(RaNorth + pi2, param.P5)
+				.addSegStrokeR(-l8N1 - l8N2, 0)
+				.closeSegStroke();
+			return rCtr;
+		}
+		function ctrPlankDiagTopPlaced(ix: number, iy: number, ia: number, ik: number): tContour {
+			const rCtr = ctrPlankDiagTop(ix - l8N1, iy, ik).rotate(ix, iy, pi + ia);
+			return rCtr;
+		}
+		function ctrPlankDiagA(ix: number, iy: number, ik: number): tContour {
+			const rCtr = contour(ix, iy)
+				.addSegStrokeR(l8N1 * ik, 0)
+				//.addSegStrokeR(l8N2, param.W8)
+				.addSegStrokeRP(RaNorth, l8N32)
+				.addSegStrokeRP(RaNorth - pi2, param.P5)
+				.addSegStrokeRP(RaNorth, l8N33)
+				.addSegStrokeRP(RaNorth + pi2, param.P5)
+				.addSegStrokeR(-l8N1 - l8N2, 0)
+				.closeSegStroke();
+			return rCtr;
+		}
+		function ctrPlankDiagAplaced(ix: number, iy: number, ia: number, ik: number): tContour {
+			const rCtr = ctrPlankDiagA(ix - l8N1, iy, ik).rotate(ix, iy, pi + ia);
+			return rCtr;
+		}
+		function ctrPlankDiagB(ix: number, iy: number, ik: number): tContour {
+			const rCtr = contour(ix, iy)
+				.addSegStrokeR(l8N1 * ik, 0)
+				//.addSegStrokeR(l8N2, param.W8)
+				.addSegStrokeRP(RaNorth, l8N32)
+				.addSegStrokeRP(RaNorth - pi2, param.P5)
+				.addSegStrokeRP(RaNorth, l8N33)
+				.addSegStrokeRP(RaNorth + pi2, param.P5)
+				.addSegStrokeR(-l8N1 - l8N2, 0)
+				.closeSegStroke();
+			return rCtr;
+		}
+		function ctrPlankDiagBplaced(ix: number, iy: number, ia: number, ik: number): tContour {
+			const rCtr = ctrPlankDiagB(ix - l8N1, iy, ik).rotate(ix, iy, pi + ia);
+			return rCtr;
+		}
 		// figBase
 		for (const yj of aPos) {
 			for (let ii = 0; ii < param.Nb1; ii++) {
@@ -921,6 +979,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			figSouth.addSecond(ctrPlank2EE(-W3U1, param.H1));
 		}
 		figSouth.addSecond(ctrPlank6b(param.U1 - param.dtF, ptPl6y0 - param.dtQ));
+		figSouth.addSecond(ctrPlankDiagTopPlaced(0, 0, pi4, 1));
+		figSouth.addSecond(ctrPlankDiagAplaced(0, 0, pi4, 1));
+		figSouth.addSecond(ctrPlankDiagBplaced(0, 0, pi4, 1));
 		// figEast
 		for (const [idx, ix] of aPos.entries()) {
 			const ctrEast: tOuterInner = [ctrPlank1aPlaced(ix, 0, 1 + idx)];
@@ -1181,6 +1242,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figPlank8S.addMainO(ctrPlank8S(0, 0));
 		// figPlank8N
 		figPlank8N.addMainO(ctrPlank8N(0, 0));
+		// figPlankDiagTop
+		figPlankDiagTop.addMainO(ctrPlankDiagTop(0, 0, 1));
+		// figPlankDiagA
+		figPlankDiagA.addMainO(ctrPlankDiagA(0, 0, 1));
+		// figPlankDiagB
+		figPlankDiagB.addMainO(ctrPlankDiagB(0, 0, 1));
 		// final figure list
 		rGeome.fig = {
 			faceEast: figEast,
@@ -1203,7 +1270,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			facePlank6c: figPlank6c,
 			facePlank7c: figPlank7c,
 			facePlank8S: figPlank8S,
-			facePlank8N: figPlank8N
+			facePlank8N: figPlank8N,
+			facePlankDiagTop: figPlankDiagTop,
+			facePlankDiagA: figPlankDiagA,
+			facePlankDiagB: figPlankDiagB
 		};
 		// volume
 		const designName = rGeome.partName;
@@ -1252,6 +1322,15 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		if (param.d3Plank8N) {
 			exportList.push(`subpax_${designName}_pl8n`);
+		}
+		if (param.d3PlankDiagTop) {
+			exportList.push(`subpax_${designName}_pldt`);
+		}
+		if (param.d3PlankDiagA) {
+			exportList.push(`subpax_${designName}_plda`);
+		}
+		if (param.d3PlankDiagB) {
+			exportList.push(`subpax_${designName}_pldb`);
 		}
 		if (param.d3Assembly) {
 			exportList.push(`pax_${designName}_assembly`);
@@ -1399,6 +1478,30 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					face: `${designName}_facePlank8N`,
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: pl4W,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_pldt`,
+					face: `${designName}_facePlankDiagTop`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.W6,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_plda`,
+					face: `${designName}_facePlankDiagA`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.W6,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_pldb`,
+					face: `${designName}_facePlankDiagB`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.W6,
 					rotate: [0, 0, 0],
 					translate: [0, 0, 0]
 				}
