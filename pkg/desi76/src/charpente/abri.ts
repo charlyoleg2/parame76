@@ -115,6 +115,7 @@ const pDef: tParamDef = {
 		pNumber('dtPe', 'mm', 0, 0, 20, 0.1),
 		pNumber('dtQ', 'mm', 20, 1, 200, 1),
 		pNumber('dtQe', 'mm', 0, 0, 20, 0.1),
+		pNumber('dtF', 'mm', 800, 0, 4000, 1),
 		pSectionSeparator('3D Export'),
 		pCheckbox('d3Plank1', false),
 		pDropdown('d3Plank1West', ['Low', 'High', 'End']),
@@ -210,6 +211,7 @@ const pDef: tParamDef = {
 		dtPe: 'abri_diagonal_top.svg',
 		dtQ: 'abri_diagonal_top.svg',
 		dtQe: 'abri_diagonal_top.svg',
+		dtF: 'abri_triangle.svg',
 		d3Plank1: 'abri_3d_export.svg',
 		d3Plank1West: 'abri_south_P2P3.svg',
 		d3Plank1East: 'abri_south_P2P3.svg',
@@ -255,6 +257,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const figPlank4N = figure();
 	const figPlank5a = figure();
 	const figPlank5b = figure();
+	const figPlank6b = figure();
 	const figPlank6c = figure();
 	const figPlank7c = figure();
 	const figPlank8S = figure();
@@ -467,11 +470,22 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const pl3Sz3 = pl3Sz2 / Math.tan(Ra);
 		const pl3Sx = Math.max(H32 + pl3Sz3, 1);
 		const pl3Sy = Math.min(pl3Sx * Math.tan(Ra), 2 * H32 - 1);
+		// pl6b
+		const pl6Qe = param.dtQe;
+		const pl6Qe2 = pl6Qe / 2;
+		const pl6bL = lb + 2 * (param.dtF - param.U1);
+		const pl6bH = param.dtQ - topYmid;
+		const pl6da = Math.atan2(param.dtX, param.dtY);
+		const pl6Q21 = param.dtQ * Math.tan(pl6da);
+		const pl6Q22 = param.dtW / Math.cos(pl6da);
+		const pl6Q1 = l5W + pl6Qe;
+		const pl6Q2 = param.dtX + pl6Q21 - pl6Qe;
+		const pl6Q3 = pl6Q22 - pl6Q21 + pl6Qe;
+		const pl6Q4 = param.Lb + 2 * (param.U1 - pl6Q2 - pl6Q3) - pl6Qe;
 		// Extrude thickness
 		const pl4W = param.W1b - 2 * param.U1;
 		const pl5aW = pl4W + 2 * param.W5bs;
 		const pl5bW = param.W5a;
-		const pl6L = lb;
 		// step-5 : checks on the parameter values
 		if (param.aSplit === 1 && param.SecondPoleNorth + param.SecondPoleSouth < 2) {
 			throw `err296: aSplit ${param.aSplit} is active but inactive SecondPoleNorth ${param.SecondPoleNorth} or SecondPoleSouth ${param.SecondPoleSouth}`;
@@ -802,10 +816,36 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const rCtr = ctrPlank5b(ix - l5l, iy - l5W / 2).rotate(ix, iy, pi2);
 			return rCtr;
 		}
+		function ctrPlank6b(ix: number, iy: number): tContour {
+			const rCtr = contour(ix, iy)
+				.addSegStrokeR(param.dtF - pl6Qe2, 0)
+				.addSegStrokeR(0, param.dtQ)
+				.addSegStrokeR(pl6Q1, 0);
+			for (let ii = 0; ii < param.Nb1 - 1; ii++) {
+				rCtr.addSegStrokeR(0, -param.dtQ)
+					.addSegStrokeR(pl6Q2, 0)
+					.addSegStrokeR(0, param.dtQ)
+					.addSegStrokeR(pl6Q3, 0)
+					.addSegStrokeR(0, -param.dtQ)
+					.addSegStrokeR(pl6Q4, 0)
+					.addSegStrokeR(0, param.dtQ)
+					.addSegStrokeR(pl6Q3, 0)
+					.addSegStrokeR(0, -param.dtQ)
+					.addSegStrokeR(pl6Q2, 0)
+					.addSegStrokeR(0, param.dtQ)
+					.addSegStrokeR(pl6Q1, 0);
+			}
+			rCtr.addSegStrokeR(0, -param.dtQ)
+				.addSegStrokeR(param.dtF - pl6Qe2, 0)
+				.addSegStrokeR(0, pl6bH)
+				.addSegStrokeR(-pl6bL, 0)
+				.closeSegStroke();
+			return rCtr;
+		}
 		function ctrPlank6c(ix: number, iy: number): tContour {
 			const ctrPeak = contour(ix, iy)
 				.addSegStrokeR(param.W6, 0)
-				.addSegStrokeR(0, -topYmid - pl6Ny)
+				.addSegStrokeR(0, param.dtQ - topYmid - pl6Ny)
 				.addSegStrokeR(-W62, pl6Ny)
 				.addSegStrokeR(-W62, -pl6Sy)
 				.closeSegStroke();
@@ -880,6 +920,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		} else {
 			figSouth.addSecond(ctrPlank2EE(-W3U1, param.H1));
 		}
+		figSouth.addSecond(ctrPlank6b(param.U1 - param.dtF, ptPl6y0 - param.dtQ));
 		// figEast
 		for (const [idx, ix] of aPos.entries()) {
 			const ctrEast: tOuterInner = [ctrPlank1aPlaced(ix, 0, 1 + idx)];
@@ -962,7 +1003,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figEast.addSecond(ctrPlank5aPlaced(ptPl5x00, ptPl5y0));
 		figEast.addSecond(contourCircle(ptPl5x00 + W52, ptPl5y0 - H32, R5));
 		figEast.addSecond(contourCircle(ptPl5x00 + W52, ptPl5y0 + R5, R5));
-		figEast.addSecond(ctrPlank6c(ptPl6x0, ptPl6y0));
+		figEast.addSecond(ctrPlank6c(ptPl6x0, ptPl6y0 - param.dtQ));
+		figEast.addSecond(ctrRectangle(ptPl6x0, ptPl6y0 - param.dtQ, param.W6, param.dtQ));
 		for (let ii = 0; ii < n7S; ii++) {
 			const ll = param.Q4Init + ii * step7;
 			const ipt = point(p0Sx + p3Sx, p0Sy + p3Sy).translatePolar(Ra, ll);
@@ -1129,8 +1171,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figPlank5a.addMainOI(ctrPl5a);
 		// figPlank5b
 		figPlank5b.addMainO(ctrPlank5b(0, 0));
+		// figPlank6b
+		figPlank6b.addMainO(ctrPlank6b(0, 0));
 		// figPlank6c
 		figPlank6c.addMainO(ctrPlank6c(0, 0));
+		figPlank6c.addSecond(ctrRectangle(0, 0, param.W6, param.dtQ));
 		// figPlank7c
 		// figPlank8S
 		figPlank8S.addMainO(ctrPlank8S(0, 0));
@@ -1154,6 +1199,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			facePlank4N: figPlank4N,
 			facePlank5a: figPlank5a,
 			facePlank5b: figPlank5b,
+			facePlank6b: figPlank6b,
 			facePlank6c: figPlank6c,
 			facePlank7c: figPlank7c,
 			facePlank8S: figPlank8S,
@@ -1196,7 +1242,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			exportList.push(`pax_${designName}_pl5`);
 		}
 		if (param.d3Plank6) {
-			exportList.push(`subpax_${designName}_pl6`);
+			exportList.push(`pax_${designName}_pl6`);
 		}
 		if (param.d3Plank7) {
 			exportList.push(`subpax_${designName}_pl7`);
@@ -1317,20 +1363,28 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					translate: [0, pl5bW, 0]
 				},
 				{
-					outName: `subpax_${designName}_pl6`,
+					outName: `subpax_${designName}_pl6b`,
+					face: `${designName}_facePlank6b`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.W6,
+					rotate: [pi2, 0, 0],
+					translate: [0, param.W6, 0]
+				},
+				{
+					outName: `subpax_${designName}_pl6c`,
 					face: `${designName}_facePlank6c`,
 					extrudeMethod: EExtrude.eLinearOrtho,
-					length: pl6L,
-					rotate: [pi2, 0, 0],
-					translate: [0, pl6L, 0]
+					length: pl6bL,
+					rotate: [pi2, 0, -pi2],
+					translate: [pl6bL, param.W6, 0]
 				},
 				{
 					outName: `subpax_${designName}_pl7`,
 					face: `${designName}_facePlank7c`,
 					extrudeMethod: EExtrude.eLinearOrtho,
-					length: pl6L,
+					length: pl6bL,
 					rotate: [pi2, 0, 0],
-					translate: [0, pl6L, 0]
+					translate: [0, pl6bL, 0]
 				},
 				{
 					outName: `subpax_${designName}_pl8s`,
@@ -1361,9 +1415,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					inList: [`subpax_${designName}_pl5a`, `subpax_${designName}_pl5b`]
 				},
 				{
+					outName: `pax_${designName}_pl6`,
+					boolMethod: EBVolume.eIntersection,
+					inList: [`subpax_${designName}_pl6b`, `subpax_${designName}_pl6c`]
+				},
+				{
 					outName: `pax_${designName}_assembly`,
 					boolMethod: EBVolume.eUnion,
-					inList: [`pax_${designName}_pl1`, `subpax_${designName}_pl6`]
+					inList: [`pax_${designName}_pl1`, `pax_${designName}_pl6`]
 				},
 				{
 					outName: `pax_${designName}`,
