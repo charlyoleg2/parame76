@@ -483,15 +483,22 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// pl6b
 		const pl6Qe = param.dtQe;
 		const pl6Qe2 = pl6Qe / 2;
-		const pl6bL = lb + 2 * (param.dtF - param.U1);
+		const pl6bL = lb + 2 * (param.W5bs + param.dtF - param.U1);
 		const pl6bH = param.dtQ - topYmid;
 		const pl6da = Math.atan2(param.dtX, param.dtY);
 		const pl6Q21 = param.dtQ * Math.tan(pl6da);
 		const pl6Q22 = param.dtW / Math.cos(pl6da);
+		const pl6Q23 = pl6Q22 - pl6Q21;
 		const pl6Q1 = l5W + pl6Qe;
 		const pl6Q2 = param.dtX + pl6Q21 - pl6Qe;
-		const pl6Q3 = pl6Q22 - pl6Q21 + pl6Qe;
-		const pl6Q4 = param.Lb + 2 * (param.U1 - pl6Q2 - pl6Q3) - pl6Qe;
+		const pl6Q3 = pl6Q23 + pl6Qe;
+		const pl6Q4 = param.Lb + 2 * (param.U1 - pl6Q2 - pl6Q3 - param.W5bs) - pl6Qe;
+		// pldt
+		//const pldtPe = param.dtPe
+		//const pldtPe2 = pldtPe / 2;
+		const pldtP1 = param.dtP / Math.tan(pl6da);
+		const pldtP2 = param.dtW / Math.sin(pl6da);
+		//const pldtP3 = pldtP2 - pldtP1;
 		// Extrude thickness
 		const pl4W = param.W1b - 2 * param.U1;
 		const pl5aW = pl4W + 2 * param.W5bs;
@@ -896,19 +903,29 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			return rCtr;
 		}
 		function ctrPlankDiagTop(ix: number, iy: number, ik: number): tContour {
-			const rCtr = contour(ix, iy)
-				.addSegStrokeR(l8N1 * ik, 0)
-				//.addSegStrokeR(l8N2, param.W8)
-				.addSegStrokeRP(RaNorth, l8N32)
-				.addSegStrokeRP(RaNorth - pi2, param.P5)
-				.addSegStrokeRP(RaNorth, l8N33)
-				.addSegStrokeRP(RaNorth + pi2, param.P5)
-				.addSegStrokeR(-l8N1 - l8N2, 0)
+			const pdtx2 = Math.sqrt((param.dtY + pldtP2) ** 2 + (param.dtX + pl6Q22) ** 2);
+			const pdtx3 = Math.sqrt(param.dtX ** 2 + param.dtY ** 2);
+			const pdty1 = ik === 1 ? 0 : param.dtW;
+			const pdty2 = param.dtP * Math.cos(pl6da);
+			const rCtr = contour(ix, iy + pdty1 + ik * pdty2)
+				.addSegStrokeRP(ik * (-pi2 + pl6da), param.dtP)
+				.addSegStrokeR(pdtx2, 0)
+				.addSegStrokeRP(ik * pl6da, param.dtQ)
+				.addSegStrokeRP(ik * (pi2 + pl6da), pl6Q23)
+				.addSegStrokeRP(ik * (pi + pl6da), param.dtQ)
+				.addSegStrokeRP(ik * (pi2 + pl6da), pl6Q21)
+				.addSegStrokeR(-pdtx3, 0)
+				.addSegStrokeRP(ik * (pi + pl6da), pldtP1)
+				.addSegStrokeRP(ik * (pi2 + pl6da), param.dtP)
+				//.addSegStrokeRP(ik * (pi + pl6da), pldtP3)
 				.closeSegStroke();
 			return rCtr;
 		}
 		function ctrPlankDiagTopPlaced(ix: number, iy: number, ia: number, ik: number): tContour {
-			const rCtr = ctrPlankDiagTop(ix - l8N1, iy, ik).rotate(ix, iy, pi + ia);
+			const pdtx4 = pldtP2 * Math.cos(pl6da) + param.dtP * Math.sin(pl6da);
+			const aa0 = pi2 - ik * ia;
+			const pdty4 = ik === 1 ? param.dtW : 0;
+			const rCtr = ctrPlankDiagTop(ix - pdtx4, iy - pdty4, ik).rotate(ix, iy, aa0);
 			return rCtr;
 		}
 		function ctrPlankDiagA(ix: number, iy: number, ik: number): tContour {
@@ -968,7 +985,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			figSouth.addMainOI(ctrSouth);
 			figSouth.addSecond(ctrRectangle(ix - W3U1, H1H2 + H2c, param.W3, param.H3));
 			figSouth.addSecond(ctrRectangle(ix + W1bU1, H1H2 + H2c, param.W3, param.H3));
-			figSouth.addSecond(ctrPlank5bPlaced(ix + W1b2, H123 + H2c));
+			figSouth.addSecond(ctrPlank5bPlaced(ix + W1b2, ptPl5y0));
 		}
 		if (param.bSplit === 1) {
 			for (let ii = 0; ii < param.Nb1 - 1; ii++) {
@@ -978,8 +995,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		} else {
 			figSouth.addSecond(ctrPlank2EE(-W3U1, param.H1));
 		}
-		figSouth.addSecond(ctrPlank6b(param.U1 - param.dtF, ptPl6y0 - param.dtQ));
-		figSouth.addSecond(ctrPlankDiagTopPlaced(0, 0, pi4, 1));
+		figSouth.addSecond(ctrPlank6b(param.U1 - param.W5bs - param.dtF, ptPl6y0 - param.dtQ));
+		for (let ii = 0; ii < param.Nb1 - 1; ii++) {
+			const ix = ii * stepX + W1b2 + l5W / 2;
+			const yy0 = ptPl6y0 - param.dtQ - param.dtY;
+			figSouth.addSecond(ctrPlankDiagTopPlaced(ix, yy0, pl6da, 1));
+		}
+		for (let ii = 1; ii < param.Nb1; ii++) {
+			const ix = ii * stepX + W1b2 - l5W / 2;
+			const yy0 = ptPl6y0 - param.dtQ - param.dtY;
+			figSouth.addSecond(ctrPlankDiagTopPlaced(ix, yy0, pl6da, -1));
+		}
 		figSouth.addSecond(ctrPlankDiagAplaced(0, 0, pi4, 1));
 		figSouth.addSecond(ctrPlankDiagBplaced(0, 0, pi4, 1));
 		// figEast
