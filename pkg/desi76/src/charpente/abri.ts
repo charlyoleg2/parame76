@@ -95,14 +95,14 @@ const pDef: tParamDef = {
 		pDropdown('peak6', ['peak', 'square']),
 		pSectionSeparator('Diagonals'),
 		pNumber('dbW', 'mm', 100, 1, 500, 1),
-		pNumber('dbX', 'mm', 1000, 1, 2000, 1),
+		pNumber('dbX', 'mm', 500, 1, 2000, 1),
 		pNumber('dbY', 'mm', 1000, 1, 2000, 1),
 		pNumber('dbP', 'mm', 50, 1, 200, 1),
 		pNumber('dbPe', 'mm', 0, 0, 20, 0.1),
 		pNumber('dbD', 'mm', 20, 1, 200, 1),
 		pNumber('dbE', 'mm', 50, 1, 500, 1),
 		pNumber('daW', 'mm', 100, 1, 500, 1),
-		pNumber('daX', 'mm', 1000, 1, 2000, 1),
+		pNumber('daX', 'mm', 500, 1, 2000, 1),
 		pNumber('daY', 'mm', 1000, 1, 2000, 1),
 		pNumber('daP', 'mm', 50, 1, 200, 1),
 		pNumber('daPe', 'mm', 0, 0, 20, 0.1),
@@ -500,6 +500,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const pldtP1 = param.dtP / Math.tan(pl6da);
 		const pldtP2 = param.dtW / Math.sin(pl6da);
 		const pldtP3 = pldtP2 - pldtP1 + pldtPe;
+		// plda
+		const daR = param.daD / 2;
+		//const pldaPe = param.dtPe;
+		//const pldaPe2 = pldaPe / 2;
+		const pldaA = Math.atan2(param.daX, param.daY);
+		const pldaX = param.daX + param.daW / (2 * Math.cos(pldaA)) + H32 * Math.tan(pldaA);
+		// pldb
+		const dbR = param.dbD / 2;
 		// Extrude thickness
 		const pl4W = param.W1b - 2 * param.U1;
 		const pl5aW = pl4W + 2 * param.W5bs;
@@ -942,19 +950,21 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			return rCtr;
 		}
 		function ctrPlankDiagA(ix: number, iy: number, ik: number): tContour {
-			const rCtr = contour(ix, iy)
-				.addSegStrokeR(l8N1 * ik, 0)
-				//.addSegStrokeR(l8N2, param.W8)
-				.addSegStrokeRP(RaNorth, l8N32)
-				.addSegStrokeRP(RaNorth - pi2, param.P5)
-				.addSegStrokeRP(RaNorth, l8N33)
-				.addSegStrokeRP(RaNorth + pi2, param.P5)
-				.addSegStrokeR(-l8N1 - l8N2, 0)
+			const pdty1 = ik === 1 ? 0 : param.daW;
+			const pdtx2 = param.daE + param.H3 / (2 * Math.cos(pldaA));
+			const pdtx3 = (param.daW / 2) * Math.tan(pldaA);
+			const pdtx4 = Math.sqrt(param.daX ** 2 + param.daY ** 2);
+			const pdtx5 = pdtx2 + pdtx3 + pdtx4;
+			const rCtr = contour(ix, iy + pdty1)
+				.addSegStrokeR(pdtx5, 0)
+				.addSegStrokeR(0, ik * param.daW)
+				.addSegStrokeR(-pdtx5, 0)
 				.closeSegStroke();
 			return rCtr;
 		}
 		function ctrPlankDiagAplaced(ix: number, iy: number, ia: number, ik: number): tContour {
-			const rCtr = ctrPlankDiagA(ix - l8N1, iy, ik).rotate(ix, iy, pi + ia);
+			const aa0 = -pi2 - ik * ia;
+			const rCtr = ctrPlankDiagA(ix - param.daE, iy - param.daW / 2, ik).rotate(ix, iy, aa0);
 			return rCtr;
 		}
 		function ctrPlankDiagB(ix: number, iy: number, ik: number): tContour {
@@ -1019,7 +1029,6 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const yy0 = ptPl6y0 - param.dtQ - param.dtY;
 			figSouth.addSecond(ctrPlankDiagTopPlaced(ix, yy0, pl6da, -1));
 		}
-		figSouth.addSecond(ctrPlankDiagAplaced(0, 0, pi4, 1));
 		figSouth.addSecond(ctrPlankDiagBplaced(0, 0, pi4, 1));
 		// figEast
 		for (const [idx, ix] of aPos.entries()) {
@@ -1045,6 +1054,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		} else {
 			figEast.addSecond(ctrPlank3EE(pl3Sx0, H1H2 + H2c));
 		}
+		figEast.addSecond(ctrPlankDiagAplaced(param.W1a + pldaX, H1H2 + H32, pldaA, 1));
+		figEast.addSecond(contourCircle(param.W1a + pldaX, H1H2 + H32, daR));
 		const p0Sx = -param.JaSouth + H32;
 		const p0Sy = D3H;
 		figEast.addSecond(contourCircle(p0Sx, p0Sy, R4));
@@ -1284,9 +1295,15 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figPlankDiagTop
 		figPlankDiagTop.addMainO(ctrPlankDiagTop(0, 0, 1));
 		// figPlankDiagA
-		figPlankDiagA.addMainO(ctrPlankDiagA(0, 0, 1));
+		figPlankDiagA.addMainOI([
+			ctrPlankDiagA(0, 0, 1),
+			contourCircle(param.daE, param.daW / 2, daR)
+		]);
 		// figPlankDiagB
-		figPlankDiagB.addMainO(ctrPlankDiagB(0, 0, 1));
+		figPlankDiagB.addMainOI([
+			ctrPlankDiagB(0, 0, 1),
+			contourCircle(param.dbE, param.dbW / 2, dbR)
+		]);
 		// final figure list
 		rGeome.fig = {
 			faceEast: figEast,
@@ -1532,7 +1549,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					outName: `subpax_${designName}_plda`,
 					face: `${designName}_facePlankDiagA`,
 					extrudeMethod: EExtrude.eLinearOrtho,
-					length: param.W6,
+					length: W1b2U1,
 					rotate: [0, 0, 0],
 					translate: [0, 0, 0]
 				},
@@ -1540,7 +1557,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					outName: `subpax_${designName}_pldb`,
 					face: `${designName}_facePlankDiagB`,
 					extrudeMethod: EExtrude.eLinearOrtho,
-					length: param.W6,
+					length: W1a2V1,
 					rotate: [0, 0, 0],
 					translate: [0, 0, 0]
 				}
