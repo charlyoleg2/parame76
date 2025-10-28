@@ -395,6 +395,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const topXmid = (topD1 + topD2 / 2) * Math.cos(aMid);
 		const topYlow = (topD1 + topD2) * Math.sin(aMid);
 		const topXlow = (topD1 + topD2) * Math.cos(aMid);
+		const lp5p6 = Math.abs((topD2 / 2) * Math.sin(aMid));
 		// pl3S1, pl3N1, pl3x1, pl3x2, pl3x4
 		const pl3S1 = param.SecondPoleSouth ? param.KaSouth + param.W1a : 0;
 		const pl3N1 = param.SecondPoleNorth ? param.KaNorth + param.W1a : 0;
@@ -494,11 +495,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const pl6Q3 = pl6Q23 + pl6Qe;
 		const pl6Q4 = param.Lb + 2 * (param.U1 - pl6Q2 - pl6Q3 - param.W5bs) - pl6Qe;
 		// pldt
-		//const pldtPe = param.dtPe
-		//const pldtPe2 = pldtPe / 2;
+		const pldtPe = param.dtPe;
+		const pldtPe2 = pldtPe / 2;
 		const pldtP1 = param.dtP / Math.tan(pl6da);
 		const pldtP2 = param.dtW / Math.sin(pl6da);
-		//const pldtP3 = pldtP2 - pldtP1;
+		const pldtP3 = pldtP2 - pldtP1 + pldtPe;
 		// Extrude thickness
 		const pl4W = param.W1b - 2 * param.U1;
 		const pl5aW = pl4W + 2 * param.W5bs;
@@ -818,12 +819,24 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		function ctrPlank5b(ix: number, iy: number): tContour {
 			const l8h = Math.max(pl5Nl2 + Math.abs(pl5yM), pl5Nl + pl5Ny);
+			const lx1 = l8h + lp5p6 - param.dtQ - param.dtY - pldtP2 - pldtPe2;
+			const lx2 = l8h - lx1 - pldtP3;
 			const rCtr = contour(ix, iy + param.W5bs)
 				.addSegStrokeR(l5l, 0)
 				.addSegStrokeR(0, -param.W5bs)
-				.addSegStrokeR(l8h, 0)
+				//.addSegStrokeR(l8h, 0)
+				.addSegStrokeR(lx1, 0)
+				.addSegStrokeR(0, param.dtP)
+				.addSegStrokeR(pldtP3, 0)
+				.addSegStrokeR(0, -param.dtP)
+				.addSegStrokeR(lx2, 0)
 				.addSegStrokeR(0, l5W)
-				.addSegStrokeR(-l8h, 0)
+				//.addSegStrokeR(-l8h, 0)
+				.addSegStrokeR(-lx2, 0)
+				.addSegStrokeR(0, -param.dtP)
+				.addSegStrokeR(-pldtP3, 0)
+				.addSegStrokeR(0, param.dtP)
+				.addSegStrokeR(-lx1, 0)
 				.addSegStrokeR(0, -param.W5bs)
 				.addSegStrokeR(-l5l, 0)
 				.closeSegStroke();
