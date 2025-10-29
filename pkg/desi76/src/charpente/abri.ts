@@ -512,8 +512,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const pldaP3 = pldaP2 - pldaP1;
 		// pldb
 		const dbR = param.dbD / 2;
-		//const pldbPe = param.dbPe;
-		//const pldbPe2 = pldbPe / 2;
+		const pldbPe = param.dbPe;
+		const pldbPe2 = pldbPe / 2;
 		const pldbA = Math.atan2(param.dbX, param.dbY);
 		const pldbX = param.dbX + param.dbW / (2 * Math.cos(pldbA)) + H22 * Math.tan(pldbA);
 		const pldbP1 = param.dbP / Math.tan(pldbA);
@@ -598,15 +598,49 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const H3sc = (iP1234 === 2 || iP1234 === 3) && param.aSplit === 1 ? param.H3s : 0;
 			const H3c2 = param.H3 + H3sc;
 			const H2sc = param.bSplit === 1 ? param.H2 : 0;
-			const rCtr = contour(ix, iy)
-				.addSegStrokeR(H1H2 + H2sc, 0)
-				.addSegStrokeR(0, param.U1)
+			const H1H2sc = H1H2 + H2sc;
+			const h3Lo = param.dbY + pldbP1 - pldbPe2 + param.H2 + H2sc;
+			const h3Hi = param.dbY + pldbP1 - pldbPe2 + H2sc;
+			const h2 = pldbP3 + pldbPe;
+			const h1Lo = H1H2sc - h2 - h3Lo;
+			const h1Hi = H1H2sc - h2 - h3Hi;
+			const rCtr = contour(ix, iy);
+			if (iSideE === 2) {
+				rCtr.addSegStrokeR(H1H2sc, 0);
+			} else if (iSideE === 1) {
+				rCtr.addSegStrokeR(h1Hi, 0)
+					.addSegStrokeR(0, param.dbP)
+					.addSegStrokeR(h2, 0)
+					.addSegStrokeR(0, -param.dbP)
+					.addSegStrokeR(h3Hi, 0);
+			} else {
+				rCtr.addSegStrokeR(h1Lo, 0)
+					.addSegStrokeR(0, param.dbP)
+					.addSegStrokeR(h2, 0)
+					.addSegStrokeR(0, -param.dbP)
+					.addSegStrokeR(h3Lo, 0);
+			}
+			rCtr.addSegStrokeR(0, param.U1)
 				.addSegStrokeR(H3c2, 0)
 				.addSegStrokeR(0, W1b2U1)
 				.addSegStrokeR(-H3c2, 0)
-				.addSegStrokeR(0, param.U1)
-				.addSegStrokeR(-H1H2 - H2sc, 0)
-				.closeSegStroke();
+				.addSegStrokeR(0, param.U1);
+			if (iSideW === 2) {
+				rCtr.addSegStrokeR(-H1H2sc, 0);
+			} else if (iSideW === 1) {
+				rCtr.addSegStrokeR(-h3Hi, 0)
+					.addSegStrokeR(0, -param.dbP)
+					.addSegStrokeR(-h2, 0)
+					.addSegStrokeR(0, param.dbP)
+					.addSegStrokeR(-h1Hi, 0);
+			} else {
+				rCtr.addSegStrokeR(-h3Lo, 0)
+					.addSegStrokeR(0, -param.dbP)
+					.addSegStrokeR(-h2, 0)
+					.addSegStrokeR(0, param.dbP)
+					.addSegStrokeR(-h1Lo, 0);
+			}
+			rCtr.closeSegStroke();
 			return rCtr;
 		}
 		function ctrPlank1bPlaced(
@@ -1021,7 +1055,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figSouth
 		for (let ii = 0; ii < param.Nb1; ii++) {
 			const ix = ii * stepX;
-			const ctrSouth: tOuterInner = [ctrPlank1bPlaced(ix, 0, 0, 0, 1)];
+			const westLoHiPre = param.bSplit === 1 ? ii % 2 : 0;
+			const westLoHi = ii === 0 ? 2 : westLoHiPre;
+			const eastLoHiPre = param.bSplit === 1 ? 1 - (ii % 2) : 0;
+			const eastLoHi = ii === param.Nb1 - 1 ? 2 : eastLoHiPre;
+			const ctrSouth: tOuterInner = [ctrPlank1bPlaced(ix, 0, westLoHi, eastLoHi, 1)];
 			if (R2 > 0) {
 				ctrSouth.push(contourCircle(ix + W1a2, D2H, R2));
 				if (param.bSplit === 1) {
