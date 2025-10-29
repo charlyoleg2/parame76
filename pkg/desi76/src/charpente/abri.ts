@@ -1366,6 +1366,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const tx = param.JaSouth + param.W1a + laSouth;
 			ctrPl3EE.push(contourCircle(tx, param.H3arc + H32, R5));
 		}
+		if (daR > 0) {
+			for (const [idx, ix] of aPos.entries()) {
+				const iix = param.JaSouth + ix;
+				if (idx < Na - 1) {
+					ctrPl3EE.push(contourCircle(iix + param.W1a + pldaX, H32, daR));
+				}
+				if (idx > 0) {
+					ctrPl3EE.push(contourCircle(iix - pldaX, H32, daR));
+				}
+			}
+		}
 		figPlank3EE.addMainOI(ctrPl3EE);
 		// figPlank3S
 		const ctrPl3S: tOuterInner = [ctrPlank3S(0, 0)];
