@@ -1052,8 +1052,20 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const yy0 = ptPl6y0 - param.dtQ - param.dtY;
 			figSouth.addSecond(ctrPlankDiagTopPlaced(ix, yy0, pl6da, -1));
 		}
-		figSouth.addSecond(ctrPlankDiagBplaced(param.W1b + pldbX, param.H1 + H22, pldbA, 1));
-		figSouth.addSecond(contourCircle(param.W1b + pldbX, param.H1 + H22, dbR));
+		for (let ii = 0; ii < param.Nb1 - 1; ii++) {
+			const ix = ii * stepX + param.W1b + pldbX;
+			const yy1 = ii % 2 === 0 && param.bSplit === 1 ? param.H2 : 0;
+			const yy2 = param.H1 + H22 + yy1;
+			figSouth.addSecond(ctrPlankDiagBplaced(ix, yy2, pldbA, 1));
+			figSouth.addSecond(contourCircle(ix, yy2, dbR));
+		}
+		for (let ii = 1; ii < param.Nb1; ii++) {
+			const ix = ii * stepX - pldbX;
+			const yy1 = ii % 2 === 1 && param.bSplit === 1 ? param.H2 : 0;
+			const yy2 = param.H1 + H22 + yy1;
+			figSouth.addSecond(ctrPlankDiagBplaced(ix, yy2, pldbA, -1));
+			figSouth.addSecond(contourCircle(ix, yy2, dbR));
+		}
 		// figEast
 		for (const [idx, ix] of aPos.entries()) {
 			const ctrEast: tOuterInner = [ctrPlank1aPlaced(ix, 0, 1 + idx)];
@@ -1198,7 +1210,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (R2 > 0) {
 			for (let ii = 0; ii < param.Nb1; ii++) {
 				const ix = W1b2 + W3U1 + ii * stepX;
-				ctrPl2EE.push(contourCircle(ix, param.H2 / 2, R2));
+				ctrPl2EE.push(contourCircle(ix, H22, R2));
+			}
+		}
+		if (dbR > 0) {
+			for (let ii = 0; ii < param.Nb1 - 1; ii++) {
+				const ix = ii * stepX + W3U1 + param.W1b + pldbX;
+				ctrPl2EE.push(contourCircle(ix, H22, dbR));
+			}
+			for (let ii = 1; ii < param.Nb1; ii++) {
+				const ix = W3U1 + ii * stepX - pldbX;
+				ctrPl2EE.push(contourCircle(ix, H22, dbR));
 			}
 		}
 		figPlank2EE.addMainOI(ctrPl2EE);
@@ -1208,14 +1230,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (R2 > 0) {
 			for (let ii = 0; ii < 2; ii++) {
 				const ix = W1b2 + W3U1 + ii * stepX;
-				ctrPl2Slot.push(contourCircle(ix, param.H2 / 2, R2));
+				ctrPl2Slot.push(contourCircle(ix, H22, R2));
 			}
+		}
+		if (dbR > 0) {
+			ctrPl2Slot.push(contourCircle(W3U1 + param.W1b + pldbX, H22, dbR));
+			ctrPl2Slot.push(contourCircle(W3U1 + stepX - pldbX, H22, dbR));
 		}
 		figPlank2Slot.addMainOI(ctrPl2Slot);
 		// figPlank2Short
 		const ctrPl2Short: tOuterInner = [ctrPlank2Short(0, 0)];
 		if (R2 > 0) {
-			ctrPl2Short.push(contourCircle(W1b2 + W3U1, param.H2 / 2, R2));
+			ctrPl2Short.push(contourCircle(W1b2 + W3U1, H22, R2));
 		}
 		figPlank2Short.addMainOI(ctrPl2Short);
 		// figPlank3EE
