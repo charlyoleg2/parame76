@@ -305,7 +305,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const W1b2 = param.W1b / 2;
 		const H12c = param.H1 + param.H2 * (param.bSplit ? 2 : 1);
 		const H123c = H12c + param.H3;
-		const D2H = param.H1 + param.H2 / 2;
+		const H22 = param.H2 / 2;
+		const D2H = param.H1 + H22;
 		const D3H = H12c + param.H3 / 2;
 		const R2 = param.D2 / 2;
 		const R3 = param.D3 / 2;
@@ -326,7 +327,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const Ra = degToRad(param.Ra);
 		const pi = Math.PI;
 		const pi2 = pi / 2;
-		const pi4 = pi2 / 2;
+		//const pi4 = pi2 / 2;
 		function JaMin(iRa: number): number {
 			const rMin = H32 + W42 / Math.cos(iRa - pi2) + H32 / Math.tan(iRa);
 			return rMin;
@@ -502,12 +503,22 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const pldtP3 = pldtP2 - pldtP1 + pldtPe;
 		// plda
 		const daR = param.daD / 2;
-		//const pldaPe = param.dtPe;
+		//const pldaPe = param.daPe;
 		//const pldaPe2 = pldaPe / 2;
 		const pldaA = Math.atan2(param.daX, param.daY);
 		const pldaX = param.daX + param.daW / (2 * Math.cos(pldaA)) + H32 * Math.tan(pldaA);
+		const pldaP1 = param.daP / Math.tan(pldaA);
+		const pldaP2 = param.daW / Math.sin(pldaA);
+		const pldaP3 = pldaP2 - pldaP1;
 		// pldb
 		const dbR = param.dbD / 2;
+		//const pldbPe = param.dbPe;
+		//const pldbPe2 = pldbPe / 2;
+		const pldbA = Math.atan2(param.dbX, param.dbY);
+		const pldbX = param.dbX + param.dbW / (2 * Math.cos(pldbA)) + H22 * Math.tan(pldbA);
+		const pldbP1 = param.dbP / Math.tan(pldbA);
+		const pldbP2 = param.dbW / Math.sin(pldbA);
+		const pldbP3 = pldbP2 - pldbP1;
 		// Extrude thickness
 		const pl4W = param.W1b - 2 * param.U1;
 		const pl5aW = pl4W + 2 * param.W5bs;
@@ -955,10 +966,15 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const pdtx3 = (param.daW / 2) * Math.tan(pldaA);
 			const pdtx4 = Math.sqrt(param.daX ** 2 + param.daY ** 2);
 			const pdtx5 = pdtx2 + pdtx3 + pdtx4;
+			const pdtx6 = param.daW / Math.tan(pldaA);
+			const pdtx7 = pdtx5 + pdtx6;
 			const rCtr = contour(ix, iy + pdty1)
 				.addSegStrokeR(pdtx5, 0)
-				.addSegStrokeR(0, ik * param.daW)
-				.addSegStrokeR(-pdtx5, 0)
+				.addSegStrokeRP(ik * pldaA, pldaP1)
+				.addSegStrokeRP(ik * (pldaA - pi2), param.daP)
+				.addSegStrokeRP(ik * pldaA, pldaP3)
+				.addSegStrokeRP(ik * (pldaA + pi2), param.daP)
+				.addSegStrokeR(-pdtx7, 0)
 				.closeSegStroke();
 			return rCtr;
 		}
@@ -968,19 +984,26 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			return rCtr;
 		}
 		function ctrPlankDiagB(ix: number, iy: number, ik: number): tContour {
-			const rCtr = contour(ix, iy)
-				.addSegStrokeR(l8N1 * ik, 0)
-				//.addSegStrokeR(l8N2, param.W8)
-				.addSegStrokeRP(RaNorth, l8N32)
-				.addSegStrokeRP(RaNorth - pi2, param.P5)
-				.addSegStrokeRP(RaNorth, l8N33)
-				.addSegStrokeRP(RaNorth + pi2, param.P5)
-				.addSegStrokeR(-l8N1 - l8N2, 0)
+			const pdty1 = ik === 1 ? 0 : param.dbW;
+			const pdtx2 = param.dbE + param.H2 / (2 * Math.cos(pldbA));
+			const pdtx3 = (param.dbW / 2) * Math.tan(pldbA);
+			const pdtx4 = Math.sqrt(param.dbX ** 2 + param.dbY ** 2);
+			const pdtx5 = pdtx2 + pdtx3 + pdtx4;
+			const pdtx6 = param.dbW / Math.tan(pldbA);
+			const pdtx7 = pdtx5 + pdtx6;
+			const rCtr = contour(ix, iy + pdty1)
+				.addSegStrokeR(pdtx5, 0)
+				.addSegStrokeRP(ik * pldbA, pldbP1)
+				.addSegStrokeRP(ik * (pldbA - pi2), param.dbP)
+				.addSegStrokeRP(ik * pldbA, pldbP3)
+				.addSegStrokeRP(ik * (pldbA + pi2), param.dbP)
+				.addSegStrokeR(-pdtx7, 0)
 				.closeSegStroke();
 			return rCtr;
 		}
 		function ctrPlankDiagBplaced(ix: number, iy: number, ia: number, ik: number): tContour {
-			const rCtr = ctrPlankDiagB(ix - l8N1, iy, ik).rotate(ix, iy, pi + ia);
+			const aa0 = -pi2 - ik * ia;
+			const rCtr = ctrPlankDiagB(ix - param.dbE, iy - param.dbW / 2, ik).rotate(ix, iy, aa0);
 			return rCtr;
 		}
 		// figBase
@@ -1029,7 +1052,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const yy0 = ptPl6y0 - param.dtQ - param.dtY;
 			figSouth.addSecond(ctrPlankDiagTopPlaced(ix, yy0, pl6da, -1));
 		}
-		figSouth.addSecond(ctrPlankDiagBplaced(0, 0, pi4, 1));
+		figSouth.addSecond(ctrPlankDiagBplaced(param.W1b + pldbX, param.H1 + H22, pldbA, 1));
+		figSouth.addSecond(contourCircle(param.W1b + pldbX, param.H1 + H22, dbR));
 		// figEast
 		for (const [idx, ix] of aPos.entries()) {
 			const ctrEast: tOuterInner = [ctrPlank1aPlaced(ix, 0, 1 + idx)];
