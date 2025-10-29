@@ -1382,37 +1382,52 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const ctrPl3S: tOuterInner = [ctrPlank3S(0, 0)];
 		if (R3 > 0) {
 			let ix = param.JaSouth + W1a2;
-			ctrPl3S.push(contourCircle(ix, param.H3 / 2, R3));
+			ctrPl3S.push(contourCircle(ix, H32, R3));
 			ix += param.KaSouth + param.W1a;
-			ctrPl3S.push(contourCircle(ix, param.H3 / 2, R3));
+			ctrPl3S.push(contourCircle(ix, H32, R3));
 		}
 		if (R4 > 0) {
 			ctrPl3S.push(contourCircle(H32, H32, R4));
+		}
+		if (daR > 0) {
+			const xx0 = param.JaSouth + param.W1a;
+			ctrPl3S.push(contourCircle(xx0 + pldaX, H32, daR));
+			ctrPl3S.push(contourCircle(xx0 + param.KaSouth - pldaX, H32, daR));
 		}
 		figPlank3S.addMainOI(ctrPl3S);
 		// figPlank3M
 		const ctrPl3M: tOuterInner = [ctrPlank3M(0, 0)];
 		if (R3 > 0) {
 			let ix = W1a2 + W2V1;
-			ctrPl3M.push(contourCircle(ix, param.H3 / 2, R3));
+			ctrPl3M.push(contourCircle(ix, H32, R3));
 			ix += param.La + param.W1a;
-			ctrPl3M.push(contourCircle(ix, param.H3 / 2, R3));
+			ctrPl3M.push(contourCircle(ix, H32, R3));
 		}
 		if (R5 > 0) {
 			const tx = param.W2 + W1aV1 + laSouth - pl3S1;
 			ctrPl3M.push(contourCircle(tx, param.H3arc + H32, R5));
+		}
+		if (daR > 0) {
+			const xx0 = W2V1 + param.W1a;
+			ctrPl3M.push(contourCircle(xx0 + pldaX, H32, daR));
+			ctrPl3M.push(contourCircle(xx0 + param.La - pldaX, H32, daR));
 		}
 		figPlank3M.addMainOI(ctrPl3M);
 		// figPlank3N
 		const ctrPl3N: tOuterInner = [ctrPlank3N(0, 0)];
 		if (R3 > 0) {
 			let ix = W1a2 + W2V1;
-			ctrPl3N.push(contourCircle(ix, param.H3 / 2, R3));
+			ctrPl3N.push(contourCircle(ix, H32, R3));
 			ix += param.KaNorth + param.W1a;
-			ctrPl3N.push(contourCircle(ix, param.H3 / 2, R3));
+			ctrPl3N.push(contourCircle(ix, H32, R3));
 		}
 		if (R4 > 0) {
 			ctrPl3N.push(contourCircle(pl3N - H32, H32, R4));
+		}
+		if (daR > 0) {
+			const xx0 = W2V1 + param.W1a;
+			ctrPl3N.push(contourCircle(xx0 + pldaX, H32, daR));
+			ctrPl3N.push(contourCircle(xx0 + param.KaNorth - pldaX, H32, daR));
 		}
 		figPlank3N.addMainOI(ctrPl3N);
 		// figPlank4S
