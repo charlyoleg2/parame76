@@ -1176,8 +1176,20 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		} else {
 			figEast.addSecond(ctrPlank3EE(pl3Sx0, H1H2 + H2c));
 		}
-		figEast.addSecond(ctrPlankDiagAplaced(param.W1a + pldaX, H1H2 + H32, pldaA, 1));
-		figEast.addSecond(contourCircle(param.W1a + pldaX, H1H2 + H32, daR));
+		for (const [idx, ix] of aPos.entries()) {
+			const H1H2c = H1H2 + H2c + H32;
+			const H3ac = param.aSplit === 1 ? param.H3 : 0;
+			if (idx < Na - 1) {
+				const H1H2cc = idx === 1 ? H1H2c + H3ac : H1H2c;
+				figEast.addSecond(ctrPlankDiagAplaced(ix + param.W1a + pldaX, H1H2cc, pldaA, 1));
+				figEast.addSecond(contourCircle(ix + param.W1a + pldaX, H1H2cc, daR));
+			}
+			if (idx > 0) {
+				const H1H2cc = idx === 2 ? H1H2c + H3ac : H1H2c;
+				figEast.addSecond(ctrPlankDiagAplaced(ix - pldaX, H1H2cc, pldaA, -1));
+				figEast.addSecond(contourCircle(ix - pldaX, H1H2cc, daR));
+			}
+		}
 		const p0Sx = -param.JaSouth + H32;
 		const p0Sy = D3H;
 		figEast.addSecond(contourCircle(p0Sx, p0Sy, R4));
