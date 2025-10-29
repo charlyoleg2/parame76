@@ -503,8 +503,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const pldtP3 = pldtP2 - pldtP1 + pldtPe;
 		// plda
 		const daR = param.daD / 2;
-		//const pldaPe = param.daPe;
-		//const pldaPe2 = pldaPe / 2;
+		const pldaPe = param.daPe;
+		const pldaPe2 = pldaPe / 2;
 		const pldaA = Math.atan2(param.daX, param.daY);
 		const pldaX = param.daX + param.daW / (2 * Math.cos(pldaA)) + H32 * Math.tan(pldaA);
 		const pldaP1 = param.daP / Math.tan(pldaA);
@@ -572,16 +572,60 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// sub-functions
 		function ctrPlank1a(ix: number, iy: number, iP1234: number): tContour {
 			const H3sc = (iP1234 === 2 || iP1234 === 3) && param.aSplit === 1 ? param.H3s : 0;
-			const H2H3c = H2H3 + (param.bSplit === 1 ? param.H2 : 0);
-			const rCtr = contour(ix, iy)
-				.addSegStrokeR(param.H1, 0)
-				.addSegStrokeR(0, param.V1)
+			const H2s = param.bSplit === 1 ? param.H2 : 0;
+			const H2H3c = H2H3 + H2s;
+			let sideN = iP1234 === 4 ? 2 : 0;
+			let sideS = iP1234 === 1 ? 2 : 0;
+			if (param.aSplit === 1 && iP1234 === 2) {
+				sideN = 1;
+			}
+			if (param.aSplit === 1 && iP1234 === 3) {
+				sideS = 1;
+			}
+			const hh0 = param.H2 + H2s;
+			const hh1 = hh0 + (param.aSplit === 1 ? param.H3 : 0);
+			const h3Lo = param.daY + pldaP1 - pldaPe2 - hh0;
+			const h3Hi = param.daY + pldaP1 - pldaPe2 - hh1;
+			const h2 = pldaP3 + pldaPe;
+			const h1Lo = param.H1 - h2 - h3Lo;
+			const h1Hi = param.H1 - h2 - h3Hi;
+			const rCtr = contour(ix, iy);
+			if (sideN === 2) {
+				rCtr.addSegStrokeR(param.H1, 0);
+			} else if (sideN === 1) {
+				rCtr.addSegStrokeR(h1Hi, 0)
+					.addSegStrokeR(0, param.daP)
+					.addSegStrokeR(h2, 0)
+					.addSegStrokeR(0, -param.daP)
+					.addSegStrokeR(h3Hi, 0);
+			} else {
+				rCtr.addSegStrokeR(h1Lo, 0)
+					.addSegStrokeR(0, param.daP)
+					.addSegStrokeR(h2, 0)
+					.addSegStrokeR(0, -param.daP)
+					.addSegStrokeR(h3Lo, 0);
+			}
+			rCtr.addSegStrokeR(0, param.V1)
 				.addSegStrokeR(H2H3c + H3sc, 0)
 				.addSegStrokeR(0, W1a2V1)
 				.addSegStrokeR(-H2H3c - H3sc, 0)
-				.addSegStrokeR(0, param.V1)
-				.addSegStrokeR(-param.H1, 0)
-				.closeSegStroke();
+				.addSegStrokeR(0, param.V1);
+			if (sideS === 2) {
+				rCtr.addSegStrokeR(-param.H1, 0);
+			} else if (sideS === 1) {
+				rCtr.addSegStrokeR(-h3Hi, 0)
+					.addSegStrokeR(0, -param.daP)
+					.addSegStrokeR(-h2, 0)
+					.addSegStrokeR(0, param.daP)
+					.addSegStrokeR(-h1Hi, 0);
+			} else {
+				rCtr.addSegStrokeR(-h3Lo, 0)
+					.addSegStrokeR(0, -param.daP)
+					.addSegStrokeR(-h2, 0)
+					.addSegStrokeR(0, param.daP)
+					.addSegStrokeR(-h1Lo, 0);
+			}
+			rCtr.closeSegStroke();
 			return rCtr;
 		}
 		function ctrPlank1aPlaced(ix: number, iy: number, iP1234: number): tContour {
@@ -1106,7 +1150,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// figEast
 		for (const [idx, ix] of aPos.entries()) {
-			const ctrEast: tOuterInner = [ctrPlank1aPlaced(ix, 0, 1 + idx)];
+			let p1234 = idx + 1 === Na ? 4 : 1 + idx;
+			if (Na === 3 && param.SecondPoleNorth === 1 && idx === 1) {
+				p1234 = 3;
+			}
+			const ctrEast: tOuterInner = [ctrPlank1aPlaced(ix, 0, p1234)];
 			if (R3 > 0) {
 				ctrEast.push(contourCircle(ix + W1a2, D3H, R3));
 				if ((idx === 1 || idx === 2) && param.aSplit === 1) {
