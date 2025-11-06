@@ -485,16 +485,16 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// pl6b
 		const pl6Qe = param.dtQe;
 		const pl6Qe2 = pl6Qe / 2;
-		const pl6bL = lb + 2 * (param.W5bs + param.dtF - param.U1);
+		const pl6bL = lb + 2 * (param.dtF - param.U1);
 		const pl6bH = param.dtQ - topYmid;
 		const pl6da = Math.atan2(param.dtX, param.dtY);
 		const pl6Q21 = param.dtQ * Math.tan(pl6da);
 		const pl6Q22 = param.dtW / Math.cos(pl6da);
 		const pl6Q23 = pl6Q22 - pl6Q21;
-		const pl6Q1 = l5W + pl6Qe;
-		const pl6Q2 = param.dtX + pl6Q21 - pl6Qe;
+		const pl6Q1 = param.W1b - 2 * param.U1 + pl6Qe;
+		const pl6Q2 = param.dtX + param.W5bs + pl6Q21 - pl6Qe;
 		const pl6Q3 = pl6Q23 + pl6Qe;
-		const pl6Q4 = param.Lb + 2 * (param.U1 - pl6Q2 - pl6Q3 - param.W5bs) - pl6Qe;
+		const pl6Q4 = param.Lb + 2 * (param.U1 - pl6Q2 - pl6Q3) - pl6Qe;
 		// pldt
 		const pldtPe = param.dtPe;
 		const pldtPe2 = pldtPe / 2;
@@ -1123,7 +1123,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		} else {
 			figSouth.addSecond(ctrPlank2EE(-W3U1, param.H1));
 		}
-		figSouth.addSecond(ctrPlank6b(param.U1 - param.W5bs - param.dtF, ptPl6y0 - param.dtQ));
+		figSouth.addSecond(ctrPlank6b(param.U1 - param.dtF, ptPl6y0 - param.dtQ));
 		for (let ii = 0; ii < param.Nb1 - 1; ii++) {
 			const ix = ii * stepX + W1b2 + l5W / 2;
 			const yy0 = ptPl6y0 - param.dtQ - param.dtY;
