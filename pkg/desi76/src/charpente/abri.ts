@@ -915,7 +915,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			return rCtr;
 		}
 		function ctrPlank5b(ix: number, iy: number): tContour {
-			const l8h = Math.max(pl5Nl2 + Math.abs(pl5yM), pl5Nl + pl5Ny);
+			//const l8h = Math.max(pl5Nl2 + Math.abs(pl5yM), pl5Nl + pl5Ny);
+			const l8h = pl5Nl + pl5Ny;
 			const lx1 = l8h + lp5p6 - param.dtQ - param.dtY - pldtP2 - pldtPe2;
 			const lx2 = l8h - lx1 - pldtP3;
 			const rCtr = contour(ix, iy + param.W5bs)
