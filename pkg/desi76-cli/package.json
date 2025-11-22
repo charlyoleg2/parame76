@@ -57,7 +57,7 @@
 		"clean": "rimraf build dist node_modules"
 	},
 	"dependencies": {
-		"desi76": "^0.1.8",
+		"desi76": "^0.1.10",
 		"geomcli": "^1.0.26",
 		"geometrix": "^1.0.26"
 	},
@@ -69,10 +69,10 @@
 		"eslint-config-prettier": "^10.1.8",
 		"npm-run-all2": "^8.0.4",
 		"prettier": "^3.6.2",
-		"rimraf": "^6.1.0",
-		"tsup": "^8.5.0",
+		"rimraf": "^6.1.2",
+		"tsup": "^8.5.1",
 		"typescript": "^5.9.3",
-		"typescript-eslint": "^8.46.3",
-		"vitest": "^4.0.8"
+		"typescript-eslint": "^8.47.0",
+		"vitest": "^4.0.13"
 	}
 }
