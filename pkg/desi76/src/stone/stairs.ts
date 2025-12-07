@@ -53,6 +53,7 @@ const pDef: tParamDef = {
 		pDropdown('spiral', ['ExtInt', 'Exterior', 'Interior']),
 		pDropdown('border', ['arc', 'straight']),
 		pNumber('H1', 'mm', 200, 10, 2000, 1),
+		pNumber('H1b', 'mm', 100, 0, 2000, 1),
 		pNumber('Wc', 'mm', 200, 10, 2000, 1),
 		pNumber('Nc', 'column', 6, 0, 100, 1)
 	],
@@ -67,6 +68,7 @@ const pDef: tParamDef = {
 		spiral: 'stairs_top.svg',
 		border: 'stairs_top.svg',
 		H1: 'stairs_height.svg',
+		H1b: 'stairs_height.svg',
 		Wc: 'stairs_top.svg',
 		Nc: 'stairs_height.svg'
 	},
@@ -269,13 +271,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const iStr = `Stair${idx.toString().padStart(4, '0')}`;
 			const iFace = `face${iStr}`;
 			figListStair[iFace] = iFig;
+			const H1plus = idx > 0 ? param.H1b : 0;
 			listVol.push({
 				outName: `subpax_${designName}_${iStr}`,
 				face: `${designName}_${iFace}`,
 				extrudeMethod: EExtrude.eLinearOrtho,
-				length: param.H1,
+				length: param.H1 + H1plus,
 				rotate: [0, 0, 0],
-				translate: [0, 0, idx * param.H1]
+				translate: [0, 0, idx * param.H1 - H1plus]
 			});
 			listVolName.push(`subpax_${designName}_${iStr}`);
 		}
