@@ -47,6 +47,8 @@ const pDef: tParamDef = {
 	partName: 'cuisine',
 	params: [
 		//pNumber(name, unit, init, min, max, step)
+		pNumber('CAX', 'cm', 100, 1, 200, 1),
+		pSectionSeparator('Ground'),
 		pNumber('AX', 'cm', 274, 200, 600, 1),
 		pNumber('AY', 'cm', 210, 100, 500, 1),
 		pNumber('BY', 'cm', 130, 50, 500, 1),
@@ -72,6 +74,7 @@ const pDef: tParamDef = {
 		pNumber('nRW', 'cm', 200, 100, 500, 1)
 	],
 	paramSvg: {
+		CAX: 'cuisine_elements.svg',
 		AX: 'cuisine_top.svg',
 		AY: 'cuisine_top.svg',
 		BY: 'cuisine_top.svg',

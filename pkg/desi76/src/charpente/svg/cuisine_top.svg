@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
-     inkscape:zoom="0.78484147"
+     inkscape:zoom="1.5696829"
      inkscape:cx="396.25837"
-     inkscape:cy="561.25984"
+     inkscape:cy="1223.4955"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="0"
@@ -255,17 +255,20 @@
        width="131.13847"
        height="101.75458"
        x="8.090806"
-       y="26.855516" />
+       y="26.855516"
+       inkscape:export-filename="cuisine_top.svg"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
     <path
-       style="fill:none;stroke:#cccccc;stroke-width:0.529167;stroke-linejoin:round"
+       style="fill:none;stroke:#cccccc;stroke-width:0.264583;stroke-linejoin:round"
        d="m 98.279937,104.54665 v 17.93654"
        id="path10-8-1-9" />
     <path
-       style="fill:none;stroke:#cccccc;stroke-width:0.529167;stroke-linejoin:round"
+       style="fill:none;stroke:#cccccc;stroke-width:0.264583;stroke-linejoin:round"
        d="m 115.89887,104.54665 v 17.93654"
        id="path10-8-1" />
     <path
-       style="fill:none;stroke:#cccccc;stroke-width:0.529167;stroke-linejoin:round"
+       style="fill:none;stroke:#cccccc;stroke-width:0.264583;stroke-linejoin:round"
        d="m 115.89887,63.536224 17.93654,-3e-6"
        id="path10" />
     <rect
@@ -320,7 +323,7 @@
        y="107.96137"
        transform="rotate(-90)" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.529167;stroke-linejoin:round;marker-start:url(#ArrowWide);marker-end:url(#ArrowWide)"
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide);marker-end:url(#ArrowWide)"
        d="M 21.310325,104.54665 21.178033,75.442489"
        id="path5" />
     <text
@@ -336,9 +339,9 @@
 </tspan><tspan
          x="157.96094"
          y="610.14855"
-         id="tspan3">210</tspan></text>
+         id="tspan2">210</tspan></text>
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.529167;stroke-linejoin:round;marker-start:url(#ArrowWide-6);marker-end:url(#ArrowWide-6)"
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide-6);marker-end:url(#ArrowWide-6)"
        d="M 22.368659,74.664576 22.236367,54.655436"
        id="path5-8" />
     <text
@@ -350,13 +353,13 @@
        y="0"><tspan
          x="238.76562"
          y="637.29308"
-         id="tspan4">BY
+         id="tspan3">BY
 </tspan><tspan
          x="233.96484"
          y="657.29308"
-         id="tspan5">130</tspan></text>
+         id="tspan4">130</tspan></text>
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.529167;stroke-linejoin:round;marker-start:url(#ArrowWide);marker-end:url(#ArrowWide)"
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide);marker-end:url(#ArrowWide)"
        d="m 26.072828,107.72167 h 34.26354"
        id="path7" />
     <text
@@ -368,13 +371,13 @@
        y="0"><tspan
          x="158.89062"
          y="489.4923"
-         id="tspan6">AX
+         id="tspan5">AX
 </tspan><tspan
          x="154.08984"
          y="509.4923"
-         id="tspan7">274</tspan></text>
+         id="tspan6">274</tspan></text>
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.529167;stroke-linejoin:round;marker-start:url(#ArrowWide-2);marker-end:url(#ArrowWide-2)"
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide-2);marker-end:url(#ArrowWide-2)"
        d="M 60.336372,109.83835 H 115.89888"
        id="path7-7" />
     <text
@@ -386,13 +389,13 @@
        y="0"><tspan
          x="336.06641"
          y="462.91222"
-         id="tspan8">CX
+         id="tspan7">CX
 </tspan><tspan
          x="331.26562"
          y="482.91222"
-         id="tspan12">405</tspan></text>
+         id="tspan8">405</tspan></text>
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.529167;stroke-linejoin:round;marker-start:url(#ArrowWide);marker-end:url(#ArrowWide)"
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide);marker-end:url(#ArrowWide)"
        d="M 119.07389,51.100807 V 63.536223"
        id="path9" />
     <text
@@ -404,17 +407,17 @@
        y="0"><tspan
          x="303.50293"
          y="662.7755"
-         id="tspan16">WW
+         id="tspan9">WW
 </tspan><tspan
          x="303.50293"
          y="682.7755"
-         id="tspan17">94</tspan></text>
+         id="tspan10">94</tspan></text>
     <path
-       style="fill:none;stroke:#cccccc;stroke-width:0.529167;stroke-linejoin:round"
+       style="fill:none;stroke:#cccccc;stroke-width:0.264583;stroke-linejoin:round"
        d="m 115.89887,104.54665 h 17.93654"
        id="path10-8" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.529167;stroke-linejoin:round;marker-start:url(#ArrowWide);marker-end:url(#ArrowWide-2)"
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide);marker-end:url(#ArrowWide-2)"
        d="M 123.78118,63.710289 V 104.61447"
        id="path11" />
     <text
@@ -424,13 +427,13 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect11);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="281.58594"
          y="606.713"
-         id="tspan18">WPY
+         id="tspan11">WPY
 </tspan><tspan
          x="281.58594"
          y="626.713"
-         id="tspan19">270</tspan></text>
+         id="tspan12">270</tspan></text>
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.529167;stroke-linejoin:round;marker-start:url(#ArrowWide-8);marker-end:url(#ArrowWide-8)"
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide-8);marker-end:url(#ArrowWide-8)"
        d="M 98.751348,114.91897 H 115.4071"
        id="path7-3" />
     <text
@@ -440,13 +443,13 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect11-0);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="281.58594"
          y="606.713"
-         id="tspan20">WPX
+         id="tspan13">WPX
 </tspan><tspan
          x="281.58594"
          y="626.713"
-         id="tspan21">130</tspan></text>
+         id="tspan14">130</tspan></text>
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.529167;stroke-linejoin:round;marker-start:url(#marker13);marker-end:url(#marker13)"
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#marker13);marker-end:url(#marker13)"
        d="m 107.96137,47.925805 h 7.9375"
        id="path12" />
     <text
@@ -458,11 +461,11 @@
        y="0"><tspan
          x="273.76562"
          y="567.21496"
-         id="tspan22">WH
+         id="tspan15">WH
 </tspan><tspan
          x="273.76562"
          y="587.21496"
-         id="tspan23">90</tspan></text>
+         id="tspan16">90</tspan></text>
     <rect
        style="fill:none;stroke:#000080;stroke-width:0.529167;stroke-linejoin:round"
        id="rect5-4"
@@ -471,23 +474,23 @@
        x="37.389961"
        y="75.44249" />
     <path
-       style="fill:none;stroke:#cccccc;stroke-width:0.529167;stroke-linejoin:round"
+       style="fill:none;stroke:#cccccc;stroke-width:0.264583;stroke-linejoin:round"
        d="M 37.389961,42.335689 V 75.44249"
        id="path10-8-1-93" />
     <path
-       style="fill:none;stroke:#cccccc;stroke-width:0.529167;stroke-linejoin:round"
+       style="fill:none;stroke:#cccccc;stroke-width:0.264583;stroke-linejoin:round"
        d="M 46.77027,42.335689 V 75.44249"
        id="path10-8-1-93-5" />
     <path
-       style="fill:none;stroke:#cccccc;stroke-width:0.529167;stroke-linejoin:round"
+       style="fill:none;stroke:#cccccc;stroke-width:0.264583;stroke-linejoin:round"
        d="M 60.336369,42.335689 V 75.44249"
        id="path10-8-1-93-3" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.529167;stroke-linejoin:round;marker-start:url(#ArrowWide-8-8);marker-end:url(#ArrowWide-8-8)"
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide-8-8);marker-end:url(#ArrowWide-8-8)"
        d="m 37.608113,42.335689 h 8.64549"
        id="path7-3-3" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.529167;stroke-linejoin:round;marker-start:url(#ArrowWide-8-8-9);marker-end:url(#ArrowWide-8-8-9)"
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide-8-8-9);marker-end:url(#ArrowWide-8-8-9)"
        d="M 47.649684,47.925805 H 59.565316"
        id="path7-3-3-2" />
     <text
@@ -497,11 +500,11 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect14);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="526.85742"
          y="511.78918"
-         id="tspan24">DW
+         id="tspan17">DW
 </tspan><tspan
          x="526.85742"
          y="531.78918"
-         id="tspan25">76</tspan></text>
+         id="tspan18">76</tspan></text>
     <text
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,-38.431328,-106.05451)"
@@ -509,10 +512,10 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect15);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="333.04297"
          y="555.10949"
-         id="tspan26">DPX
+         id="tspan19">DPX
 </tspan><tspan
          x="333.04297"
          y="575.10949"
-         id="tspan27">108</tspan></text>
+         id="tspan20">108</tspan></text>
   </g>
 </svg>
