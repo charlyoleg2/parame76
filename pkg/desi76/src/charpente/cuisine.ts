@@ -32,7 +32,7 @@ import {
 	//pointCoord,
 	ffix,
 	pNumber,
-	//pCheckbox,
+	pCheckbox,
 	//pDropdown,
 	pSectionSeparator,
 	initGeom,
@@ -47,7 +47,21 @@ const pDef: tParamDef = {
 	partName: 'cuisine',
 	params: [
 		//pNumber(name, unit, init, min, max, step)
-		pNumber('CAX', 'cm', 100, 1, 200, 1),
+		pNumber('FB', 'cm', 20, 1, 100, 1),
+		pNumber('FX', 'cm', 65, 1, 200, 1),
+		pNumber('FY', 'cm', 65, 1, 200, 1),
+		pNumber('FH', 'cm', 200, 100, 300, 1),
+		pNumber('VX', 'cm', 180, 50, 300, 1),
+		pNumber('VY', 'cm', 90, 50, 300, 1),
+		pNumber('CAX', 'cm', 80, 1, 200, 1),
+		pNumber('PTX', 'cm', 60, 20, 200, 1),
+		pNumber('PTH', 'cm', 91, 50, 200, 1),
+		pNumber('S1', 'cm', 30, 0, 200, 1),
+		pNumber('S2', 'cm', 10, 0, 200, 1),
+		pNumber('BarX', 'cm', 120, 10, 300, 1),
+		pNumber('BarY', 'cm', 40, 10, 300, 1),
+		pNumber('BarH', 'cm', 120, 10, 300, 1),
+		pCheckbox('BarEn', true),
 		pSectionSeparator('Ground'),
 		pNumber('AX', 'cm', 274, 200, 600, 1),
 		pNumber('AY', 'cm', 210, 100, 500, 1),
@@ -74,7 +88,21 @@ const pDef: tParamDef = {
 		pNumber('nRW', 'cm', 200, 100, 500, 1)
 	],
 	paramSvg: {
+		FB: 'cuisine_elements.svg',
+		FX: 'cuisine_elements.svg',
+		FY: 'cuisine_elements.svg',
+		FH: 'cuisine_elements.svg',
+		VX: 'cuisine_elements.svg',
+		VY: 'cuisine_elements.svg',
 		CAX: 'cuisine_elements.svg',
+		PTX: 'cuisine_elements.svg',
+		PTH: 'cuisine_elements.svg',
+		S1: 'cuisine_elements.svg',
+		S2: 'cuisine_elements.svg',
+		BarX: 'cuisine_elements.svg',
+		BarY: 'cuisine_elements.svg',
+		BarH: 'cuisine_elements.svg',
+		BarEn: 'cuisine_elements.svg',
 		AX: 'cuisine_top.svg',
 		AY: 'cuisine_top.svg',
 		BY: 'cuisine_top.svg',
@@ -104,6 +132,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const figRoofEast = figure();
 	const figRoofNorth = figure();
 	const figWindow = figure();
+	const figFrigo = figure();
+	const figVaissCagi = figure();
+	const figCuis = figure();
+	const figBar = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -121,6 +153,16 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const wPx1 = (param.AX - param.WW) / 2;
 		const wPx2 = lX - param.WW - param.WPX;
 		const wPy3 = param.WPY;
+		const cagiLen = param.WPY - param.S1;
+		const cuisLen = cagiLen - param.S2;
+		const cagiH = param.nMH + (param.CAX + param.MW) * Math.tan(aRn);
+		const vaissH = param.eMH + param.VY * Math.tan(aRe);
+		const distFrigVaiss = param.AY - param.FY - param.VY;
+		const cuisW = param.CAX + param.MW + param.PTX;
+		const distFrigCuis = param.CX - param.FB - param.FX - cuisW;
+		const distVaisCuis = param.CX - param.VX - cuisW;
+		const salonN = 310;
+		const barThickness = 10;
 		const pi2 = Math.PI / 2;
 		// step-5 : checks on the parameter values
 		if (lAZx < 0) {
@@ -130,12 +172,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `lX ${ffix(lX)}  lY ${ffix(lY)}\n`;
 		rGeome.logstr += `East side: roof-angle ${ffix(radToDeg(aRe))}, lR2e ${ffix(lR2e)}\n`;
 		rGeome.logstr += `North side: roof-angle ${ffix(radToDeg(aRn))}, lR2n ${ffix(lR2n)}\n`;
+		rGeome.logstr += `cagiLen ${ffix(cagiLen)}  cuisLen ${ffix(cuisLen)}\n`;
+		rGeome.logstr += `cagiH ${ffix(cagiH)}  vaissH ${ffix(vaissH)}\n`;
+		rGeome.logstr += `distFrigVaiss ${ffix(distFrigVaiss)}  distFrigCuis ${ffix(distFrigCuis)} distVaisCuis ${ffix(distVaisCuis)}\n`;
 		// step-7 : drawing of the figures
 		// fig1
 		const ctrBase = contour(0, 0)
 			.addSegStrokeR(lX, 0)
-			.addSegStrokeR(0, lY)
-			.addSegStrokeR(-lX, 0)
+			.addSegStrokeR(0, lY + param.MW)
+			.addSegStrokeR(-salonN, 0)
+			.addSegStrokeR(0, -param.MW)
+			.addSegStrokeR(salonN - lX, 0)
 			.closeSegStroke();
 		const ctrArbeitZimmerS = contour(0, param.AY - param.MW)
 			.addSegStrokeR(lAZx, 0)
@@ -193,6 +240,30 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.closeSegStroke();
 		figRoofNorth.addMainO(ctrRn);
 		figWindow.addMainO(ctrRectangle(0, param.WPH, param.WW, param.WH));
+		figFrigo.addMainO(
+			ctrRectangle(param.AX + param.MW + param.FB, param.AY - param.FY, param.FX, param.FY)
+		);
+		figVaissCagi.addMainO(ctrRectangle(param.AX + param.MW, 0, param.VX, param.VY));
+		figVaissCagi.addMainO(ctrRectangle(lX - param.CAX - param.MW, 0, param.MW, cagiLen));
+		figCuis.addMainO(
+			ctrRectangle(lX - param.CAX - param.MW - param.PTX, 0, param.PTX, cuisLen)
+		);
+		figTop.mergeFigure(figFrigo, true);
+		figTop.mergeFigure(figVaissCagi, true);
+		figTop.mergeFigure(figCuis, true);
+		// Bar
+		const ctrBar = contour(lX - param.CAX - param.MW, cuisLen)
+			.addSegStrokeR(0, param.BarY)
+			.addSegStrokeR(-param.BarX + param.BarY / 2, 0)
+			.addPointR(-param.BarY / 2, -param.BarY / 2)
+			.addSegArc3(Math.PI, true)
+			.addPointR(param.BarY / 2, -param.BarY / 2)
+			.addSegArc3(-Math.PI, false)
+			.closeSegStroke();
+		figBar.addMainO(ctrBar);
+		if (param.BarEn) {
+			figTop.mergeFigure(figBar, true);
+		}
 		// final figure list
 		rGeome.fig = {
 			faceTop: figTop,
@@ -200,10 +271,25 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			faceTopSup: figTopSupDoor,
 			faceRoofEast: figRoofEast,
 			faceRoofNorth: figRoofNorth,
-			faceWindow: figWindow
+			faceWindow: figWindow,
+			faceFrigo: figFrigo,
+			faceVaissCagi: figVaissCagi,
+			faceCuis: figCuis,
+			faceBar: figBar
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
+		const lCuis = [
+			`subpax_${designName}_top`,
+			`subpax_${designName}_azSub`,
+			`subpax_${designName}_azSup`,
+			`subpax_${designName}_frigo`,
+			`subpax_${designName}_vaissCagi`,
+			`subpax_${designName}_cuis`
+		];
+		if (param.BarEn) {
+			lCuis.push(`subpax_${designName}_bar`);
+		}
 		rGeome.vol = {
 			extrudes: [
 				{
@@ -269,17 +355,45 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					length: lWindowCut,
 					rotate: [pi2, 0, pi2],
 					translate: [lX + param.MW - lWindowCut, wPy3, 0]
+				},
+				{
+					outName: `subpax_${designName}_frigo`,
+					face: `${designName}_faceFrigo`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.FH,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_vaissCagi`,
+					face: `${designName}_faceVaissCagi`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.AMH,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_cuis`,
+					face: `${designName}_faceCuis`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.PTH,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_bar`,
+					face: `${designName}_faceBar`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: barThickness,
+					rotate: [0, 0, 0],
+					translate: [0, 0, param.BarH - barThickness]
 				}
 			],
 			volumes: [
 				{
 					outName: `ipax_${designName}_add1`,
 					boolMethod: EBVolume.eUnion,
-					inList: [
-						`subpax_${designName}_top`,
-						`subpax_${designName}_azSub`,
-						`subpax_${designName}_azSup`
-					]
+					inList: lCuis
 				},
 				{
 					outName: `ipax_${designName}_add2`,

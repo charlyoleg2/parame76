@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
-     inkscape:zoom="1.5696829"
-     inkscape:cx="359.30824"
-     inkscape:cy="1686.0093"
+     inkscape:zoom="1.1099334"
+     inkscape:cx="359.48102"
+     inkscape:cy="1520.3615"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="0"
@@ -43,6 +43,18 @@
   </sodipodi:namedview>
   <defs
      id="defs1">
+    <rect
+       x="327.04343"
+       y="1420.9875"
+       width="51.250935"
+       height="28.669941"
+       id="rect37" />
+    <rect
+       x="335.41806"
+       y="1392.3195"
+       width="48.136784"
+       height="40.373161"
+       id="rect36" />
     <rect
        x="176.46877"
        y="1783.7998"
@@ -149,6 +161,32 @@
          sodipodi:nodetypes="ccc"
          id="path13-3" />
     </marker>
+    <marker
+       style="overflow:visible"
+       id="marker13-0"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Wide arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:butt"
+         d="M 3,-3 0,0 3,3"
+         transform="rotate(180,0.125,0)"
+         sodipodi:nodetypes="ccc"
+         id="path13-9" />
+    </marker>
+    <rect
+       x="327.04343"
+       y="1420.9875"
+       width="44.367519"
+       height="25.822041"
+       id="rect37-6" />
   </defs>
   <g
      inkscape:label="Layer 1"
@@ -330,7 +368,7 @@
 </tspan><tspan
          x="570.17969"
          y="1638.9767"
-         id="tspan4">90</tspan></text>
+         id="tspan4">65</tspan></text>
     <text
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,-71.103792,-9.3331364)"
@@ -342,7 +380,7 @@
 </tspan><tspan
          x="561.89648"
          y="1663.9982"
-         id="tspan6">90</tspan></text>
+         id="tspan6">65</tspan></text>
     <text
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,-78.379684,0.96660918)"
@@ -397,16 +435,18 @@
          id="tspan14">10</tspan></text>
     <text
        xml:space="preserve"
-       transform="matrix(0.26458333,0,0,0.26458333,-30.542424,-21.801795)"
+       transform="matrix(0.26458333,0,0,0.26458333,-37.421595,-21.801795)"
        id="text72"
-       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect72);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
-         x="558.07422"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:center;text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect72);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"
+       x="40.454029"
+       y="0"><tspan
+         x="584.12598"
          y="1677.1388"
          id="tspan15">CAX
 </tspan><tspan
-         x="558.07422"
+         x="588.92676"
          y="1697.1388"
-         id="tspan16">100</tspan></text>
+         id="tspan16">80</tspan></text>
     <text
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,-52.903194,-21.378048)"
@@ -457,5 +497,54 @@
          x="200.31348"
          y="1818.0372"
          id="tspan22">90</tspan></text>
+    <path
+       style="fill:#ffeeaa;stroke:#d4aa00;stroke-width:0.264583;stroke-linejoin:round"
+       d="M 112.1031,413.88673 V 403.84698 H 91.160448 c 0,0 -4.7625,-0.32069 -4.7625,5.01989 1e-5,5.34058 4.7625,5.01986 4.7625,5.01986 z"
+       id="path32"
+       sodipodi:nodetypes="ccczcc" />
+    <path
+       style="fill:none;stroke:#cccccc;stroke-width:0.264583;stroke-linejoin:round"
+       d="m 86.397948,397.68438 v 11.18249"
+       id="path10-8-1-10-3" />
+    <path
+       style="fill:none;stroke:#cccccc;stroke-width:0.264583;stroke-linejoin:round"
+       d="m 112.1031,397.67792 v 11.18249"
+       id="path10-8-1-10-3-1" />
+    <path
+       style="fill:#ffeeaa;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#marker13);marker-end:url(#marker13)"
+       d="m 86.397948,401.38857 25.705152,-0.006"
+       id="path33" />
+    <path
+       style="fill:#ffeeaa;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#marker13);marker-end:url(#marker13)"
+       d="m 90.407187,403.84698 v 10.03974"
+       id="path34" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,7.8338829,28.48458)"
+       id="text35"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect36);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="335.41797"
+         y="1406.5568"
+         id="tspan23">BarX</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,4.4295001,32.625749)"
+       id="text36"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect37);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="327.04297"
+         y="1435.2247"
+         id="tspan24">BarY</tspan></text>
+    <path
+       style="fill:#ffffff;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-end:url(#marker13-0)"
+       d="m 105.7766,410.73508 3.70828,-2.52838"
+       id="path2-0" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,14.64784,27.371809)"
+       id="text36-7"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect37-6);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="327.04297"
+         y="1435.2247"
+         id="tspan25">BarH</tspan></text>
   </g>
 </svg>
