@@ -3,4 +3,5 @@
 export * from './boat/catamaran';
 export * from './boat/voila';
 export * from './charpente/abri';
+export * from './charpente/cuisine';
 export * from './stone/stairs';
