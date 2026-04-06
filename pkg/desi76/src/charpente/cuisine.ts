@@ -96,6 +96,11 @@ const pDef: tParamDef = {
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
 	const figTop = figure();
+	const figTopSubDoor = figure();
+	const figTopSupDoor = figure();
+	const figRoofEast = figure();
+	const figRoofNorth = figure();
+	const figWindow = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -107,6 +112,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const lR2e = (200 - param.eMH) / Math.tan(aRe);
 		const lR2n = (200 - param.nMH) / Math.tan(aRn);
 		const cWHtop = 30;
+		const hRe = param.eRW * Math.tan(aRe);
+		const hRn = param.nRW * Math.tan(aRn);
+		const lWindowCut = Math.max(param.eRW, param.nRW) + param.MW;
+		const wPx1 = (param.AX - param.WW) / 2;
+		const wPx2 = lX - param.WW - param.WPX;
+		const wPy3 = param.WPY;
+		const pi2 = Math.PI / 2;
 		// step-5 : checks on the parameter values
 		if (lAZx < 0) {
 			throw `err099: sign of lAZx ${ffix(lAZx)} must be positive`;
@@ -153,12 +165,39 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figTop.addSecond(ctrArbeitZimmerN);
 		figTop.addSecond(ctrArbeitZimmerTop);
 		figTop.addSecond(ctr2M);
-		figTop.addSecond(ctrRectangle((param.AX - param.WW) / 2, 0, param.WW, cWHtop));
-		figTop.addSecond(ctrRectangle(lX - param.WW - param.WPX, 0, param.WW, cWHtop));
+		figTop.addSecond(ctrRectangle(wPx1, 0, param.WW, cWHtop));
+		figTop.addSecond(ctrRectangle(wPx2, 0, param.WW, cWHtop));
 		figTop.addSecond(ctrRectangle(lX - cWHtop, param.WPY, cWHtop, param.WW));
+		figTopSubDoor.addMainO(ctrArbeitZimmerS);
+		figTopSubDoor.addMainO(ctrArbeitZimmerN);
+		figTopSupDoor.addMainO(ctrArbeitZimmerTop);
+		const ctrRe = contour(0, 0)
+			.addSegStrokeR(param.MW, 0)
+			.addSegStrokeR(0, param.eMH)
+			.addSegStrokeR(param.eRW, hRe)
+			.addSegStrokeR(0, param.MW)
+			.addSegStrokeR(-param.eRW, -hRe)
+			.addSegStrokeR(-param.MW, 0)
+			.closeSegStroke();
+		figRoofEast.addMainO(ctrRe);
+		const ctrRn = contour(0, 0)
+			.addSegStrokeR(param.MW, 0)
+			.addSegStrokeR(0, param.nMH)
+			.addSegStrokeR(param.nRW, hRn)
+			.addSegStrokeR(0, param.MW)
+			.addSegStrokeR(-param.nRW, -hRn)
+			.addSegStrokeR(-param.MW, 0)
+			.closeSegStroke();
+		figRoofNorth.addMainO(ctrRn);
+		figWindow.addMainO(ctrRectangle(0, param.WPH, param.WW, param.WH));
 		// final figure list
 		rGeome.fig = {
-			faceTop: figTop
+			faceTop: figTop,
+			faceTopSub: figTopSubDoor,
+			faceTopSup: figTopSupDoor,
+			faceRoofEast: figRoofEast,
+			faceRoofNorth: figRoofNorth,
+			faceWindow: figWindow
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
@@ -171,13 +210,97 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					length: param.MW,
 					rotate: [0, 0, 0],
 					translate: [0, 0, -param.MW]
+				},
+				{
+					outName: `subpax_${designName}_azSub`,
+					face: `${designName}_faceTopSub`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.DH,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_azSup`,
+					face: `${designName}_faceTopSup`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.AMH - param.DH,
+					rotate: [0, 0, 0],
+					translate: [0, 0, param.DH]
+				},
+				{
+					outName: `subpax_${designName}_roofE`,
+					face: `${designName}_faceRoofEast`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: lX,
+					rotate: [pi2, 0, pi2],
+					translate: [0, -param.MW, 0]
+				},
+				{
+					outName: `subpax_${designName}_roofN`,
+					face: `${designName}_faceRoofNorth`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: lY,
+					rotate: [pi2, 0, 2 * pi2],
+					translate: [lX + param.MW, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_w1`,
+					face: `${designName}_faceWindow`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: lWindowCut,
+					rotate: [pi2, 0, 0],
+					translate: [wPx1, lWindowCut - param.MW, 0]
+				},
+				{
+					outName: `subpax_${designName}_w2`,
+					face: `${designName}_faceWindow`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: lWindowCut,
+					rotate: [pi2, 0, 0],
+					translate: [wPx2, lWindowCut - param.MW, 0]
+				},
+				{
+					outName: `subpax_${designName}_w3`,
+					face: `${designName}_faceWindow`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: lWindowCut,
+					rotate: [pi2, 0, pi2],
+					translate: [lX + param.MW - lWindowCut, wPy3, 0]
 				}
 			],
 			volumes: [
 				{
+					outName: `ipax_${designName}_add1`,
+					boolMethod: EBVolume.eUnion,
+					inList: [
+						`subpax_${designName}_top`,
+						`subpax_${designName}_azSub`,
+						`subpax_${designName}_azSup`
+					]
+				},
+				{
+					outName: `ipax_${designName}_add2`,
+					boolMethod: EBVolume.eUnion,
+					inList: [`subpax_${designName}_roofE`, `subpax_${designName}_roofN`]
+				},
+				{
+					outName: `ipax_${designName}_cut`,
+					boolMethod: EBVolume.eUnion,
+					inList: [
+						`subpax_${designName}_w1`,
+						`subpax_${designName}_w2`,
+						`subpax_${designName}_w3`
+					]
+				},
+				{
+					outName: `ipax_${designName}_roof`,
+					boolMethod: EBVolume.eSubstraction,
+					inList: [`ipax_${designName}_add2`, `ipax_${designName}_cut`]
+				},
+				{
 					outName: `pax_${designName}`,
 					boolMethod: EBVolume.eUnion,
-					inList: [`subpax_${designName}_top`]
+					inList: [`ipax_${designName}_add1`, `ipax_${designName}_roof`]
 				}
 			]
 		};
