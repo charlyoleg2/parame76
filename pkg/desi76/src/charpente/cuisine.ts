@@ -241,7 +241,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figRoofNorth.addMainO(ctrRn);
 		figWindow.addMainO(ctrRectangle(0, param.WPH, param.WW, param.WH));
 		figFrigo.addMainO(
-			ctrRectangle(param.AX + param.MW + param.FB, param.AY - param.FY, param.FX, param.FY)
+			ctrRectangle(param.AX + param.MW + param.FB, param.AY - param.FY, param.FX, param.FY, 5)
 		);
 		figVaissCagi.addMainO(ctrRectangle(param.AX + param.MW, 0, param.VX, param.VY));
 		figVaissCagi.addMainO(ctrRectangle(lX - param.CAX - param.MW, 0, param.MW, cagiLen));
