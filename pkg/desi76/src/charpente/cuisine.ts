@@ -80,11 +80,11 @@ const pDef: tParamDef = {
 		pNumber('AMH', 'cm', 300, 100, 600, 1),
 		pSectionSeparator('Roof'),
 		pNumber('MW', 'cm', 10, 5, 50, 1),
-		pNumber('eMH', 'cm', 90, 5, 200, 1),
-		pNumber('eRA', 'degree', 45, 10, 85, 1),
+		pNumber('eMH', 'cm', 104, 5, 200, 1),
+		pNumber('eRA', 'degree', 40.78, 10, 85, 0.01),
 		pNumber('eRW', 'cm', 250, 100, 500, 1),
-		pNumber('nMH', 'cm', 90, 5, 200, 1),
-		pNumber('nRA', 'degree', 45, 10, 85, 1),
+		pNumber('nMH', 'cm', 60, 5, 200, 1),
+		pNumber('nRA', 'degree', 45, 10, 85, 0.01),
 		pNumber('nRW', 'cm', 200, 100, 500, 1)
 	],
 	paramSvg: {
