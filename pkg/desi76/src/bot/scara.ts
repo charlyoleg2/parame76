@@ -57,12 +57,14 @@ const pDef: tParamDef = {
 		pNumber('A1', 'degree', 90, 0, 180, 1),
 		pNumber('T1', 'mm', 2, 0.1, 100, 0.1),
 		pNumber('T2', 'mm', 2, 0.1, 100, 0.1),
-		pNumber('R1', 'mm', 5, 0.5, 100, 0.5),
+		pNumber('S2', 'mm', 30, 1, 1000, 1),
+		pNumber('R1i', 'mm', 5, 0.5, 100, 0.5),
+		pNumber('R1e', 'mm', 1, 0.1, 100, 0.1),
 		pSectionSeparator('External details'),
-		pNumber('L2', 'mm', 30, 1, 1000, 1),
+		pNumber('S1', 'mm', 40, 1, 1000, 1),
 		pNumber('T3', 'mm', 2, 0.1, 100, 0.1),
-		pNumber('E1', 'mm', 1, 0.1, 100, 0.1),
-		pNumber('R2', 'mm', 5, 0.5, 100, 0.5),
+		pNumber('R2i', 'mm', 5, 0.5, 100, 0.5),
+		pNumber('R2e', 'mm', 1, 0.1, 100, 0.1),
 		pSectionSeparator('Heights'),
 		pNumber('H1', 'mm', 50, 1, 1000, 1),
 		pNumber('H2', 'mm', 2, 0.1, 200, 0.1),
@@ -79,9 +81,13 @@ const pDef: tParamDef = {
 		A1: 'scara_top.svg',
 		T1: 'scara_top.svg',
 		T2: 'scara_top.svg',
-		R1: 'scara_top.svg',
-		L2: 'scara_top.svg',
+		S2: 'scara_top.svg',
+		R1i: 'scara_top.svg',
+		R1e: 'scara_top.svg',
+		S1: 'scara_top.svg',
 		T3: 'scara_top.svg',
+		R2i: 'scara_top.svg',
+		R2e: 'scara_top.svg',
 		H1: 'scara_side.svg',
 		H2: 'scara_side.svg',
 		H3: 'scara_side.svg',
@@ -106,13 +112,16 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const R12 = param.D12 / 2;
 		//const R21 = param.D21 / 2;
 		const R22 = param.D22 / 2;
+		const Ltot = R12 + param.L1 + R22;
+		const Htot1 = param.H1 + 2 * (param.H2 + param.H4);
+		const Htot2 = param.H1 + 2 * (param.H2 + param.H3);
 		//const pi2 = Math.PI / 2;
 		// step-5 : checks on the parameter values
 		if (param.L1 < R12 + R22) {
 			throw `err095: L1 ${ffix(param.L1)} is too small compare to D12 ${ffix(2 * R12)} and D22 ${ffix(2 * R22)}`;
 		}
 		// step-6 : any logs
-		rGeome.logstr += `length ${ffix(R12 + param.L1 + R22)}  height ${ffix(param.H1 + 2 * (param.H2 + param.H3))}\n`;
+		rGeome.logstr += `length ${ffix(Ltot)}  height-1 ${ffix(Htot1)}  height-2 ${ffix(Htot2)}\n`;
 		// step-7 : drawing of the figures
 		// fig1
 		const ctrBase = contour(0, 0)
