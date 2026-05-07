@@ -25,7 +25,7 @@
      inkscape:document-units="px"
      inkscape:zoom="2.2198668"
      inkscape:cx="295.9637"
-     inkscape:cy="249.78976"
+     inkscape:cy="229.51828"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="0"
@@ -43,12 +43,6 @@
   </sodipodi:namedview>
   <defs
      id="defs1">
-    <rect
-       x="383.35632"
-       y="586.70782"
-       width="163.7375"
-       height="88.026001"
-       id="rect2" />
     <rect
        x="24.527246"
        y="715.19928"
@@ -658,21 +652,5 @@
          x="24.527344"
          y="729.43566"
          id="tspan14">H4</tspan></text>
-    <text
-       xml:space="preserve"
-       transform="matrix(0.26458333,0,0,0.26458333,-0.82438043,-1.8344703)"
-       id="text2"
-       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect2);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
-         x="383.35547"
-         y="600.94347"
-         id="tspan15">secondEnd:
-</tspan><tspan
-         x="383.35547"
-         y="620.94347"
-         id="tspan16">-extern
-</tspan><tspan
-         x="383.35547"
-         y="640.94347"
-         id="tspan17">-intern</tspan></text>
   </g>
 </svg>
