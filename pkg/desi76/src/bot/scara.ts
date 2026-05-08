@@ -18,13 +18,13 @@ import {
 	//designParam,
 	//checkGeom,
 	//prefixLog,
-	//point,
+	point,
 	//Point,
 	//ShapePoint,
 	//line,
 	//vector,
 	contour,
-	//contourCircle,
+	contourCircle,
 	//ctrRectangle,
 	figure,
 	//degToRad,
@@ -107,19 +107,21 @@ const pDef: tParamDef = {
 // step-3 : definition of the function that creates from the parameter-values the figures and construct the 3D
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
-	const figTop = figure();
+	const figPlate = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
 		//const a1 = degToRad(param.A1);
-		//const R11 = param.D11 / 2;
+		const R11 = param.D11 / 2;
 		const R12 = param.D12 / 2;
-		//const R21 = param.D21 / 2;
+		const R21 = param.D21 / 2;
 		const R22 = param.D22 / 2;
 		const Ltot = R12 + param.L1 + R22;
 		const Htot1 = param.H1 + 2 * (param.H2 + param.H4);
 		const Htot2 = param.H1 + 2 * (param.H2 + param.H3);
-		//const pi2 = Math.PI / 2;
+		const aIncli = Math.atan2(R22 - R12, param.L1);
+		const pi2 = Math.PI / 2;
+		const aP1 = pi2 + aIncli;
 		// step-5 : checks on the parameter values
 		if (param.L1 < R12 + R22) {
 			throw `err095: L1 ${ffix(param.L1)} is too small compare to D12 ${ffix(2 * R12)} and D22 ${ffix(2 * R22)}`;
@@ -128,23 +130,33 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `length ${ffix(Ltot)}  height-1 ${ffix(Htot1)}  height-2 ${ffix(Htot2)}\n`;
 		// step-7 : drawing of the figures
 		// fig1
-		const ctrBase = contour(0, 0)
-			.addSegStrokeR(param.L1, 0)
-			.addSegStrokeR(0, R22)
-			.addSegStrokeR(-param.L1, 0)
+		const p1 = point(R12, 0).translatePolar(aP1, R12);
+		const p6 = point(R12 + param.L1, 0).translatePolar(aP1, R22);
+		const ctrPlate = contour(p1.cx, p1.cy)
+			.addPointA(0, 0)
+			.addPointA(p1.cx, -p1.cy)
+			.addSegArc2()
+			.addSegStrokeA(p6.cx, -p6.cy)
+			.addPointA(Ltot, 0)
+			.addPointA(p6.cx, p6.cy)
+			.addSegArc2()
 			.closeSegStroke();
-		figTop.addMainO(ctrBase);
+		figPlate.addMainOI([
+			ctrPlate,
+			contourCircle(R12, 0, R11),
+			contourCircle(R12 + param.L1, 0, R21)
+		]);
 		// final figure list
 		rGeome.fig = {
-			faceTop: figTop
+			facePlate: figPlate
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
 		rGeome.vol = {
 			extrudes: [
 				{
-					outName: `subpax_${designName}_top`,
-					face: `${designName}_faceTop`,
+					outName: `subpax_${designName}_plate`,
+					face: `${designName}_facePlate`,
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: param.H2,
 					rotate: [0, 0, 0],
