@@ -118,7 +118,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const R12 = param.D12 / 2;
 		const R21 = param.D21 / 2;
 		const R22 = param.D22 / 2;
-		const Ltot = R12 + param.L1 + R22;
+		const X2 = R12 + param.L1;
+		const Ltot = X2 + R22;
 		const Htot1 = param.H1 + 2 * (param.H2 + param.H4);
 		const Htot2 = param.H1 + 2 * (param.H2 + param.H3);
 		const aIncli = Math.atan2(R22 - R12, param.L1);
@@ -138,16 +139,22 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (R22 < R21 + 2 * param.T3) {
 			throw `err135: D22 ${ffix(2 * R22)} is too small compare to D21 ${ffix(2 * R21)} and T3 ${ffix(param.T3)}`;
 		}
+		if (R12 < R11 + param.T1 + param.T2) {
+			throw `err142: D12 ${ffix(2 * R12)} is too small compare to T1 ${ffix(param.T1)} and T2 ${ffix(param.T2)}`;
+		}
+		if (R22 < R21 + param.T1 + param.T2) {
+			throw `err145: D22 ${ffix(2 * R22)} is too small compare to T1 ${ffix(param.T1)} and T2 ${ffix(param.T2)}`;
+		}
 		// step-6 : any logs
 		rGeome.logstr += `length ${ffix(Ltot)}  height-1 ${ffix(Htot1)}  height-2 ${ffix(Htot2)}\n`;
 		// step-7 : drawing of the figures
 		// fig1
 		const p1 = point(R12, 0).translatePolar(aP1, R12);
-		const p6 = point(R12 + param.L1, 0).translatePolar(aP1, R22);
+		const p6 = point(X2, 0).translatePolar(aP1, R22);
 		const p12 = point(R12, 0).translatePolar(aP1, R12 - param.T3);
-		const p62 = point(R12 + param.L1, 0).translatePolar(aP1, R22 - param.T3);
+		const p62 = point(X2, 0).translatePolar(aP1, R22 - param.T3);
 		const p91 = point(R12, 0).translatePolar(a91, R91);
-		const p92 = point(R12 + param.L1, 0).translatePolar(Math.PI - a92, R92);
+		const p92 = point(X2, 0).translatePolar(Math.PI - a92, R92);
 		// figPlate
 		const ctrPlate = contour(p1.cx, p1.cy)
 			.addPointA(0, 0)
@@ -158,11 +165,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addPointA(p6.cx, p6.cy)
 			.addSegArc2()
 			.closeSegStroke();
-		figPlate.addMainOI([
-			ctrPlate,
-			contourCircle(R12, 0, R11),
-			contourCircle(R12 + param.L1, 0, R21)
-		]);
+		figPlate.addMainOI([ctrPlate, contourCircle(R12, 0, R11), contourCircle(X2, 0, R21)]);
 		// figExtern
 		const ctrE2 = contour(p12.cx, p12.cy)
 			.addPointA(param.T3, 0)
@@ -182,17 +185,16 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addCornerRounded(param.R2i)
 			.addSegStrokeA(p92.cx, -p92.cy)
 			.addCornerRounded(param.R2i)
-			.addPointA(R12 + param.L1 + R92, 0)
+			.addPointA(X2 + R92, 0)
 			.addPointA(p92.cx, p92.cy)
 			.addSegArc2()
 			.addCornerRounded(param.R2i)
 			.closeSegStroke();
-		figExtern.addMainOI([
-			ctrE3,
-			contourCircle(R12, 0, R11),
-			contourCircle(R12 + param.L1, 0, R21)
-		]);
+		figExtern.addMainOI([ctrE3, contourCircle(R12, 0, R11), contourCircle(X2, 0, R21)]);
 		// figIntern
+		figIntern.addMainOI([contourCircle(R12, 0, R11 + param.T1), contourCircle(R12, 0, R11)]);
+		figIntern.addMainOI([contourCircle(X2, 0, R21 + param.T1), contourCircle(X2, 0, R21)]);
+		figIntern.mergeFigure(figPlate, true);
 		// final figure list
 		rGeome.fig = {
 			facePlate: figPlate,
@@ -204,19 +206,57 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.vol = {
 			extrudes: [
 				{
-					outName: `subpax_${designName}_plate`,
+					outName: `subpax_${designName}_ext1`,
+					face: `${designName}_faceExtern`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.H3,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_plate2`,
 					face: `${designName}_facePlate`,
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: param.H2,
 					rotate: [0, 0, 0],
-					translate: [0, 0, 0]
+					translate: [0, 0, param.H3]
+				},
+				{
+					outName: `subpax_${designName}_int3`,
+					face: `${designName}_faceIntern`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.H1,
+					rotate: [0, 0, 0],
+					translate: [0, 0, param.H3 + param.H2]
+				},
+				{
+					outName: `subpax_${designName}_plate4`,
+					face: `${designName}_facePlate`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.H2,
+					rotate: [0, 0, 0],
+					translate: [0, 0, param.H3 + param.H2 + param.H1]
+				},
+				{
+					outName: `subpax_${designName}_ext5`,
+					face: `${designName}_faceExtern`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.H3,
+					rotate: [0, 0, 0],
+					translate: [0, 0, param.H3 + 2 * param.H2 + param.H1]
 				}
 			],
 			volumes: [
 				{
 					outName: `pax_${designName}`,
 					boolMethod: EBVolume.eUnion,
-					inList: [`subpax_${designName}_top`]
+					inList: [
+						`subpax_${designName}_ext1`,
+						`subpax_${designName}_plate2`,
+						`subpax_${designName}_int3`,
+						`subpax_${designName}_plate4`,
+						`subpax_${designName}_ext5`
+					]
 				}
 			]
 		};
