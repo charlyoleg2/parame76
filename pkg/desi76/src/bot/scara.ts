@@ -59,14 +59,14 @@ const pDef: tParamDef = {
 		pNumber('T1', 'mm', 2, 0.1, 100, 0.1),
 		pNumber('T2', 'mm', 2, 0.1, 100, 0.1),
 		pNumber('S2', 'mm', 30, 1, 1000, 1),
-		pNumber('R1i', 'mm', 5, 0.5, 100, 0.5),
-		pNumber('R1e', 'mm', 1, 0.1, 100, 0.1),
+		pNumber('R1i', 'mm', 2, 0, 100, 0.5),
+		pNumber('R1e', 'mm', 0.5, 0, 100, 0.1),
 		pSectionSeparator('External details'),
 		pNumber('N2', 'legs', 3, 0, 10, 1),
 		pNumber('S1', 'mm', 40, 1, 1000, 1),
 		pNumber('T3', 'mm', 2, 0.1, 100, 0.1),
-		pNumber('R2i', 'mm', 5, 0.5, 100, 0.5),
-		pNumber('R2e', 'mm', 1, 0.1, 100, 0.1),
+		pNumber('R2i', 'mm', 2, 0, 100, 0.5),
+		pNumber('R2e', 'mm', 0.5, 0, 100, 0.1),
 		pSectionSeparator('Heights'),
 		pNumber('H1', 'mm', 50, 1, 1000, 1),
 		pNumber('H2', 'mm', 2, 0.1, 200, 0.1),
@@ -108,6 +108,8 @@ const pDef: tParamDef = {
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
 	const figPlate = figure();
+	const figIntern = figure();
+	const figExtern = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -120,11 +122,21 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const Htot1 = param.H1 + 2 * (param.H2 + param.H4);
 		const Htot2 = param.H1 + 2 * (param.H2 + param.H3);
 		const aIncli = Math.atan2(R22 - R12, param.L1);
+		const R91 = R11 + param.T3;
+		const R92 = R21 + param.T3;
+		const a91 = Math.asin(param.T3 / (2 * R91));
+		const a92 = Math.asin(param.T3 / (2 * R92));
 		const pi2 = Math.PI / 2;
 		const aP1 = pi2 + aIncli;
 		// step-5 : checks on the parameter values
 		if (param.L1 < R12 + R22) {
 			throw `err095: L1 ${ffix(param.L1)} is too small compare to D12 ${ffix(2 * R12)} and D22 ${ffix(2 * R22)}`;
+		}
+		if (R12 < R11 + 2 * param.T3) {
+			throw `err132: D12 ${ffix(2 * R12)} is too small compare to D11 ${ffix(2 * R11)} and T3 ${ffix(param.T3)}`;
+		}
+		if (R22 < R21 + 2 * param.T3) {
+			throw `err135: D22 ${ffix(2 * R22)} is too small compare to D21 ${ffix(2 * R21)} and T3 ${ffix(param.T3)}`;
 		}
 		// step-6 : any logs
 		rGeome.logstr += `length ${ffix(Ltot)}  height-1 ${ffix(Htot1)}  height-2 ${ffix(Htot2)}\n`;
@@ -132,6 +144,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// fig1
 		const p1 = point(R12, 0).translatePolar(aP1, R12);
 		const p6 = point(R12 + param.L1, 0).translatePolar(aP1, R22);
+		const p12 = point(R12, 0).translatePolar(aP1, R12 - param.T3);
+		const p62 = point(R12 + param.L1, 0).translatePolar(aP1, R22 - param.T3);
+		const p91 = point(R12, 0).translatePolar(a91, R91);
+		const p92 = point(R12 + param.L1, 0).translatePolar(Math.PI - a92, R92);
+		// figPlate
 		const ctrPlate = contour(p1.cx, p1.cy)
 			.addPointA(0, 0)
 			.addPointA(p1.cx, -p1.cy)
@@ -146,9 +163,41 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			contourCircle(R12, 0, R11),
 			contourCircle(R12 + param.L1, 0, R21)
 		]);
+		// figExtern
+		const ctrE2 = contour(p12.cx, p12.cy)
+			.addPointA(param.T3, 0)
+			.addPointA(p12.cx, -p12.cy)
+			.addSegArc2()
+			.addSegStrokeA(p62.cx, -p62.cy)
+			.addPointA(Ltot - param.T3, 0)
+			.addPointA(p62.cx, p62.cy)
+			.addSegArc2()
+			.closeSegStroke();
+		figExtern.addMainOI([ctrPlate, ctrE2]);
+		const ctrE3 = contour(p91.cx, p91.cy)
+			.addCornerRounded(param.R2i)
+			.addPointA(R12 - R91, 0)
+			.addPointA(p91.cx, -p91.cy)
+			.addSegArc2()
+			.addCornerRounded(param.R2i)
+			.addSegStrokeA(p92.cx, -p92.cy)
+			.addCornerRounded(param.R2i)
+			.addPointA(R12 + param.L1 + R92, 0)
+			.addPointA(p92.cx, p92.cy)
+			.addSegArc2()
+			.addCornerRounded(param.R2i)
+			.closeSegStroke();
+		figExtern.addMainOI([
+			ctrE3,
+			contourCircle(R12, 0, R11),
+			contourCircle(R12 + param.L1, 0, R21)
+		]);
+		// figIntern
 		// final figure list
 		rGeome.fig = {
-			facePlate: figPlate
+			facePlate: figPlate,
+			faceIntern: figIntern,
+			faceExtern: figExtern
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
