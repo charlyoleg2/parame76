@@ -4,7 +4,7 @@
 // step-1 : import from geometrix
 import type {
 	//Contour,
-	//tContour,
+	tContour,
 	//tOuterInner,
 	tParamDef,
 	tParamVal,
@@ -27,8 +27,8 @@ import {
 	contourCircle,
 	//ctrRectangle,
 	figure,
-	//degToRad,
-	//radToDeg,
+	degToRad,
+	radToDeg,
 	//pointCoord,
 	ffix,
 	pNumber,
@@ -113,7 +113,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
-		//const a1 = degToRad(param.A1);
+		const a1 = degToRad(param.A1) / 2;
 		const R11 = param.D11 / 2;
 		const R12 = param.D12 / 2;
 		const R21 = param.D21 / 2;
@@ -123,6 +123,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const Htot1 = param.H1 + 2 * (param.H2 + param.H4);
 		const Htot2 = param.H1 + 2 * (param.H2 + param.H3);
 		const aIncli = Math.atan2(R22 - R12, param.L1);
+		const R7 = R12 - param.T2;
+		const R8 = R22 - param.T2;
 		const R91 = R11 + param.T3;
 		const R92 = R21 + param.T3;
 		const a91 = Math.asin(param.T3 / (2 * R91));
@@ -145,14 +147,23 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (R22 < R21 + param.T1 + param.T2) {
 			throw `err145: D22 ${ffix(2 * R22)} is too small compare to T1 ${ffix(param.T1)} and T2 ${ffix(param.T2)}`;
 		}
+		if (aP1 < a1) {
+			throw `err148: aIncli ${ffix(radToDeg(aIncli))} is too small compare to A1 ${ffix(radToDeg(2 * a1))}`;
+		}
 		// step-6 : any logs
 		rGeome.logstr += `length ${ffix(Ltot)}  height-1 ${ffix(Htot1)}  height-2 ${ffix(Htot2)}\n`;
 		// step-7 : drawing of the figures
 		// fig1
 		const p1 = point(R12, 0).translatePolar(aP1, R12);
 		const p6 = point(X2, 0).translatePolar(aP1, R22);
-		const p12 = point(R12, 0).translatePolar(aP1, R12 - param.T3);
-		const p62 = point(X2, 0).translatePolar(aP1, R22 - param.T3);
+		const p12 = point(R12, 0).translatePolar(aP1, R12 - param.T2);
+		const p62 = point(X2, 0).translatePolar(aP1, R22 - param.T2);
+		const p13 = point(R12, 0).translatePolar(aP1, R12 - param.T3);
+		const p63 = point(X2, 0).translatePolar(aP1, R22 - param.T3);
+		const p7e = point(R12, 0).translatePolar(Math.PI - a1, R12);
+		const p7i = point(R12, 0).translatePolar(Math.PI - a1, R12 - param.T2);
+		const p8e = point(X2, 0).translatePolar(a1, R22);
+		const p8i = point(X2, 0).translatePolar(a1, R22 - param.T2);
 		const p91 = point(R12, 0).translatePolar(a91, R91);
 		const p92 = point(X2, 0).translatePolar(Math.PI - a92, R92);
 		// figPlate
@@ -167,13 +178,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.closeSegStroke();
 		figPlate.addMainOI([ctrPlate, contourCircle(R12, 0, R11), contourCircle(X2, 0, R21)]);
 		// figExtern
-		const ctrE2 = contour(p12.cx, p12.cy)
+		const ctrE2 = contour(p13.cx, p13.cy)
 			.addPointA(param.T3, 0)
-			.addPointA(p12.cx, -p12.cy)
+			.addPointA(p13.cx, -p13.cy)
 			.addSegArc2()
-			.addSegStrokeA(p62.cx, -p62.cy)
+			.addSegStrokeA(p63.cx, -p63.cy)
 			.addPointA(Ltot - param.T3, 0)
-			.addPointA(p62.cx, p62.cy)
+			.addPointA(p63.cx, p63.cy)
 			.addSegArc2()
 			.closeSegStroke();
 		figExtern.addMainOI([ctrPlate, ctrE2]);
@@ -194,6 +205,28 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figIntern
 		figIntern.addMainOI([contourCircle(R12, 0, R11 + param.T1), contourCircle(R12, 0, R11)]);
 		figIntern.addMainOI([contourCircle(X2, 0, R21 + param.T1), contourCircle(X2, 0, R21)]);
+		function ctrI(iyk: number): tContour {
+			const rCtr = contour(p7i.cx, iyk * p7i.cy)
+				.addCornerRounded(param.R1e)
+				.addPointA(p12.cx, iyk * p12.cy)
+				.addSegArc(R7, false, iyk > 0 ? false : true)
+				.addSegStrokeA(p62.cx, iyk * p62.cy)
+				.addPointA(p8i.cx, iyk * p8i.cy)
+				.addSegArc(R8, false, iyk > 0 ? false : true)
+				.addCornerRounded(param.R1e)
+				.addSegStrokeA(p8e.cx, iyk * p8e.cy)
+				.addCornerRounded(param.R1e)
+				.addPointA(p6.cx, iyk * p6.cy)
+				.addSegArc(R22, false, iyk > 0 ? true : false)
+				.addSegStrokeA(p1.cx, iyk * p1.cy)
+				.addPointA(p7e.cx, iyk * p7e.cy)
+				.addSegArc(R12, false, iyk > 0 ? true : false)
+				.addCornerRounded(param.R1e)
+				.closeSegStroke();
+			return rCtr;
+		}
+		figIntern.addMainO(ctrI(1));
+		figIntern.addMainO(ctrI(-1));
 		figIntern.mergeFigure(figPlate, true);
 		// final figure list
 		rGeome.fig = {
