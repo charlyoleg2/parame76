@@ -7,7 +7,7 @@
    viewBox="0 0 136.99362 74.261738"
    version="1.1"
    id="svg1"
-   inkscape:version="1.4.3 (1:1.4.3+202512261035+0d15f75042)"
+   inkscape:version="1.4.4 (1:1.4.4+202605061436+dcaf3e7d9e)"
    sodipodi:docname="src_scara.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
-     inkscape:zoom="2.2198668"
-     inkscape:cx="295.9637"
-     inkscape:cy="229.51828"
+     inkscape:zoom="3.1393658"
+     inkscape:cx="296.55671"
+     inkscape:cy="1234.1665"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="0"
@@ -43,6 +43,12 @@
   </sodipodi:namedview>
   <defs
      id="defs1">
+    <rect
+       x="274.34079"
+       y="67.571617"
+       width="67.12114"
+       height="24.325783"
+       id="rect48" />
     <rect
        x="467.14514"
        y="55.40873"
@@ -691,5 +697,17 @@
          x="467.14453"
          y="69.644644"
          id="tspan17">N2</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide)"
+       d="M 60.905492,47.198777 72.347618,33.492061"
+       id="path44" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-2.2645877,10.607806)"
+       id="text47"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect48);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="274.33984"
+         y="81.808707"
+         id="tspan18">iiEn</tspan></text>
   </g>
 </svg>

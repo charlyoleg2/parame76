@@ -9,7 +9,7 @@ import type {
 	tParamDef,
 	tParamVal,
 	tGeom,
-	//tExtrude,
+	tExtrude,
 	tPageDef
 	//tSubInst
 	//tSubDesign
@@ -32,7 +32,7 @@ import {
 	//pointCoord,
 	ffix,
 	pNumber,
-	//pCheckbox,
+	pCheckbox,
 	pDropdown,
 	pSectionSeparator,
 	initGeom,
@@ -61,6 +61,7 @@ const pDef: tParamDef = {
 		pNumber('S2', 'mm', 30, 1, 1000, 1),
 		pNumber('R1i', 'mm', 2, 0, 100, 0.5),
 		pNumber('R1e', 'mm', 0.5, 0, 100, 0.1),
+		pCheckbox('iiEn', true),
 		pSectionSeparator('External details'),
 		pNumber('N2', 'legs', 3, 0, 10, 1),
 		pNumber('S1', 'mm', 40, 1, 1000, 1),
@@ -71,7 +72,8 @@ const pDef: tParamDef = {
 		pNumber('H1', 'mm', 50, 1, 1000, 1),
 		pNumber('H2', 'mm', 2, 0.1, 200, 0.1),
 		pNumber('H3', 'mm', 5, 1, 200, 1),
-		pNumber('H4', 'mm', 0, 0, 200, 0.1)
+		pNumber('H41', 'mm', 0, 0, 200, 0.1),
+		pNumber('H42', 'mm', 0, 0, 200, 0.1)
 	],
 	paramSvg: {
 		L1: 'scara_top.svg',
@@ -87,6 +89,7 @@ const pDef: tParamDef = {
 		S2: 'scara_top.svg',
 		R1i: 'scara_top.svg',
 		R1e: 'scara_top.svg',
+		iiEn: 'scara_top.svg',
 		N2: 'scara_top.svg',
 		S1: 'scara_top.svg',
 		T3: 'scara_top.svg',
@@ -95,7 +98,8 @@ const pDef: tParamDef = {
 		H1: 'scara_side.svg',
 		H2: 'scara_side.svg',
 		H3: 'scara_side.svg',
-		H4: 'scara_side.svg'
+		H41: 'scara_side.svg',
+		H42: 'scara_side.svg'
 	},
 	sim: {
 		tMax: 100,
@@ -110,6 +114,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const figPlate = figure();
 	const figIntern = figure();
 	const figExtern = figure();
+	const figH41 = figure();
+	const figH42 = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -120,8 +126,6 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const R22 = param.D22 / 2;
 		const X2 = R12 + param.L1;
 		const Ltot = X2 + R22;
-		const Htot1 = param.H1 + 2 * (param.H2 + param.H4);
-		const Htot2 = param.H1 + 2 * (param.H2 + param.H3);
 		const aIncli = Math.atan2(R22 - R12, param.L1);
 		const R7 = R12 - param.T2;
 		const R8 = R22 - param.T2;
@@ -131,6 +135,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const a92 = Math.asin(param.T3 / (2 * R92));
 		const pi2 = Math.PI / 2;
 		const aP1 = pi2 + aIncli;
+		const He = Math.max(param.H3, param.H41, param.H42);
+		const Htot = param.H1 + 2 * (param.H2 + He);
 		// step-5 : checks on the parameter values
 		if (param.L1 < R12 + R22) {
 			throw `err095: L1 ${ffix(param.L1)} is too small compare to D12 ${ffix(2 * R12)} and D22 ${ffix(2 * R22)}`;
@@ -151,7 +157,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			throw `err148: aIncli ${ffix(radToDeg(aIncli))} is too small compare to A1 ${ffix(radToDeg(2 * a1))}`;
 		}
 		// step-6 : any logs
-		rGeome.logstr += `length ${ffix(Ltot)}  height-1 ${ffix(Htot1)}  height-2 ${ffix(Htot2)}\n`;
+		rGeome.logstr += `length ${ffix(Ltot)}  height ${ffix(Htot)}\n`;
 		// step-7 : drawing of the figures
 		// fig1
 		const p1 = point(R12, 0).translatePolar(aP1, R12);
@@ -228,14 +234,62 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figIntern.addMainO(ctrI(1));
 		figIntern.addMainO(ctrI(-1));
 		figIntern.mergeFigure(figPlate, true);
+		// figH41
+		figH41.addMainOI([contourCircle(R12, 0, R12), contourCircle(R12, 0, R11)]);
+		figH41.mergeFigure(figPlate, true);
+		// figH42
+		figH42.addMainOI([contourCircle(X2, 0, R22), contourCircle(X2, 0, R21)]);
+		figH42.mergeFigure(figH41, true);
 		// final figure list
 		rGeome.fig = {
 			facePlate: figPlate,
 			faceIntern: figIntern,
-			faceExtern: figExtern
+			faceExtern: figExtern,
+			faceH41: figH41,
+			faceH42: figH42
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
+		const eH4List: tExtrude[] = [];
+		const vH4List: string[] = [];
+		if (param.H41 > 0) {
+			eH4List.push({
+				outName: `subpax_${designName}_h41l`,
+				face: `${designName}_faceH41`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.H41,
+				rotate: [0, 0, 0],
+				translate: [0, 0, He - param.H41]
+			});
+			eH4List.push({
+				outName: `subpax_${designName}_h41h`,
+				face: `${designName}_faceH41`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.H41,
+				rotate: [0, 0, 0],
+				translate: [0, 0, He + 2 * param.H2 + param.H1]
+			});
+			vH4List.push(`subpax_${designName}_h41l`, `subpax_${designName}_h41h`);
+		}
+		if (param.H42 > 0) {
+			eH4List.push({
+				outName: `subpax_${designName}_h42l`,
+				face: `${designName}_faceH42`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.H42,
+				rotate: [0, 0, 0],
+				translate: [0, 0, He - param.H42]
+			});
+			eH4List.push({
+				outName: `subpax_${designName}_h42h`,
+				face: `${designName}_faceH42`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.H42,
+				rotate: [0, 0, 0],
+				translate: [0, 0, He + 2 * param.H2 + param.H1]
+			});
+			vH4List.push(`subpax_${designName}_h42l`, `subpax_${designName}_h42h`);
+		}
 		rGeome.vol = {
 			extrudes: [
 				{
@@ -244,7 +298,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: param.H3,
 					rotate: [0, 0, 0],
-					translate: [0, 0, 0]
+					translate: [0, 0, He - param.H3]
 				},
 				{
 					outName: `subpax_${designName}_plate2`,
@@ -252,7 +306,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: param.H2,
 					rotate: [0, 0, 0],
-					translate: [0, 0, param.H3]
+					translate: [0, 0, He]
 				},
 				{
 					outName: `subpax_${designName}_int3`,
@@ -260,7 +314,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: param.H1,
 					rotate: [0, 0, 0],
-					translate: [0, 0, param.H3 + param.H2]
+					translate: [0, 0, He + param.H2]
 				},
 				{
 					outName: `subpax_${designName}_plate4`,
@@ -268,7 +322,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: param.H2,
 					rotate: [0, 0, 0],
-					translate: [0, 0, param.H3 + param.H2 + param.H1]
+					translate: [0, 0, He + param.H2 + param.H1]
 				},
 				{
 					outName: `subpax_${designName}_ext5`,
@@ -276,8 +330,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: param.H3,
 					rotate: [0, 0, 0],
-					translate: [0, 0, param.H3 + 2 * param.H2 + param.H1]
-				}
+					translate: [0, 0, He + 2 * param.H2 + param.H1]
+				},
+				...eH4List
 			],
 			volumes: [
 				{
@@ -288,7 +343,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 						`subpax_${designName}_plate2`,
 						`subpax_${designName}_int3`,
 						`subpax_${designName}_plate4`,
-						`subpax_${designName}_ext5`
+						`subpax_${designName}_ext5`,
+						...vH4List
 					]
 				}
 			]
