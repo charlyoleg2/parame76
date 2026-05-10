@@ -71,7 +71,7 @@ const pDef: tParamDef = {
 		pSectionSeparator('Heights'),
 		pNumber('H1', 'mm', 50, 1, 1000, 1),
 		pNumber('H2', 'mm', 2, 0.1, 200, 0.1),
-		pNumber('H3', 'mm', 5, 1, 200, 1),
+		pNumber('H3', 'mm', 5, 0, 200, 1),
 		pNumber('H41', 'mm', 0, 0, 200, 0.1),
 		pNumber('H42', 'mm', 0, 0, 200, 0.1)
 	],
@@ -162,6 +162,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		if (param.iiEn && a7c < a1) {
 			throw `err163: aIncli ${ffix(radToDeg(aIncli))} is too small compare to A1 ${ffix(radToDeg(2 * a1))}`;
+		}
+		if (param.H3 === 0) {
+			rGeome.logstr += 'warn167: Warning H3 is zero\n';
 		}
 		// step-6 : any logs
 		rGeome.logstr += `length ${ffix(Ltot)}  height ${ffix(Htot)}\n`;
@@ -296,6 +299,25 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const designName = rGeome.partName;
 		const eH4List: tExtrude[] = [];
 		const vH4List: string[] = [];
+		if (param.H3 > 0) {
+			eH4List.push({
+				outName: `subpax_${designName}_ext1`,
+				face: `${designName}_faceExtern`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.H3,
+				rotate: [0, 0, 0],
+				translate: [0, 0, He - param.H3]
+			});
+			eH4List.push({
+				outName: `subpax_${designName}_ext5`,
+				face: `${designName}_faceExtern`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.H3,
+				rotate: [0, 0, 0],
+				translate: [0, 0, Hl5]
+			});
+			vH4List.push(`subpax_${designName}_ext1`, `subpax_${designName}_ext5`);
+		}
 		if (param.H41 > 0) {
 			eH4List.push({
 				outName: `subpax_${designName}_h41l`,
@@ -337,14 +359,6 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.vol = {
 			extrudes: [
 				{
-					outName: `subpax_${designName}_ext1`,
-					face: `${designName}_faceExtern`,
-					extrudeMethod: EExtrude.eLinearOrtho,
-					length: param.H3,
-					rotate: [0, 0, 0],
-					translate: [0, 0, He - param.H3]
-				},
-				{
 					outName: `subpax_${designName}_plate2`,
 					face: `${designName}_facePlate`,
 					extrudeMethod: EExtrude.eLinearOrtho,
@@ -368,14 +382,6 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					rotate: [0, 0, 0],
 					translate: [0, 0, He + param.H2 + param.H1]
 				},
-				{
-					outName: `subpax_${designName}_ext5`,
-					face: `${designName}_faceExtern`,
-					extrudeMethod: EExtrude.eLinearOrtho,
-					length: param.H3,
-					rotate: [0, 0, 0],
-					translate: [0, 0, Hl5]
-				},
 				...eH4List
 			],
 			volumes: [
@@ -383,11 +389,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					outName: `pax_${designName}`,
 					boolMethod: EBVolume.eUnion,
 					inList: [
-						`subpax_${designName}_ext1`,
 						`subpax_${designName}_plate2`,
 						`subpax_${designName}_int3`,
 						`subpax_${designName}_plate4`,
-						`subpax_${designName}_ext5`,
 						...vH4List
 					]
 				}
