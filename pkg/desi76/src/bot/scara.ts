@@ -25,7 +25,7 @@ import {
 	//vector,
 	contour,
 	contourCircle,
-	//ctrRectangle,
+	ctrRectangle,
 	figure,
 	degToRad,
 	radToDeg,
@@ -116,6 +116,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const figExtern = figure();
 	const figH41 = figure();
 	const figH42 = figure();
+	const figSide = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -137,6 +138,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const aP1 = pi2 + aIncli;
 		const He = Math.max(param.H3, param.H41, param.H42);
 		const Htot = param.H1 + 2 * (param.H2 + He);
+		const Hl5 = He + 2 * param.H2 + param.H1;
 		// step-5 : checks on the parameter values
 		if (param.L1 < R12 + R22) {
 			throw `err095: L1 ${ffix(param.L1)} is too small compare to D12 ${ffix(2 * R12)} and D22 ${ffix(2 * R22)}`;
@@ -240,13 +242,27 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figH42
 		figH42.addMainOI([contourCircle(X2, 0, R22), contourCircle(X2, 0, R21)]);
 		figH42.mergeFigure(figH41, true);
+		// figSide
+		figSide.addMainO(ctrRectangle(0, He, Ltot, param.H2));
+		figSide.addMainO(ctrRectangle(0, He + param.H2 + param.H1, Ltot, param.H2));
+		figSide.addSecond(ctrRectangle(R12 - R11, 0, 2 * R11, Htot));
+		figSide.addSecond(ctrRectangle(X2 - R21, 0, 2 * R21, Htot));
+		if (param.H41 > 0) {
+			figSide.addMainO(ctrRectangle(0, He - param.H41, 2 * R12, param.H41));
+			figSide.addMainO(ctrRectangle(0, Hl5, 2 * R12, param.H41));
+		}
+		if (param.H42 > 0) {
+			figSide.addMainO(ctrRectangle(X2 - R22, He - param.H42, 2 * R22, param.H42));
+			figSide.addMainO(ctrRectangle(X2 - R22, Hl5, 2 * R22, param.H42));
+		}
 		// final figure list
 		rGeome.fig = {
 			facePlate: figPlate,
 			faceIntern: figIntern,
 			faceExtern: figExtern,
 			faceH41: figH41,
-			faceH42: figH42
+			faceH42: figH42,
+			faceSide: figSide
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
@@ -267,7 +283,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				extrudeMethod: EExtrude.eLinearOrtho,
 				length: param.H41,
 				rotate: [0, 0, 0],
-				translate: [0, 0, He + 2 * param.H2 + param.H1]
+				translate: [0, 0, Hl5]
 			});
 			vH4List.push(`subpax_${designName}_h41l`, `subpax_${designName}_h41h`);
 		}
@@ -286,7 +302,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				extrudeMethod: EExtrude.eLinearOrtho,
 				length: param.H42,
 				rotate: [0, 0, 0],
-				translate: [0, 0, He + 2 * param.H2 + param.H1]
+				translate: [0, 0, Hl5]
 			});
 			vH4List.push(`subpax_${designName}_h42l`, `subpax_${designName}_h42h`);
 		}
@@ -330,7 +346,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: param.H3,
 					rotate: [0, 0, 0],
-					translate: [0, 0, He + 2 * param.H2 + param.H1]
+					translate: [0, 0, Hl5]
 				},
 				...eH4List
 			],
