@@ -59,14 +59,14 @@ const pDef: tParamDef = {
 		pNumber('T1', 'mm', 2, 0.1, 100, 0.1),
 		pNumber('T2', 'mm', 2, 0.1, 100, 0.1),
 		pNumber('S2', 'mm', 30, 1, 1000, 1),
-		pNumber('R1i', 'mm', 2, 0, 100, 0.5),
+		pNumber('R1i', 'mm', 1, 0, 100, 0.1),
 		pNumber('R1e', 'mm', 0.5, 0, 100, 0.1),
 		pCheckbox('iiEn', true),
 		pSectionSeparator('External details'),
 		pNumber('N2', 'legs', 3, 0, 10, 1),
 		pNumber('S1', 'mm', 40, 1, 1000, 1),
 		pNumber('T3', 'mm', 2, 0.1, 100, 0.1),
-		pNumber('R2i', 'mm', 2, 0, 100, 0.5),
+		pNumber('R2i', 'mm', 1, 0, 100, 0.1),
 		pNumber('R2e', 'mm', 0.5, 0, 100, 0.1),
 		pSectionSeparator('Heights'),
 		pNumber('H1', 'mm', 50, 1, 1000, 1),
@@ -139,6 +139,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const He = Math.max(param.H3, param.H41, param.H42);
 		const Htot = param.H1 + 2 * (param.H2 + He);
 		const Hl5 = He + 2 * param.H2 + param.H1;
+		const a7c = aP1 - Math.acos(R7 / R12);
+		const a8c = aP1 + Math.acos(R8 / R22);
 		// step-5 : checks on the parameter values
 		if (param.L1 < R12 + R22) {
 			throw `err095: L1 ${ffix(param.L1)} is too small compare to D12 ${ffix(2 * R12)} and D22 ${ffix(2 * R22)}`;
@@ -158,6 +160,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (aP1 < a1) {
 			throw `err148: aIncli ${ffix(radToDeg(aIncli))} is too small compare to A1 ${ffix(radToDeg(2 * a1))}`;
 		}
+		if (param.iiEn && a7c < a1) {
+			throw `err163: aIncli ${ffix(radToDeg(aIncli))} is too small compare to A1 ${ffix(radToDeg(2 * a1))}`;
+		}
 		// step-6 : any logs
 		rGeome.logstr += `length ${ffix(Ltot)}  height ${ffix(Htot)}\n`;
 		// step-7 : drawing of the figures
@@ -170,8 +175,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const p63 = point(X2, 0).translatePolar(aP1, R22 - param.T3);
 		const p7e = point(R12, 0).translatePolar(Math.PI - a1, R12);
 		const p7i = point(R12, 0).translatePolar(Math.PI - a1, R12 - param.T2);
+		const p7be = point(R12, 0).translatePolar(a1, R12);
+		const p7bi = point(R12, 0).translatePolar(a1, R12 - param.T2);
+		const p7c = point(R12, 0).translatePolar(a7c, R12);
 		const p8e = point(X2, 0).translatePolar(a1, R22);
 		const p8i = point(X2, 0).translatePolar(a1, R22 - param.T2);
+		const p8be = point(X2, 0).translatePolar(Math.PI - a1, R22);
+		const p8bi = point(X2, 0).translatePolar(Math.PI - a1, R22 - param.T2);
+		const p8c = point(X2, 0).translatePolar(a8c, R22);
 		const p91 = point(R12, 0).translatePolar(a91, R91);
 		const p92 = point(X2, 0).translatePolar(Math.PI - a92, R92);
 		// figPlate
@@ -214,12 +225,29 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figIntern.addMainOI([contourCircle(R12, 0, R11 + param.T1), contourCircle(R12, 0, R11)]);
 		figIntern.addMainOI([contourCircle(X2, 0, R21 + param.T1), contourCircle(X2, 0, R21)]);
 		function ctrI(iyk: number): tContour {
-			const rCtr = contour(p7i.cx, iyk * p7i.cy)
-				.addCornerRounded(param.R1e)
-				.addPointA(p12.cx, iyk * p12.cy)
-				.addSegArc(R7, false, iyk > 0 ? false : true)
-				.addSegStrokeA(p62.cx, iyk * p62.cy)
-				.addPointA(p8i.cx, iyk * p8i.cy)
+			const rCtr = contour(p7i.cx, iyk * p7i.cy).addCornerRounded(param.R1e);
+			if (param.iiEn) {
+				rCtr.addPointA(p7bi.cx, iyk * p7bi.cy)
+					.addSegArc(R7, false, iyk > 0 ? false : true)
+					.addCornerRounded(param.R1e)
+					.addSegStrokeA(p7be.cx, iyk * p7be.cy)
+					.addCornerRounded(param.R1e)
+					.addPointA(p7c.cx, iyk * p7c.cy)
+					.addSegArc(R12, false, iyk > 0 ? true : false)
+					.addCornerRounded(param.R1i)
+					.addSegStrokeA(p8c.cx, iyk * p8c.cy)
+					.addCornerRounded(param.R1i)
+					.addPointA(p8be.cx, iyk * p8be.cy)
+					.addSegArc(R12, false, iyk > 0 ? true : false)
+					.addCornerRounded(param.R1e)
+					.addSegStrokeA(p8bi.cx, iyk * p8bi.cy)
+					.addCornerRounded(param.R1e);
+			} else {
+				rCtr.addPointA(p12.cx, iyk * p12.cy)
+					.addSegArc(R7, false, iyk > 0 ? false : true)
+					.addSegStrokeA(p62.cx, iyk * p62.cy);
+			}
+			rCtr.addPointA(p8i.cx, iyk * p8i.cy)
 				.addSegArc(R8, false, iyk > 0 ? false : true)
 				.addCornerRounded(param.R1e)
 				.addSegStrokeA(p8e.cx, iyk * p8e.cy)
