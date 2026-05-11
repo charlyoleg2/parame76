@@ -63,7 +63,7 @@ const pDef: tParamDef = {
 		pNumber('R1e', 'mm', 0.5, 0, 100, 0.1),
 		pCheckbox('iiEn', true),
 		pSectionSeparator('External details'),
-		pNumber('N2', 'legs', 3, 0, 10, 1),
+		pNumber('N2', 'legs', 2, 0, 2, 1),
 		pNumber('S1', 'mm', 40, 1, 1000, 1),
 		pNumber('T3', 'mm', 2, 0.1, 100, 0.1),
 		pNumber('R2i', 'mm', 1, 0, 100, 0.1),
@@ -322,7 +322,51 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				figExtern.addMainOI([ctrE3, contourCircle(R12, 0, R11), contourCircle(X2, 0, R21)]);
 			}
 		} else {
-			figExtern.addMainOI([ctrPlate, contourCircle(R12, 0, R11), contourCircle(X2, 0, R21)]);
+			const aB = (2 * Math.PI) / (param.N2 + 1);
+			const NaB = (param.N2 - 1) / 2;
+			if (pFirstEnd === 0 && pSecondEnd === 1) {
+				figExtern.addMainOI([ctrPlate, contourCircle(X2, 0, R21)]);
+			} else if (pFirstEnd === 1 && pSecondEnd === 0) {
+				figExtern.addMainOI([ctrPlate, contourCircle(R12, 0, R11)]);
+			} else {
+				function ctrE4(iyk: number): tContour {
+					const R93 = R12 - param.T3;
+					const R94 = R22 - param.T3;
+					const a93 = Math.asin(param.T3 / (2 * R93));
+					const a94 = Math.asin(param.T3 / (2 * R94));
+					const p93 = point(R12, 0).translatePolar(Math.PI - iyk * (NaB * aB + a93), R93);
+					const p94 = point(X2, 0).translatePolar(iyk * (NaB * aB + a94), R94);
+					const p95 = point(R12, 0).translatePolar(Math.PI - iyk * (NaB * aB + a91), R91);
+					const p96 = point(X2, 0).translatePolar(iyk * (NaB * aB + a92), R92);
+					const rCtr = contour(p13.cx, iyk * p13.cy)
+						.addPointA(p93.cx, p93.cy)
+						.addSegArc(R93, false, iyk > 0 ? true : false)
+						.addCornerRounded(param.R2i)
+						.addSegStrokeA(p95.cx, p95.cy)
+						.addCornerRounded(param.R2i)
+						.addPointA(p91.cx, iyk * p91.cy)
+						.addSegArc(R91, false, iyk > 0 ? false : true)
+						.addCornerRounded(param.R2i)
+						.addSegStrokeA(p92.cx, iyk * p92.cy)
+						.addCornerRounded(param.R2i)
+						.addPointA(p96.cx, p96.cy)
+						.addSegArc(R92, false, iyk > 0 ? false : true)
+						.addCornerRounded(param.R2i)
+						.addSegStrokeA(p94.cx, p94.cy)
+						.addCornerRounded(param.R2i)
+						.addPointA(p63.cx, iyk * p63.cy)
+						.addSegArc(R94, false, iyk > 0 ? true : false)
+						.closeSegStroke();
+					return rCtr;
+				}
+				figExtern.addMainOI([
+					ctrPlate,
+					ctrE4(1),
+					ctrE4(-1),
+					contourCircle(R12, 0, R11),
+					contourCircle(X2, 0, R21)
+				]);
+			}
 		}
 		figExtern.mergeFigure(figPlate, true);
 		// figIntern
