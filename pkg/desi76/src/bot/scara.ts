@@ -361,7 +361,42 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				hollowR.push(ctrE5(X2, R94, R92, aB, (NaB - ii) * aB));
 			}
 			if (pFirstEnd === 0 && pSecondEnd === 1) {
-				figExtern.addMainOI([ctrPlate, ...hollowR]);
+				const ctrE6 = contour(p13d.cx, p13d.cy)
+					.addCornerRounded(param.R2e)
+					.addSegStrokeA(p63.cx, p63.cy)
+					.addPointA(p94.cx, p94.cy)
+					.addSegArc(R94, false, false)
+					.addCornerRounded(param.R2i)
+					.addSegStrokeA(p96.cx, p96.cy)
+					.addCornerRounded(param.R2i)
+					.addPointA(p92.cx, p92.cy)
+					.addSegArc(R92, false, true)
+					.addCornerRounded(param.R2i)
+					.addSegStrokeA(R12 + param.S1, T32)
+					.addCornerRounded(param.R2e)
+					.addSegStrokeA(R12 + param.S1, -T32)
+					.addCornerRounded(param.R2e)
+					.addSegStrokeA(p92.cx, -p92.cy)
+					.addCornerRounded(param.R2i)
+					.addPointA(p96.cx, -p96.cy)
+					.addSegArc(R92, false, true)
+					.addCornerRounded(param.R2i)
+					.addSegStrokeA(p94.cx, -p94.cy)
+					.addCornerRounded(param.R2i)
+					.addPointA(p63.cx, -p63.cy)
+					.addSegArc(R94, false, false)
+					.addSegStrokeA(p13d.cx, -p13d.cy)
+					.addCornerRounded(param.R2e)
+					.addSegStrokeA(p1d.cx, -p1d.cy)
+					.addCornerRounded(param.R2e)
+					.addSegStrokeA(p6.cx, -p6.cy)
+					.addPointA(Ltot, 0)
+					.addPointA(p6.cx, p6.cy)
+					.addSegArc2()
+					.addSegStrokeA(p1d.cx, p1d.cy)
+					.addCornerRounded(param.R2e)
+					.closeSegStroke();
+				figExtern.addMainOI([ctrE6, ...hollowR]);
 			} else if (pFirstEnd === 1 && pSecondEnd === 0) {
 				figExtern.addMainOI([ctrPlate, ...hollowL]);
 			} else {
