@@ -143,6 +143,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const a8c = aP1 + Math.acos(R8 / R22);
 		const pFirstEnd = param.firstEnd;
 		const pSecondEnd = param.secondEnd === 1 ? 0 : 1;
+		const T32 = param.T3 / 2;
 		// start using 2D objects
 		const p1 = point(R12, 0).translatePolar(aP1, R12);
 		const p6 = point(X2, 0).translatePolar(aP1, R22);
@@ -227,30 +228,62 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.closeSegStroke();
 		figPlate.addMainOI([ctrPlate, contourCircle(R12, 0, R11), contourCircle(X2, 0, R21)]);
 		// figExtern
-		const ctrE2 = contour(p13.cx, p13.cy)
-			.addPointA(param.T3, 0)
-			.addPointA(p13.cx, -p13.cy)
-			.addSegArc2()
-			.addSegStrokeA(p63.cx, -p63.cy)
-			.addPointA(Ltot - param.T3, 0)
-			.addPointA(p63.cx, p63.cy)
-			.addSegArc2()
-			.closeSegStroke();
-		figExtern.addMainOI([ctrPlate, ctrE2]);
-		const ctrE3 = contour(p91.cx, p91.cy)
-			.addCornerRounded(param.R2i)
-			.addPointA(R12 - R91, 0)
-			.addPointA(p91.cx, -p91.cy)
-			.addSegArc2()
-			.addCornerRounded(param.R2i)
-			.addSegStrokeA(p92.cx, -p92.cy)
-			.addCornerRounded(param.R2i)
-			.addPointA(X2 + R92, 0)
-			.addPointA(p92.cx, p92.cy)
-			.addSegArc2()
-			.addCornerRounded(param.R2i)
-			.closeSegStroke();
-		figExtern.addMainOI([ctrE3, contourCircle(R12, 0, R11), contourCircle(X2, 0, R21)]);
+		if (param.N2 === 0) {
+			if (pFirstEnd === 0 && pSecondEnd === 1) {
+				const ctrE3 = contour(R12 + param.S1, T32)
+					.addCornerRounded(param.R2e)
+					.addSegStrokeA(R12 + param.S1, -T32)
+					.addCornerRounded(param.R2e)
+					.addSegStrokeA(p92.cx, -p92.cy)
+					.addCornerRounded(param.R2i)
+					.addPointA(X2 + R92, 0)
+					.addPointA(p92.cx, p92.cy)
+					.addSegArc2()
+					.addCornerRounded(param.R2i)
+					.closeSegStroke();
+				figExtern.addMainOI([ctrE3, contourCircle(X2, 0, R21)]);
+			} else if (pFirstEnd === 1 && pSecondEnd === 0) {
+				const ctrE3 = contour(p91.cx, p91.cy)
+					.addCornerRounded(param.R2i)
+					.addPointA(R12 - R91, 0)
+					.addPointA(p91.cx, -p91.cy)
+					.addSegArc2()
+					.addCornerRounded(param.R2i)
+					.addSegStrokeA(X2 - param.S2, -T32)
+					.addCornerRounded(param.R2e)
+					.addSegStrokeA(X2 - param.S2, T32)
+					.addCornerRounded(param.R2e)
+					.closeSegStroke();
+				figExtern.addMainOI([ctrE3, contourCircle(R12, 0, R11)]);
+			} else {
+				const ctrE2 = contour(p13.cx, p13.cy)
+					.addPointA(param.T3, 0)
+					.addPointA(p13.cx, -p13.cy)
+					.addSegArc2()
+					.addSegStrokeA(p63.cx, -p63.cy)
+					.addPointA(Ltot - param.T3, 0)
+					.addPointA(p63.cx, p63.cy)
+					.addSegArc2()
+					.closeSegStroke();
+				figExtern.addMainOI([ctrPlate, ctrE2]);
+				const ctrE3 = contour(p91.cx, p91.cy)
+					.addCornerRounded(param.R2i)
+					.addPointA(R12 - R91, 0)
+					.addPointA(p91.cx, -p91.cy)
+					.addSegArc2()
+					.addCornerRounded(param.R2i)
+					.addSegStrokeA(p92.cx, -p92.cy)
+					.addCornerRounded(param.R2i)
+					.addPointA(X2 + R92, 0)
+					.addPointA(p92.cx, p92.cy)
+					.addSegArc2()
+					.addCornerRounded(param.R2i)
+					.closeSegStroke();
+				figExtern.addMainOI([ctrE3, contourCircle(R12, 0, R11), contourCircle(X2, 0, R21)]);
+			}
+		} else {
+			figExtern.addMainOI([ctrPlate, contourCircle(R12, 0, R11), contourCircle(X2, 0, R21)]);
+		}
 		// figIntern
 		if (pFirstEnd === 0) {
 			figIntern.addMainOI([
