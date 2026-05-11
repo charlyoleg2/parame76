@@ -150,6 +150,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const p62 = point(X2, 0).translatePolar(aP1, R22 - param.T2);
 		const p13 = point(R12, 0).translatePolar(aP1, R12 - param.T3);
 		const p63 = point(X2, 0).translatePolar(aP1, R22 - param.T3);
+		const l1d = (R12 + param.S1 - p1.cx) / Math.cos(aIncli);
+		const l12d = (R12 + param.S1 - p12.cx) / Math.cos(aIncli);
 		const l6d = (p6.cx - (X2 - param.S2)) / Math.cos(aIncli);
 		const l62d = (p62.cx - (X2 - param.S2)) / Math.cos(aIncli);
 		// step-5 : checks on the parameter values
@@ -181,7 +183,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			throw `err181: S2 ${ffix(param.S2)} is too small compare to D22 ${ffix(2 * R22)}`;
 		}
 		if (param.L1 < param.S1 + param.S2) {
-			throw `err184: L1 ${ffix(param.L1)} is too small compare to D12 ${ffix(2 * R12)} and D22 ${ffix(2 * R22)}`;
+			throw `err184: L1 ${ffix(param.L1)} is too small compare to S1 ${ffix(param.S1)} and S2 ${ffix(param.S2)}`;
+		}
+		if (l1d <= 0 || l12d <= 0) {
+			throw `err189: S1 ${ffix(param.S1)} is too small`;
 		}
 		if (l6d <= 0 || l62d <= 0) {
 			throw `err170: S2 ${ffix(param.S2)} is too small`;
@@ -206,6 +211,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const p8c = point(X2, 0).translatePolar(a8c, R22);
 		const p91 = point(R12, 0).translatePolar(a91, R91);
 		const p92 = point(X2, 0).translatePolar(Math.PI - a92, R92);
+		const p1d = p1.translatePolar(aP1 - pi2, l1d);
+		const p12d = p12.translatePolar(aP1 - pi2, l12d);
 		const p6d = p6.translatePolar(aP1 + pi2, l6d);
 		const p62d = p62.translatePolar(aP1 + pi2, l62d);
 		// figPlate
@@ -255,21 +262,34 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			figIntern.addMainOI([contourCircle(X2, 0, R21 + param.T1), contourCircle(X2, 0, R21)]);
 		}
 		function ctrI(iyk: number): tContour {
-			const rCtr = contour(p7i.cx, iyk * p7i.cy).addCornerRounded(param.R1e);
-			if (param.iiEn) {
-				rCtr.addPointA(p7bi.cx, iyk * p7bi.cy)
-					.addSegArc(R7, false, iyk > 0 ? false : true)
-					.addCornerRounded(param.R1e)
-					.addSegStrokeA(p7be.cx, iyk * p7be.cy)
-					.addCornerRounded(param.R1e)
-					.addPointA(p7c.cx, iyk * p7c.cy)
-					.addSegArc(R12, false, iyk > 0 ? true : false)
-					.addCornerRounded(param.R1i);
-			} else {
-				rCtr.addPointA(p12.cx, iyk * p12.cy).addSegArc(R7, false, iyk > 0 ? false : true);
+			let tp0 = p7i;
+			if (pFirstEnd === 1) {
+				tp0 = p12d;
+			}
+			const rCtr = contour(tp0.cx, iyk * tp0.cy).addCornerRounded(param.R1e);
+			if (pFirstEnd === 0) {
+				if (param.iiEn) {
+					rCtr.addPointA(p7bi.cx, iyk * p7bi.cy)
+						.addSegArc(R7, false, iyk > 0 ? false : true)
+						.addCornerRounded(param.R1e)
+						.addSegStrokeA(p7be.cx, iyk * p7be.cy)
+						.addCornerRounded(param.R1e)
+						.addPointA(p7c.cx, iyk * p7c.cy)
+						.addSegArc(R12, false, iyk > 0 ? true : false)
+						.addCornerRounded(param.R1i);
+				} else {
+					rCtr.addPointA(p12.cx, iyk * p12.cy).addSegArc(
+						R7,
+						false,
+						iyk > 0 ? false : true
+					);
+				}
 			}
 			if (pSecondEnd === 1) {
-				rCtr.addSegStrokeA(p62d.cx, iyk * p62d.cy).addSegStrokeA(p6d.cx, iyk * p6d.cy);
+				rCtr.addSegStrokeA(p62d.cx, iyk * p62d.cy)
+					.addCornerRounded(param.R1e)
+					.addSegStrokeA(p6d.cx, iyk * p6d.cy)
+					.addCornerRounded(param.R1e);
 			} else {
 				if (param.iiEn) {
 					rCtr.addSegStrokeA(p8c.cx, iyk * p8c.cy)
@@ -290,11 +310,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					.addPointA(p6.cx, iyk * p6.cy)
 					.addSegArc(R22, false, iyk > 0 ? true : false);
 			}
-			rCtr.addSegStrokeA(p1.cx, iyk * p1.cy)
-				.addPointA(p7e.cx, iyk * p7e.cy)
-				.addSegArc(R12, false, iyk > 0 ? true : false)
-				.addCornerRounded(param.R1e)
-				.closeSegStroke();
+			if (pFirstEnd === 1) {
+				rCtr.addSegStrokeA(p1d.cx, iyk * p1d.cy)
+					.addCornerRounded(param.R1e)
+					.closeSegStroke();
+			} else {
+				rCtr.addSegStrokeA(p1.cx, iyk * p1.cy)
+					.addPointA(p7e.cx, iyk * p7e.cy)
+					.addSegArc(R12, false, iyk > 0 ? true : false)
+					.addCornerRounded(param.R1e)
+					.closeSegStroke();
+			}
 			return rCtr;
 		}
 		figIntern.addMainO(ctrI(1));
@@ -332,7 +358,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const designName = rGeome.partName;
 		const eH4List: tExtrude[] = [];
 		const vH4List: string[] = [];
-		if (param.H3 > 0) {
+		if (param.H3 > 0 && pFirstEnd + pSecondEnd > 0) {
 			eH4List.push({
 				outName: `subpax_${designName}_ext1`,
 				face: `${designName}_faceExtern`,
