@@ -141,6 +141,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const Hl5 = He + 2 * param.H2 + param.H1;
 		const a7c = aP1 - Math.acos(R7 / R12);
 		const a8c = aP1 + Math.acos(R8 / R22);
+		const pFirstEnd = param.firstEnd;
+		const pSecondEnd = param.secondEnd === 1 ? 0 : 1;
+		// start using 2D objects
+		const p1 = point(R12, 0).translatePolar(aP1, R12);
+		const p6 = point(X2, 0).translatePolar(aP1, R22);
+		const p12 = point(R12, 0).translatePolar(aP1, R12 - param.T2);
+		const p62 = point(X2, 0).translatePolar(aP1, R22 - param.T2);
+		const p13 = point(R12, 0).translatePolar(aP1, R12 - param.T3);
+		const p63 = point(X2, 0).translatePolar(aP1, R22 - param.T3);
+		const l6d = (p6.cx - (X2 - param.S2)) / Math.cos(aIncli);
+		const l62d = (p62.cx - (X2 - param.S2)) / Math.cos(aIncli);
 		// step-5 : checks on the parameter values
 		if (param.L1 < R12 + R22) {
 			throw `err095: L1 ${ffix(param.L1)} is too small compare to D12 ${ffix(2 * R12)} and D22 ${ffix(2 * R22)}`;
@@ -163,6 +174,19 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (param.iiEn && a7c < a1) {
 			throw `err163: aIncli ${ffix(radToDeg(aIncli))} is too small compare to A1 ${ffix(radToDeg(2 * a1))}`;
 		}
+		if (param.S1 < R12 / 2) {
+			throw `err178: S1 ${ffix(param.S1)} is too small compare to D12 ${ffix(2 * R12)}`;
+		}
+		if (param.S2 < R22 / 2) {
+			throw `err181: S2 ${ffix(param.S2)} is too small compare to D22 ${ffix(2 * R22)}`;
+		}
+		if (param.L1 < param.S1 + param.S2) {
+			throw `err184: L1 ${ffix(param.L1)} is too small compare to D12 ${ffix(2 * R12)} and D22 ${ffix(2 * R22)}`;
+		}
+		if (l6d <= 0 || l62d <= 0) {
+			throw `err170: S2 ${ffix(param.S2)} is too small`;
+		}
+		// warnings
 		if (param.H3 === 0) {
 			rGeome.logstr += 'warn167: Warning H3 is zero\n';
 		}
@@ -170,12 +194,6 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `length ${ffix(Ltot)}  height ${ffix(Htot)}\n`;
 		// step-7 : drawing of the figures
 		// fig1
-		const p1 = point(R12, 0).translatePolar(aP1, R12);
-		const p6 = point(X2, 0).translatePolar(aP1, R22);
-		const p12 = point(R12, 0).translatePolar(aP1, R12 - param.T2);
-		const p62 = point(X2, 0).translatePolar(aP1, R22 - param.T2);
-		const p13 = point(R12, 0).translatePolar(aP1, R12 - param.T3);
-		const p63 = point(X2, 0).translatePolar(aP1, R22 - param.T3);
 		const p7e = point(R12, 0).translatePolar(Math.PI - a1, R12);
 		const p7i = point(R12, 0).translatePolar(Math.PI - a1, R12 - param.T2);
 		const p7be = point(R12, 0).translatePolar(a1, R12);
@@ -188,6 +206,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const p8c = point(X2, 0).translatePolar(a8c, R22);
 		const p91 = point(R12, 0).translatePolar(a91, R91);
 		const p92 = point(X2, 0).translatePolar(Math.PI - a92, R92);
+		const p6d = p6.translatePolar(aP1 + pi2, l6d);
+		const p62d = p62.translatePolar(aP1 + pi2, l62d);
 		// figPlate
 		const ctrPlate = contour(p1.cx, p1.cy)
 			.addPointA(0, 0)
@@ -225,8 +245,15 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.closeSegStroke();
 		figExtern.addMainOI([ctrE3, contourCircle(R12, 0, R11), contourCircle(X2, 0, R21)]);
 		// figIntern
-		figIntern.addMainOI([contourCircle(R12, 0, R11 + param.T1), contourCircle(R12, 0, R11)]);
-		figIntern.addMainOI([contourCircle(X2, 0, R21 + param.T1), contourCircle(X2, 0, R21)]);
+		if (pFirstEnd === 0) {
+			figIntern.addMainOI([
+				contourCircle(R12, 0, R11 + param.T1),
+				contourCircle(R12, 0, R11)
+			]);
+		}
+		if (pSecondEnd === 0) {
+			figIntern.addMainOI([contourCircle(X2, 0, R21 + param.T1), contourCircle(X2, 0, R21)]);
+		}
 		function ctrI(iyk: number): tContour {
 			const rCtr = contour(p7i.cx, iyk * p7i.cy).addCornerRounded(param.R1e);
 			if (param.iiEn) {
@@ -237,27 +264,33 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					.addCornerRounded(param.R1e)
 					.addPointA(p7c.cx, iyk * p7c.cy)
 					.addSegArc(R12, false, iyk > 0 ? true : false)
-					.addCornerRounded(param.R1i)
-					.addSegStrokeA(p8c.cx, iyk * p8c.cy)
-					.addCornerRounded(param.R1i)
-					.addPointA(p8be.cx, iyk * p8be.cy)
-					.addSegArc(R12, false, iyk > 0 ? true : false)
-					.addCornerRounded(param.R1e)
-					.addSegStrokeA(p8bi.cx, iyk * p8bi.cy)
-					.addCornerRounded(param.R1e);
+					.addCornerRounded(param.R1i);
 			} else {
-				rCtr.addPointA(p12.cx, iyk * p12.cy)
-					.addSegArc(R7, false, iyk > 0 ? false : true)
-					.addSegStrokeA(p62.cx, iyk * p62.cy);
+				rCtr.addPointA(p12.cx, iyk * p12.cy).addSegArc(R7, false, iyk > 0 ? false : true);
 			}
-			rCtr.addPointA(p8i.cx, iyk * p8i.cy)
-				.addSegArc(R8, false, iyk > 0 ? false : true)
-				.addCornerRounded(param.R1e)
-				.addSegStrokeA(p8e.cx, iyk * p8e.cy)
-				.addCornerRounded(param.R1e)
-				.addPointA(p6.cx, iyk * p6.cy)
-				.addSegArc(R22, false, iyk > 0 ? true : false)
-				.addSegStrokeA(p1.cx, iyk * p1.cy)
+			if (pSecondEnd === 1) {
+				rCtr.addSegStrokeA(p62d.cx, iyk * p62d.cy).addSegStrokeA(p6d.cx, iyk * p6d.cy);
+			} else {
+				if (param.iiEn) {
+					rCtr.addSegStrokeA(p8c.cx, iyk * p8c.cy)
+						.addCornerRounded(param.R1i)
+						.addPointA(p8be.cx, iyk * p8be.cy)
+						.addSegArc(R12, false, iyk > 0 ? true : false)
+						.addCornerRounded(param.R1e)
+						.addSegStrokeA(p8bi.cx, iyk * p8bi.cy)
+						.addCornerRounded(param.R1e);
+				} else {
+					rCtr.addSegStrokeA(p62.cx, iyk * p62.cy);
+				}
+				rCtr.addPointA(p8i.cx, iyk * p8i.cy)
+					.addSegArc(R8, false, iyk > 0 ? false : true)
+					.addCornerRounded(param.R1e)
+					.addSegStrokeA(p8e.cx, iyk * p8e.cy)
+					.addCornerRounded(param.R1e)
+					.addPointA(p6.cx, iyk * p6.cy)
+					.addSegArc(R22, false, iyk > 0 ? true : false);
+			}
+			rCtr.addSegStrokeA(p1.cx, iyk * p1.cy)
 				.addPointA(p7e.cx, iyk * p7e.cy)
 				.addSegArc(R12, false, iyk > 0 ? true : false)
 				.addCornerRounded(param.R1e)
