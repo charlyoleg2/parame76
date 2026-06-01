@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
-     inkscape:zoom="0.78484147"
-     inkscape:cx="396.25837"
-     inkscape:cy="561.25984"
+     inkscape:zoom="1.1099335"
+     inkscape:cx="241.45592"
+     inkscape:cy="311.27992"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="0"
@@ -135,7 +135,10 @@
        width="137.54391"
        height="88.676491"
        x="7.8664627"
-       y="98.211594" />
+       y="98.211594"
+       inkscape:export-filename="scarabase_double.svg"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
     <rect
        style="fill:none;stroke:#fff6d5;stroke-width:0.264583;stroke-linejoin:round"
        id="rect16"
@@ -283,7 +286,7 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect27);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="219.64062"
          y="387.68175"
-         id="tspan6">a5</tspan></text>
+         id="tspan6">A5</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide)"
        d="m 40.762578,157.09087 -6.197819,3.2181"

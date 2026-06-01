@@ -6,3 +6,4 @@ export * from './charpente/abri';
 export * from './charpente/cuisine';
 export * from './stone/stairs';
 export * from './bot/scara';
+export * from './bot/scarabase';
