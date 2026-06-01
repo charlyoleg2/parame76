@@ -25,7 +25,7 @@ import {
 	//vector,
 	contour,
 	contourCircle,
-	//ctrRectangle,
+	ctrRectangle,
 	figure,
 	degToRad,
 	radToDeg,
@@ -50,15 +50,22 @@ const pDef: tParamDef = {
 		pNumber('D1', 'mm', 20, 1, 1000, 1),
 		pNumber('D2', 'mm', 60, 1, 1000, 1),
 		pNumber('L3', 'mm', 30, 0, 1000, 1),
-		pNumber('L4', 'mm', 30, 0, 1000, 1),
+		pNumber('L4', 'mm', 10, 1, 100, 1),
 		pNumber('W5', 'mm', 40, 1, 1000, 1),
 		pDropdown('Nac', ['single', 'double']),
 		pSectionSeparator('Plate details'),
 		pNumber('R34', 'mm', 2, 0, 10, 0.1),
 		pNumber('A5', 'degree', 45, 0, 90, 1),
 		pNumber('W6', 'mm', 0, 0, 1000, 1),
-		pSectionSeparator('Plate structure'),
-		pNumber('T3', 'mm', 0, 0, 1000, 1)
+		pSectionSeparator('Plate reinforcement'),
+		pNumber('T3', 'mm', 0, 0, 1000, 1),
+		pSectionSeparator('Heights'),
+		pNumber('H1', 'mm', 50, 1, 1000, 1),
+		pNumber('H2', 'mm', 10, 1, 1000, 1),
+		pNumber('H3', 'mm', 10, 0, 1000, 1),
+		pNumber('W8', 'mm', 20, 1, 1000, 1),
+		pNumber('H8', 'mm', 30, 1, 1000, 1),
+		pNumber('D8', 'mm', 5, 1, 1000, 1)
 	],
 	paramSvg: {
 		D1: 'scarabase_single.svg',
@@ -69,7 +76,14 @@ const pDef: tParamDef = {
 		Nac: 'scarabase_double.svg',
 		R34: 'scarabase_single.svg',
 		A5: 'scarabase_double.svg',
-		W6: 'scarabase_double.svg'
+		W6: 'scarabase_double.svg',
+		T3: 'scarabase_single.svg',
+		H1: 'scarabase_heights.svg',
+		H2: 'scarabase_heights.svg',
+		H3: 'scarabase_heights.svg',
+		W8: 'scarabase_heights.svg',
+		H8: 'scarabase_heights.svg',
+		D8: 'scarabase_heights.svg'
 	},
 	sim: {
 		tMax: 100,
@@ -82,12 +96,14 @@ const pDef: tParamDef = {
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
 	const figPlate = figure();
+	const figHeights = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
 		const a5 = degToRad(param.A5) / 2;
 		const R1 = param.D1 / 2;
 		const R2 = param.D2 / 2;
+		const R8 = param.D8 / 2;
 		const W52 = param.W5 / 2;
 		const L32 = param.L3 + R2;
 		const a21 = Math.atan(W52 / L32);
@@ -96,15 +112,23 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const a2 = a21 + a22;
 		const L432 = param.L4 + param.L3 + R2;
 		const Ltot = 2 * R2 + param.L3 + param.L4;
-		const Htot = 0;
+		const Htot = param.H1 + 2 * (param.H2 + param.H3);
+		const X8 = (param.W5 - param.W8) / 2;
+		const Y8 = (param.H1 - param.H8) / 2;
 		const pi2 = Math.PI / 2;
 		// step-5 : checks on the parameter values
 		if (R2 < R1 + 2 * param.T3) {
 			throw `err132: D2 ${ffix(2 * R2)} is too small compare to D1 ${ffix(2 * R1)} and T3 ${ffix(param.T3)}`;
 		}
+		if (X8 < R8) {
+			throw `err124: W5 ${ffix(2 * W52)} is too small compare to D8 ${ffix(2 * R8)} and W8 ${ffix(param.W8)}`;
+		}
+		if (Y8 < R8) {
+			throw `err127: H1 ${ffix(param.H1)} is too small compare to D8 ${ffix(2 * R8)} and H8 ${ffix(param.H8)}`;
+		}
 		// warnings
-		if (param.T3 === 0) {
-			rGeome.logstr += 'warn167: Warning H3 is zero\n';
+		if (param.H3 === 0) {
+			rGeome.logstr += 'warn125: Warning H3 is zero\n';
 		}
 		// step-6 : any logs
 		rGeome.logstr += `length ${ffix(Ltot)}  height ${ffix(Htot)}\n`;
@@ -128,9 +152,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addCornerRounded(param.R34)
 			.closeSegStroke();
 		figPlate.addMainOI([ctrPlate, contourCircle(0, L432, R1)]);
+		// figHeights
+		figHeights.addMainOI([
+			ctrRectangle(0, 0, param.W5, param.H1),
+			contourCircle(X8, Y8, R8),
+			contourCircle(2 * W52 - X8, Y8, R8),
+			contourCircle(X8, param.H1 - Y8, R8),
+			contourCircle(2 * W52 - X8, param.H1 - Y8, R8)
+		]);
 		// final figure list
 		rGeome.fig = {
-			facePlate: figPlate
+			facePlate: figPlate,
+			faceHeights: figHeights
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
