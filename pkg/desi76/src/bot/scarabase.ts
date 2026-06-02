@@ -55,8 +55,8 @@ const pDef: tParamDef = {
 		pDropdown('Nac', ['single', 'double']),
 		pSectionSeparator('Plate details'),
 		pNumber('R34', 'mm', 2, 0, 10, 0.1),
-		pNumber('A5', 'degree', 45, 0, 90, 1),
-		pNumber('W6', 'mm', 0, 0, 1000, 1),
+		pNumber('A5', 'degree', 90, 0, 180, 1),
+		pNumber('W6', 'mm', 10, 0, 1000, 1),
 		pNumber('T3', 'mm', 3, 1, 100, 1),
 		pNumber('T4', 'mm', 10, 1, 100, 1),
 		pSectionSeparator('Heights and back'),
@@ -119,7 +119,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const H123 = param.H1 + H23;
 		const Y4 = param.L4 + param.T3 / Math.tan(a2);
 		const X5 = param.W5 * Math.cos(a5);
-		//const Y5 = param.W5 * Math.sin(a5);
+		const Y5 = param.W5 * Math.sin(a5);
 		const W7 = param.Nac === 0 ? param.W5 : param.W6 + 2 * X5;
 		const X8 = (W7 - param.W8) / 2;
 		const Y8 = (param.H1 - param.H8) / 2;
@@ -175,9 +175,59 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.closeSegStroke();
 			return rCtr;
 		}
-		const ctrPlate = ctrSingle;
+		const p30 = point(X5 / 2, param.L4 + Y5 / 2).translatePolar(a5 + pi2, param.L3 + R2);
+		const p31 = p30.translatePolar(a5 - pi2 + a2, R2);
+		const p32 = p30.translatePolar(a5 + pi2, R2);
+		const p33 = p30.translatePolar(a5 - pi2 - a2, R2);
+		const p40 = point(W7 - X5 / 2, param.L4 + Y5 / 2).translatePolar(pi2 - a5, param.L3 + R2);
+		const p41 = p40.translatePolar(-a5 - pi2 + a2, R2);
+		const p42 = p40.translatePolar(-a5 + pi2, R2);
+		const p43 = p40.translatePolar(-a5 - pi2 - a2, R2);
+		function ctrDouble(iT3nPlate: number) {
+			const rCtr = contour(0, 0);
+			if (iT3nPlate === 1) {
+				rCtr.addSegStrokeA(param.T3, 0)
+					.addSegStrokeA(param.T3, Y4)
+					.addCornerRounded(param.R34)
+					.addSegStrokeA(p22i.cx, p22i.cy)
+					.addPointA(W52, L432 + R2 - param.T3)
+					.addPointA(p21i.cx, p21i.cy)
+					.addSegArc2()
+					.addSegStrokeA(2 * W52 - param.T3, Y4)
+					.addCornerRounded(param.R34)
+					.addSegStrokeA(2 * W52 - param.T3, 0);
+			}
+			rCtr.addSegStrokeA(W7, 0)
+				.addSegStrokeA(W7, param.L4)
+				.addCornerRounded(param.R34)
+				.addSegStrokeA(p41.cx, p41.cy)
+				.addPointA(p42.cx, p42.cy)
+				.addPointA(p43.cx, p43.cy)
+				.addSegArc2()
+				.addSegStrokeA(W7 - X5, param.L4 + Y5)
+				.addCornerRounded(param.R34)
+				.addSegStrokeA(X5, param.L4 + Y5)
+				.addCornerRounded(param.R34)
+				.addSegStrokeA(p31.cx, p31.cy)
+				.addPointA(p32.cx, p32.cy)
+				.addPointA(p33.cx, p33.cy)
+				.addSegArc2()
+				.addSegStrokeA(0, param.L4)
+				.addCornerRounded(param.R34)
+				.closeSegStroke();
+			return rCtr;
+		}
+		const ctrPlate = param.Nac === 1 ? ctrDouble : ctrSingle;
 		// figPlate
-		figPlate.addMainOI([ctrPlate(0), contourCircle(W52, L432, R1)]);
+		if (param.Nac === 0) {
+			figPlate.addMainOI([ctrSingle(0), contourCircle(W52, L432, R1)]);
+		} else {
+			figPlate.addMainOI([
+				ctrDouble(0),
+				contourCircle(p30.cx, p30.cy, R1),
+				contourCircle(p40.cx, p40.cy, R1)
+			]);
+		}
 		figPlate.addSecond(ctrRectangle(0, 0, W7, param.T4));
 		figPlate.addSecond(ctrRectangle(X8 - R8, 0, 2 * R8, param.T4));
 		figPlate.addSecond(ctrRectangle(W7 - X8 - R8, 0, 2 * R8, param.T4));
