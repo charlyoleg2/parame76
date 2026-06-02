@@ -97,7 +97,8 @@ const pDef: tParamDef = {
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
 	const figPlate = figure();
-	const figHeights = figure();
+	const figBack = figure();
+	const figT3 = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -120,7 +121,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const H123 = param.H1 + H23;
 		const pi2 = Math.PI / 2;
 		// step-5 : checks on the parameter values
-		if (R2 < R1 + 2 * param.T3) {
+		if (R2 < R1 + 4 * param.T3) {
 			throw `err132: D2 ${ffix(2 * R2)} is too small compare to D1 ${ffix(2 * R1)} and T3 ${ffix(param.T3)}`;
 		}
 		if (X8 < R8) {
@@ -156,22 +157,28 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.closeSegStroke();
 		figPlate.addMainOI([ctrPlate, contourCircle(W52, L432, R1)]);
 		figPlate.addSecond(ctrRectangle(0, 0, param.W5, param.T4));
-		// figHeights
-		figHeights.addMainOI([
+		figPlate.addSecond(ctrRectangle(X8 - R8, 0, 2 * R8, param.T4));
+		figPlate.addSecond(ctrRectangle(2 * W52 - X8 - R8, 0, 2 * R8, param.T4));
+		// figBack
+		figBack.addMainOI([
 			ctrRectangle(0, H23, param.W5, param.H1),
 			contourCircle(X8, H23 + Y8, R8),
 			contourCircle(2 * W52 - X8, H23 + Y8, R8),
 			contourCircle(X8, H123 - Y8, R8),
 			contourCircle(2 * W52 - X8, H123 - Y8, R8)
 		]);
-		figHeights.addSecond(ctrRectangle(W52 - R1, 0, 2 * R1, H23));
-		figHeights.addSecond(ctrRectangle(W52 - R2, 0, 2 * R2, H23));
-		figHeights.addSecond(ctrRectangle(W52 - R1, H123, 2 * R1, H23));
-		figHeights.addSecond(ctrRectangle(W52 - R2, H123, 2 * R2, H23));
+		figBack.addSecond(ctrRectangle(W52 - R1, 0, 2 * R1, H23));
+		figBack.addSecond(ctrRectangle(W52 - R2, 0, 2 * R2, H23));
+		figBack.addSecond(ctrRectangle(W52 - R1, H123, 2 * R1, H23));
+		figBack.addSecond(ctrRectangle(W52 - R2, H123, 2 * R2, H23));
+		// figT3
+		figT3.addMainOI([contourCircle(W52, L432, R1 + param.T3), contourCircle(W52, L432, R1)]);
+		figT3.mergeFigure(figPlate, true);
 		// final figure list
 		rGeome.fig = {
 			facePlate: figPlate,
-			faceHeights: figHeights
+			faceBack: figBack,
+			faceT3: figT3
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
@@ -195,7 +202,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				},
 				{
 					outName: `subpax_${designName}_back`,
-					face: `${designName}_faceHeights`,
+					face: `${designName}_faceBack`,
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: param.T4,
 					rotate: [pi2, 0, 0],
