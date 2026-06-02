@@ -115,6 +115,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const Htot = param.H1 + 2 * (param.H2 + param.H3);
 		const X8 = (param.W5 - param.W8) / 2;
 		const Y8 = (param.H1 - param.H8) / 2;
+		const H23 = param.H2 + param.H3;
+		const H123 = param.H1 + H23;
 		const pi2 = Math.PI / 2;
 		// step-5 : checks on the parameter values
 		if (R2 < R1 + 2 * param.T3) {
@@ -137,29 +139,34 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// step-7 : drawing of the figures
 		// fig1
-		const p21 = point(0, L432).translatePolar(-pi2 + a2, R2);
-		const p22 = point(0, L432).translatePolar(-pi2 - a2, R2);
+		const p21 = point(W52, L432).translatePolar(-pi2 + a2, R2);
+		const p22 = point(W52, L432).translatePolar(-pi2 - a2, R2);
 		// figPlate
-		const ctrPlate = contour(-W52, 0)
-			.addSegStrokeA(W52, 0)
-			.addSegStrokeA(W52, param.L4)
+		const ctrPlate = contour(0, 0)
+			.addSegStrokeA(2 * W52, 0)
+			.addSegStrokeA(2 * W52, param.L4)
 			.addCornerRounded(param.R34)
 			.addSegStrokeA(p21.cx, p21.cy)
-			.addPointA(0, L432 + R2)
+			.addPointA(W52, L432 + R2)
 			.addPointA(p22.cx, p22.cy)
 			.addSegArc2()
-			.addSegStrokeA(-W52, param.L4)
+			.addSegStrokeA(0, param.L4)
 			.addCornerRounded(param.R34)
 			.closeSegStroke();
-		figPlate.addMainOI([ctrPlate, contourCircle(0, L432, R1)]);
+		figPlate.addMainOI([ctrPlate, contourCircle(W52, L432, R1)]);
+		figPlate.addSecond(ctrRectangle(0, 0, param.W5, param.L4));
 		// figHeights
 		figHeights.addMainOI([
-			ctrRectangle(0, 0, param.W5, param.H1),
-			contourCircle(X8, Y8, R8),
-			contourCircle(2 * W52 - X8, Y8, R8),
-			contourCircle(X8, param.H1 - Y8, R8),
-			contourCircle(2 * W52 - X8, param.H1 - Y8, R8)
+			ctrRectangle(0, H23, param.W5, param.H1),
+			contourCircle(X8, H23 + Y8, R8),
+			contourCircle(2 * W52 - X8, H23 + Y8, R8),
+			contourCircle(X8, H123 - Y8, R8),
+			contourCircle(2 * W52 - X8, H123 - Y8, R8)
 		]);
+		figHeights.addSecond(ctrRectangle(W52 - R1, 0, 2 * R1, H23));
+		figHeights.addSecond(ctrRectangle(W52 - R2, 0, 2 * R2, H23));
+		figHeights.addSecond(ctrRectangle(W52 - R1, H123, 2 * R1, H23));
+		figHeights.addSecond(ctrRectangle(W52 - R2, H123, 2 * R2, H23));
 		// final figure list
 		rGeome.fig = {
 			facePlate: figPlate,
@@ -175,14 +182,34 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: param.H2,
 					rotate: [0, 0, 0],
-					translate: [0, 0, 0]
+					translate: [0, 0, param.H3]
+				},
+				{
+					outName: `subpax_${designName}_plate4`,
+					face: `${designName}_facePlate`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.H2,
+					rotate: [0, 0, 0],
+					translate: [0, 0, H123]
+				},
+				{
+					outName: `subpax_${designName}_back`,
+					face: `${designName}_faceHeights`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.L4,
+					rotate: [pi2, 0, 0],
+					translate: [0, param.L4, 0]
 				}
 			],
 			volumes: [
 				{
 					outName: `pax_${designName}`,
 					boolMethod: EBVolume.eUnion,
-					inList: [`subpax_${designName}_plate2`]
+					inList: [
+						`subpax_${designName}_plate2`,
+						`subpax_${designName}_plate4`,
+						`subpax_${designName}_back`
+					]
 				}
 			]
 		};
