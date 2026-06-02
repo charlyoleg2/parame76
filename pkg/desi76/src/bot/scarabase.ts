@@ -50,16 +50,16 @@ const pDef: tParamDef = {
 		pNumber('D1', 'mm', 20, 1, 1000, 1),
 		pNumber('D2', 'mm', 60, 1, 1000, 1),
 		pNumber('L3', 'mm', 30, 0, 1000, 1),
-		pNumber('L4', 'mm', 10, 1, 100, 1),
+		pNumber('L4', 'mm', 20, 1, 100, 1),
 		pNumber('W5', 'mm', 40, 1, 1000, 1),
 		pDropdown('Nac', ['single', 'double']),
 		pSectionSeparator('Plate details'),
 		pNumber('R34', 'mm', 2, 0, 10, 0.1),
 		pNumber('A5', 'degree', 45, 0, 90, 1),
 		pNumber('W6', 'mm', 0, 0, 1000, 1),
-		pSectionSeparator('Plate reinforcement'),
-		pNumber('T3', 'mm', 0, 0, 1000, 1),
-		pSectionSeparator('Heights'),
+		pNumber('T3', 'mm', 3, 1, 100, 1),
+		pNumber('T4', 'mm', 10, 1, 100, 1),
+		pSectionSeparator('Heights and back'),
 		pNumber('H1', 'mm', 50, 1, 1000, 1),
 		pNumber('H2', 'mm', 10, 1, 1000, 1),
 		pNumber('H3', 'mm', 10, 0, 1000, 1),
@@ -78,6 +78,7 @@ const pDef: tParamDef = {
 		A5: 'scarabase_double.svg',
 		W6: 'scarabase_double.svg',
 		T3: 'scarabase_single.svg',
+		T4: 'scarabase_single.svg',
 		H1: 'scarabase_heights.svg',
 		H2: 'scarabase_heights.svg',
 		H3: 'scarabase_heights.svg',
@@ -154,7 +155,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addCornerRounded(param.R34)
 			.closeSegStroke();
 		figPlate.addMainOI([ctrPlate, contourCircle(W52, L432, R1)]);
-		figPlate.addSecond(ctrRectangle(0, 0, param.W5, param.L4));
+		figPlate.addSecond(ctrRectangle(0, 0, param.W5, param.T4));
 		// figHeights
 		figHeights.addMainOI([
 			ctrRectangle(0, H23, param.W5, param.H1),
@@ -196,9 +197,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					outName: `subpax_${designName}_back`,
 					face: `${designName}_faceHeights`,
 					extrudeMethod: EExtrude.eLinearOrtho,
-					length: param.L4,
+					length: param.T4,
 					rotate: [pi2, 0, 0],
-					translate: [0, param.L4, 0]
+					translate: [0, param.T4, 0]
 				}
 			],
 			volumes: [
