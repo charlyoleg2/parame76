@@ -9,7 +9,7 @@ import type {
 	tParamDef,
 	tParamVal,
 	tGeom,
-	//tExtrude,
+	tExtrude,
 	tPageDef
 	//tSubInst
 	//tSubDesign
@@ -119,6 +119,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const Y8 = (param.H1 - param.H8) / 2;
 		const H23 = param.H2 + param.H3;
 		const H123 = param.H1 + H23;
+		const Y4 = param.L4 + param.T3 / Math.tan(a2);
 		const pi2 = Math.PI / 2;
 		// step-5 : checks on the parameter values
 		if (R2 < R1 + 4 * param.T3) {
@@ -172,6 +173,30 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figBack.addSecond(ctrRectangle(W52 - R1, H123, 2 * R1, H23));
 		figBack.addSecond(ctrRectangle(W52 - R2, H123, 2 * R2, H23));
 		// figT3
+		const p21i = point(W52, L432).translatePolar(-pi2 + a2, R2 - param.T3);
+		const p22i = point(W52, L432).translatePolar(-pi2 - a2, R2 - param.T3);
+		const ctrT3e = contour(0, 0)
+			.addSegStrokeA(param.T3, 0)
+			.addSegStrokeA(param.T3, Y4)
+			.addCornerRounded(param.R34)
+			.addSegStrokeA(p22i.cx, p22i.cy)
+			.addPointA(W52, L432 + R2 - param.T3)
+			.addPointA(p21i.cx, p21i.cy)
+			.addSegArc2()
+			.addSegStrokeA(2 * W52 - param.T3, Y4)
+			.addCornerRounded(param.R34)
+			.addSegStrokeA(2 * W52 - param.T3, 0)
+			.addSegStrokeA(2 * W52, 0)
+			.addSegStrokeA(2 * W52, param.L4)
+			.addCornerRounded(param.R34)
+			.addSegStrokeA(p21.cx, p21.cy)
+			.addPointA(W52, L432 + R2)
+			.addPointA(p22.cx, p22.cy)
+			.addSegArc2()
+			.addSegStrokeA(0, param.L4)
+			.addCornerRounded(param.R34)
+			.closeSegStroke();
+		figT3.addMainO(ctrT3e);
 		figT3.addMainOI([contourCircle(W52, L432, R1 + param.T3), contourCircle(W52, L432, R1)]);
 		figT3.mergeFigure(figPlate, true);
 		// final figure list
@@ -182,6 +207,28 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
+		const lExtrudes: tExtrude[] = [];
+		const lUnion: string[] = [];
+		if (param.H3 > 0) {
+			lExtrudes.push({
+				outName: `subpax_${designName}_t31`,
+				face: `${designName}_faceT3`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.H3,
+				rotate: [0, 0, 0],
+				translate: [0, 0, 0]
+			});
+			lUnion.push(`subpax_${designName}_t31`);
+			lExtrudes.push({
+				outName: `subpax_${designName}_t35`,
+				face: `${designName}_faceT3`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.H3,
+				rotate: [0, 0, 0],
+				translate: [0, 0, H123 + param.H2]
+			});
+			lUnion.push(`subpax_${designName}_t35`);
+		}
 		rGeome.vol = {
 			extrudes: [
 				{
@@ -207,7 +254,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					length: param.T4,
 					rotate: [pi2, 0, 0],
 					translate: [0, param.T4, 0]
-				}
+				},
+				...lExtrudes
 			],
 			volumes: [
 				{
@@ -216,7 +264,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					inList: [
 						`subpax_${designName}_plate2`,
 						`subpax_${designName}_plate4`,
-						`subpax_${designName}_back`
+						`subpax_${designName}_back`,
+						...lUnion
 					]
 				}
 			]
