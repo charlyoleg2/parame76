@@ -143,6 +143,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (param.Nac === 1) {
 			rGeome.logstr += `angle of double ${ffix(radToDeg(2 * a5))}\n`;
 		}
+		rGeome.logstr += `W7 ${ffix(W7)}\n`;
 		// step-7 : drawing of the figures
 		// sub-functions
 		const p21 = point(W52, L432).translatePolar(-pi2 + a2, R2);
@@ -179,23 +180,43 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const p31 = p30.translatePolar(a5 - pi2 + a2, R2);
 		const p32 = p30.translatePolar(a5 + pi2, R2);
 		const p33 = p30.translatePolar(a5 - pi2 - a2, R2);
+		const p31i = p30.translatePolar(a5 - pi2 + a2, R2 - param.T3);
+		const p32i = p30.translatePolar(a5 + pi2, R2 - param.T3);
+		const p33i = p30.translatePolar(a5 - pi2 - a2, R2 - param.T3);
 		const p40 = point(W7 - X5 / 2, param.L4 + Y5 / 2).translatePolar(pi2 - a5, param.L3 + R2);
 		const p41 = p40.translatePolar(-a5 - pi2 + a2, R2);
 		const p42 = p40.translatePolar(-a5 + pi2, R2);
 		const p43 = p40.translatePolar(-a5 - pi2 - a2, R2);
+		const p41i = p40.translatePolar(-a5 - pi2 + a2, R2 - param.T3);
+		const p42i = p40.translatePolar(-a5 + pi2, R2 - param.T3);
+		const p43i = p40.translatePolar(-a5 - pi2 - a2, R2 - param.T3);
+		const Y41 = param.L4 + param.T3 / Math.tan(a5 / 2);
+		const Y42 = param.L4 + Y5 - param.T3;
+		const Y43 = Y42;
+		const Y44 = Y41;
+		const X42 = X5 - param.T3 / Math.tan(a5 / 2);
+		const X43 = W7 - X42;
 		function ctrDouble(iT3nPlate: number) {
 			const rCtr = contour(0, 0);
 			if (iT3nPlate === 1) {
 				rCtr.addSegStrokeA(param.T3, 0)
-					.addSegStrokeA(param.T3, Y4)
+					.addSegStrokeA(param.T3, Y41)
 					.addCornerRounded(param.R34)
-					.addSegStrokeA(p22i.cx, p22i.cy)
-					.addPointA(W52, L432 + R2 - param.T3)
-					.addPointA(p21i.cx, p21i.cy)
+					.addSegStrokeA(p33i.cx, p33i.cy)
+					.addPointA(p32i.cx, p32i.cx)
+					.addPointA(p31i.cx, p31i.cy)
 					.addSegArc2()
-					.addSegStrokeA(2 * W52 - param.T3, Y4)
+					.addSegStrokeA(X42, Y42)
 					.addCornerRounded(param.R34)
-					.addSegStrokeA(2 * W52 - param.T3, 0);
+					.addSegStrokeA(X43, Y43)
+					.addCornerRounded(param.R34)
+					.addSegStrokeA(p43i.cx, p43i.cy)
+					.addPointA(p42i.cx, p42i.cx)
+					.addPointA(p41i.cx, p41i.cy)
+					.addSegArc2()
+					.addSegStrokeA(W7 - param.T3, Y44)
+					.addCornerRounded(param.R34)
+					.addSegStrokeA(W7 - param.T3, 0);
 			}
 			rCtr.addSegStrokeA(W7, 0)
 				.addSegStrokeA(W7, param.L4)
@@ -217,7 +238,6 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.closeSegStroke();
 			return rCtr;
 		}
-		const ctrPlate = param.Nac === 1 ? ctrDouble : ctrSingle;
 		// figPlate
 		if (param.Nac === 0) {
 			figPlate.addMainOI([ctrSingle(0), contourCircle(W52, L432, R1)]);
@@ -244,8 +264,23 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figBack.addSecond(ctrRectangle(W52 - R1, H123, 2 * R1, H23));
 		figBack.addSecond(ctrRectangle(W52 - R2, H123, 2 * R2, H23));
 		// figT3
-		figT3.addMainO(ctrPlate(1));
-		figT3.addMainOI([contourCircle(W52, L432, R1 + param.T3), contourCircle(W52, L432, R1)]);
+		if (param.Nac === 0) {
+			figT3.addMainO(ctrSingle(1));
+			figT3.addMainOI([
+				contourCircle(W52, L432, R1 + param.T3),
+				contourCircle(W52, L432, R1)
+			]);
+		} else {
+			figT3.addMainO(ctrDouble(1));
+			figT3.addMainOI([
+				contourCircle(p30.cx, p30.cy, R1 + param.T3),
+				contourCircle(p30.cx, p30.cy, R1)
+			]);
+			figT3.addMainOI([
+				contourCircle(p40.cx, p40.cy, R1 + param.T3),
+				contourCircle(p40.cx, p40.cy, R1)
+			]);
+		}
 		figT3.mergeFigure(figPlate, true);
 		// final figure list
 		rGeome.fig = {
