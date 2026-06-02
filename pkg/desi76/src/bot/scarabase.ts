@@ -115,11 +115,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const L432 = param.L4 + param.L3 + R2;
 		const Ltot = 2 * R2 + param.L3 + param.L4;
 		const Htot = param.H1 + 2 * (param.H2 + param.H3);
-		const X8 = (param.W5 - param.W8) / 2;
-		const Y8 = (param.H1 - param.H8) / 2;
 		const H23 = param.H2 + param.H3;
 		const H123 = param.H1 + H23;
 		const Y4 = param.L4 + param.T3 / Math.tan(a2);
+		const X5 = param.W5 * Math.cos(a5);
+		//const Y5 = param.W5 * Math.sin(a5);
+		const W7 = param.Nac === 0 ? param.W5 : param.W6 + 2 * X5;
+		const X8 = (W7 - param.W8) / 2;
+		const Y8 = (param.H1 - param.H8) / 2;
 		const pi2 = Math.PI / 2;
 		// step-5 : checks on the parameter values
 		if (R2 < R1 + 4 * param.T3) {
@@ -141,28 +144,46 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			rGeome.logstr += `angle of double ${ffix(radToDeg(2 * a5))}\n`;
 		}
 		// step-7 : drawing of the figures
-		// fig1
+		// sub-functions
 		const p21 = point(W52, L432).translatePolar(-pi2 + a2, R2);
 		const p22 = point(W52, L432).translatePolar(-pi2 - a2, R2);
+		const p21i = point(W52, L432).translatePolar(-pi2 + a2, R2 - param.T3);
+		const p22i = point(W52, L432).translatePolar(-pi2 - a2, R2 - param.T3);
+		function ctrSingle(iT3nPlate: number) {
+			const rCtr = contour(0, 0);
+			if (iT3nPlate === 1) {
+				rCtr.addSegStrokeA(param.T3, 0)
+					.addSegStrokeA(param.T3, Y4)
+					.addCornerRounded(param.R34)
+					.addSegStrokeA(p22i.cx, p22i.cy)
+					.addPointA(W52, L432 + R2 - param.T3)
+					.addPointA(p21i.cx, p21i.cy)
+					.addSegArc2()
+					.addSegStrokeA(2 * W52 - param.T3, Y4)
+					.addCornerRounded(param.R34)
+					.addSegStrokeA(2 * W52 - param.T3, 0);
+			}
+			rCtr.addSegStrokeA(2 * W52, 0)
+				.addSegStrokeA(2 * W52, param.L4)
+				.addCornerRounded(param.R34)
+				.addSegStrokeA(p21.cx, p21.cy)
+				.addPointA(W52, L432 + R2)
+				.addPointA(p22.cx, p22.cy)
+				.addSegArc2()
+				.addSegStrokeA(0, param.L4)
+				.addCornerRounded(param.R34)
+				.closeSegStroke();
+			return rCtr;
+		}
+		const ctrPlate = ctrSingle;
 		// figPlate
-		const ctrPlate = contour(0, 0)
-			.addSegStrokeA(2 * W52, 0)
-			.addSegStrokeA(2 * W52, param.L4)
-			.addCornerRounded(param.R34)
-			.addSegStrokeA(p21.cx, p21.cy)
-			.addPointA(W52, L432 + R2)
-			.addPointA(p22.cx, p22.cy)
-			.addSegArc2()
-			.addSegStrokeA(0, param.L4)
-			.addCornerRounded(param.R34)
-			.closeSegStroke();
-		figPlate.addMainOI([ctrPlate, contourCircle(W52, L432, R1)]);
-		figPlate.addSecond(ctrRectangle(0, 0, param.W5, param.T4));
+		figPlate.addMainOI([ctrPlate(0), contourCircle(W52, L432, R1)]);
+		figPlate.addSecond(ctrRectangle(0, 0, W7, param.T4));
 		figPlate.addSecond(ctrRectangle(X8 - R8, 0, 2 * R8, param.T4));
-		figPlate.addSecond(ctrRectangle(2 * W52 - X8 - R8, 0, 2 * R8, param.T4));
+		figPlate.addSecond(ctrRectangle(W7 - X8 - R8, 0, 2 * R8, param.T4));
 		// figBack
 		figBack.addMainOI([
-			ctrRectangle(0, H23, param.W5, param.H1),
+			ctrRectangle(0, H23, W7, param.H1),
 			contourCircle(X8, H23 + Y8, R8),
 			contourCircle(2 * W52 - X8, H23 + Y8, R8),
 			contourCircle(X8, H123 - Y8, R8),
@@ -173,30 +194,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figBack.addSecond(ctrRectangle(W52 - R1, H123, 2 * R1, H23));
 		figBack.addSecond(ctrRectangle(W52 - R2, H123, 2 * R2, H23));
 		// figT3
-		const p21i = point(W52, L432).translatePolar(-pi2 + a2, R2 - param.T3);
-		const p22i = point(W52, L432).translatePolar(-pi2 - a2, R2 - param.T3);
-		const ctrT3e = contour(0, 0)
-			.addSegStrokeA(param.T3, 0)
-			.addSegStrokeA(param.T3, Y4)
-			.addCornerRounded(param.R34)
-			.addSegStrokeA(p22i.cx, p22i.cy)
-			.addPointA(W52, L432 + R2 - param.T3)
-			.addPointA(p21i.cx, p21i.cy)
-			.addSegArc2()
-			.addSegStrokeA(2 * W52 - param.T3, Y4)
-			.addCornerRounded(param.R34)
-			.addSegStrokeA(2 * W52 - param.T3, 0)
-			.addSegStrokeA(2 * W52, 0)
-			.addSegStrokeA(2 * W52, param.L4)
-			.addCornerRounded(param.R34)
-			.addSegStrokeA(p21.cx, p21.cy)
-			.addPointA(W52, L432 + R2)
-			.addPointA(p22.cx, p22.cy)
-			.addSegArc2()
-			.addSegStrokeA(0, param.L4)
-			.addCornerRounded(param.R34)
-			.closeSegStroke();
-		figT3.addMainO(ctrT3e);
+		figT3.addMainO(ctrPlate(1));
 		figT3.addMainOI([contourCircle(W52, L432, R1 + param.T3), contourCircle(W52, L432, R1)]);
 		figT3.mergeFigure(figPlate, true);
 		// final figure list
