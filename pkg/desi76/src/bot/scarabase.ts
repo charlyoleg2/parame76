@@ -117,13 +117,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const Htot = param.H1 + 2 * (param.H2 + param.H3);
 		const H23 = param.H2 + param.H3;
 		const H123 = param.H1 + H23;
-		const Y4 = param.L4 + param.T3 / Math.tan(a2);
+		const pi2 = Math.PI / 2;
+		const Y4 = param.L4 + param.T3 * Math.tan((pi2 - a2) / 2);
 		const X5 = param.W5 * Math.cos(a5);
 		const Y5 = param.W5 * Math.sin(a5);
 		const W7 = param.Nac === 0 ? param.W5 : param.W6 + 2 * X5;
 		const X8 = (W7 - param.W8) / 2;
 		const Y8 = (param.H1 - param.H8) / 2;
-		const pi2 = Math.PI / 2;
 		// step-5 : checks on the parameter values
 		if (R2 < R1 + 4 * param.T3) {
 			throw `err132: D2 ${ffix(2 * R2)} is too small compare to D1 ${ffix(2 * R1)} and T3 ${ffix(param.T3)}`;
@@ -190,11 +190,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const p41i = p40.translatePolar(-a5 - pi2 + a2, R2 - param.T3);
 		const p42i = p40.translatePolar(-a5 + pi2, R2 - param.T3);
 		const p43i = p40.translatePolar(-a5 - pi2 - a2, R2 - param.T3);
-		const Y41 = param.L4 + param.T3 / Math.tan(a5 / 2);
+		const Y41 = param.L4 + param.T3 * Math.tan(a5 / 2 + (pi2 - a2) / 2);
 		const Y42 = param.L4 + Y5 - param.T3;
 		const Y43 = Y42;
 		const Y44 = Y41;
-		const X42 = X5 - param.T3 / Math.tan(a5 / 2);
+		const a42 = a5 / 2 - pi2 + a2;
+		const X42 = X5 - param.T3 * Math.tan(pi2 / 2 - a42);
 		const X43 = W7 - X42;
 		function ctrDouble(iT3nPlate: number) {
 			const rCtr = contour(0, 0);
@@ -203,7 +204,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					.addSegStrokeA(param.T3, Y41)
 					.addCornerRounded(param.R34)
 					.addSegStrokeA(p33i.cx, p33i.cy)
-					.addPointA(p32i.cx, p32i.cx)
+					.addPointA(p32i.cx, p32i.cy)
 					.addPointA(p31i.cx, p31i.cy)
 					.addSegArc2()
 					.addSegStrokeA(X42, Y42)
@@ -211,7 +212,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					.addSegStrokeA(X43, Y43)
 					.addCornerRounded(param.R34)
 					.addSegStrokeA(p43i.cx, p43i.cy)
-					.addPointA(p42i.cx, p42i.cx)
+					.addPointA(p42i.cx, p42i.cy)
 					.addPointA(p41i.cx, p41i.cy)
 					.addSegArc2()
 					.addSegStrokeA(W7 - param.T3, Y44)
@@ -255,14 +256,25 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figBack.addMainOI([
 			ctrRectangle(0, H23, W7, param.H1),
 			contourCircle(X8, H23 + Y8, R8),
-			contourCircle(2 * W52 - X8, H23 + Y8, R8),
+			contourCircle(W7 - X8, H23 + Y8, R8),
 			contourCircle(X8, H123 - Y8, R8),
-			contourCircle(2 * W52 - X8, H123 - Y8, R8)
+			contourCircle(W7 - X8, H123 - Y8, R8)
 		]);
-		figBack.addSecond(ctrRectangle(W52 - R1, 0, 2 * R1, H23));
-		figBack.addSecond(ctrRectangle(W52 - R2, 0, 2 * R2, H23));
-		figBack.addSecond(ctrRectangle(W52 - R1, H123, 2 * R1, H23));
-		figBack.addSecond(ctrRectangle(W52 - R2, H123, 2 * R2, H23));
+		if (param.Nac === 0) {
+			figBack.addSecond(ctrRectangle(W52 - R1, 0, 2 * R1, H23));
+			figBack.addSecond(ctrRectangle(W52 - R2, 0, 2 * R2, H23));
+			figBack.addSecond(ctrRectangle(W52 - R1, H123, 2 * R1, H23));
+			figBack.addSecond(ctrRectangle(W52 - R2, H123, 2 * R2, H23));
+		} else {
+			figBack.addSecond(ctrRectangle(p30.cx - R1, 0, 2 * R1, H23));
+			figBack.addSecond(ctrRectangle(p30.cx - R2, 0, 2 * R2, H23));
+			figBack.addSecond(ctrRectangle(p40.cx - R1, 0, 2 * R1, H23));
+			figBack.addSecond(ctrRectangle(p40.cx - R2, 0, 2 * R2, H23));
+			figBack.addSecond(ctrRectangle(p30.cx - R1, H123, 2 * R1, H23));
+			figBack.addSecond(ctrRectangle(p30.cx - R2, H123, 2 * R2, H23));
+			figBack.addSecond(ctrRectangle(p40.cx - R1, H123, 2 * R1, H23));
+			figBack.addSecond(ctrRectangle(p40.cx - R2, H123, 2 * R2, H23));
+		}
 		// figT3
 		if (param.Nac === 0) {
 			figT3.addMainO(ctrSingle(1));
