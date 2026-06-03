@@ -125,7 +125,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const X8 = (W7 - param.W8) / 2;
 		const Y8 = (param.H1 - param.H8) / 2;
 		// step-5 : checks on the parameter values
-		if (R2 < R1 + 4 * param.T3) {
+		if (R2 < R1 + 2 * param.T3) {
 			throw `err132: D2 ${ffix(2 * R2)} is too small compare to D1 ${ffix(2 * R1)} and T3 ${ffix(param.T3)}`;
 		}
 		if (X8 < R8) {
@@ -141,7 +141,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-6 : any logs
 		rGeome.logstr += `length ${ffix(Ltot)}  height ${ffix(Htot)}\n`;
 		if (param.Nac === 1) {
-			rGeome.logstr += `angle of double ${ffix(radToDeg(2 * a5))}\n`;
+			rGeome.logstr += `angle between holders: ${ffix(radToDeg(2 * a5))}\n`;
 		}
 		rGeome.logstr += `W7 ${ffix(W7)}\n`;
 		// step-7 : drawing of the figures
@@ -190,12 +190,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const p41i = p40.translatePolar(-a5 - pi2 + a2, R2 - param.T3);
 		const p42i = p40.translatePolar(-a5 + pi2, R2 - param.T3);
 		const p43i = p40.translatePolar(-a5 - pi2 - a2, R2 - param.T3);
-		const Y41 = param.L4 + param.T3 * Math.tan(a5 / 2 + (pi2 - a2) / 2);
+		const Y41 = param.L4 + param.T3 * Math.tan((a5 + (pi2 - a2)) / 2);
 		const Y42 = param.L4 + Y5 - param.T3;
 		const Y43 = Y42;
 		const Y44 = Y41;
-		const a42 = a5 / 2 - pi2 + a2;
-		const X42 = X5 - param.T3 * Math.tan(pi2 / 2 - a42);
+		const a42 = pi2 - a5 + (pi2 - a2);
+		const X42 = X5 - param.T3 * Math.tan(a42 / 2);
 		const X43 = W7 - X42;
 		function ctrDouble(iT3nPlate: number) {
 			const rCtr = contour(0, 0);
