@@ -40,6 +40,8 @@ import {
 	EBVolume
 } from 'geometrix';
 //import { triAPiPi, triAArA, triALArLL, triLALrL, triALLrL, triALLrLAA, triLLLrA, triLLLrAAA } from 'triangule';
+//import { scaraDef } from './scara';
+//import { scarabaseDef } from './scarabase';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
@@ -74,6 +76,17 @@ const pDef: tParamDef = {
 		pNumber('W8', 'mm', 20, 1, 1000, 1),
 		pNumber('H8', 'mm', 30, 1, 1000, 1),
 		pNumber('D8', 'mm', 5, 1, 1000, 1),
+		pSectionSeparator('Angles'),
+		pNumber('PA0', 'degree', 0, -121, 120, 1),
+		pNumber('PA1', 'degree', 0, -121, 120, 1),
+		pNumber('PA2', 'degree', 0, -121, 120, 1),
+		pNumber('PA3', 'degree', 0, -121, 120, 1),
+		pNumber('PA4', 'degree', 0, -121, 120, 1),
+		pNumber('PA5', 'degree', 0, -121, 120, 1),
+		pNumber('PA6', 'degree', 0, -121, 120, 1),
+		pNumber('PA7', 'degree', 0, -121, 120, 1),
+		pNumber('PA8', 'degree', 0, -121, 120, 1),
+		pNumber('PA9', 'degree', 0, -121, 120, 1),
 		pSectionSeparator('Enable parts for 3D'),
 		pCheckbox('D3E0', true),
 		pCheckbox('D3E1', true),
@@ -111,6 +124,16 @@ const pDef: tParamDef = {
 		W8: 'long2d_top.svg',
 		H8: 'long2d_top.svg',
 		D8: 'long2d_top.svg',
+		PA0: 'long2d_top.svg',
+		PA1: 'long2d_top.svg',
+		PA2: 'long2d_top.svg',
+		PA3: 'long2d_top.svg',
+		PA4: 'long2d_top.svg',
+		PA5: 'long2d_top.svg',
+		PA6: 'long2d_top.svg',
+		PA7: 'long2d_top.svg',
+		PA8: 'long2d_top.svg',
+		PA9: 'long2d_top.svg',
 		D3E0: 'long2d_top.svg',
 		D3E1: 'long2d_top.svg',
 		D3E2: 'long2d_top.svg',
@@ -141,8 +164,23 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-4 : some preparation calculation
 		const ER1 = param.ED1 / 2;
 		const ER2 = param.ED2 / 2;
-		const Ltot = 2 * ER2 + param.L3 + param.L4;
-		const Htot = param.EH1 + 2 * (param.EH2 + param.EH3);
+		const BL: number[] = Array(param.NB).fill(param.EL);
+		const BD1: number[] = Array(param.NB + 1).fill(param.ED1);
+		const BD2: number[] = Array(param.NB + 1).fill(param.ED2);
+		const BH1: number[] = Array(param.NB + 1).fill(param.EH1);
+		for (let ii = param.NB - 2; ii >= 0; ii--) {
+			BL[ii] = BL[ii + 1] * param.LA + param.LB;
+		}
+		for (let ii = param.NB - 1; ii >= 0; ii--) {
+			BD1[ii] = BD1[ii + 1] * param.DA + param.DB;
+			BD2[ii] = BD2[ii + 1] * param.DA + param.DB;
+			BH1[ii] = BH1[ii + 1] * param.HA + param.HB + 2 * (param.EH2 + param.E1);
+		}
+		//const BR1 = BD1.map((aD1: number) => aD1 / 2);
+		const BR2 = BD2.map((aD1: number) => aD1 / 2);
+		const BLtot = BL.reduce((acc: number, val: number) => acc + val, 0);
+		const Ltot = param.L4 + param.L3 + BR2[0] + BLtot + BR2[param.NB];
+		const Htot = BH1[0] + 2 * (param.EH2 + param.EH3);
 		// step-5 : checks on the parameter values
 		if (ER2 < ER1 + 2 * param.T3) {
 			throw `err132: ED2 ${ffix(2 * ER2)} is too small compare to ED1 ${ffix(2 * ER1)} and T3 ${ffix(param.T3)}`;
@@ -153,6 +191,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// step-6 : any logs
 		rGeome.logstr += `length ${ffix(Ltot)}  height ${ffix(Htot)}\n`;
+		for (let ii = 0; ii < param.NB; ii++) {
+			rGeome.logstr += `leg-${ii + 1} : BL ${ffix(BL[ii])}, D12 ${ffix(BD2[ii])}, D22 ${ffix(BD2[ii + 1])},`;
+			rGeome.logstr += ` BH1 ${ffix(BH1[ii + 1])}\n`;
+		}
 		// step-7 : drawing of the figures
 		// sub-functions
 		// figTop
