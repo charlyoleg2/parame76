@@ -95,7 +95,7 @@ const pDef: tParamDef = {
 		T3: 'scara_top.svg',
 		R2i: 'scara_top.svg',
 		R2e: 'scara_top.svg',
-		H1: 'scara_side.svg',
+		H1: 'scara_side2.svg',
 		H2: 'scara_side.svg',
 		H3: 'scara_side.svg',
 		H41: 'scara_side.svg',

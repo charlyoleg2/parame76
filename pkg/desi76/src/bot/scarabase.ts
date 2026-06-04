@@ -79,7 +79,7 @@ const pDef: tParamDef = {
 		W6: 'scarabase_double.svg',
 		T3: 'scarabase_single.svg',
 		T4: 'scarabase_single.svg',
-		H1: 'scarabase_heights.svg',
+		H1: 'scarabase_cut.svg',
 		H2: 'scarabase_heights.svg',
 		H3: 'scarabase_heights.svg',
 		W8: 'scarabase_heights.svg',
