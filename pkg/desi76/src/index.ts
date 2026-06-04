@@ -7,3 +7,4 @@ export * from './charpente/cuisine';
 export * from './stone/stairs';
 export * from './bot/scara';
 export * from './bot/scarabase';
+export * from './bot/long2d';
