@@ -77,16 +77,16 @@ const pDef: tParamDef = {
 		pNumber('H8', 'mm', 30, 1, 1000, 1),
 		pNumber('D8', 'mm', 5, 1, 1000, 1),
 		pSectionSeparator('Angles'),
-		pNumber('PA0', 'degree', 0, -121, 120, 1),
-		pNumber('PA1', 'degree', 0, -121, 120, 1),
-		pNumber('PA2', 'degree', 0, -121, 120, 1),
-		pNumber('PA3', 'degree', 0, -121, 120, 1),
-		pNumber('PA4', 'degree', 0, -121, 120, 1),
-		pNumber('PA5', 'degree', 0, -121, 120, 1),
-		pNumber('PA6', 'degree', 0, -121, 120, 1),
-		pNumber('PA7', 'degree', 0, -121, 120, 1),
-		pNumber('PA8', 'degree', 0, -121, 120, 1),
-		pNumber('PA9', 'degree', 0, -121, 120, 1),
+		pNumber('PA1', 'degree', 0, -120, 120, 1),
+		pNumber('PA2', 'degree', 0, -120, 120, 1),
+		pNumber('PA3', 'degree', 0, -120, 120, 1),
+		pNumber('PA4', 'degree', 0, -120, 120, 1),
+		pNumber('PA5', 'degree', 0, -120, 120, 1),
+		pNumber('PA6', 'degree', 0, -120, 120, 1),
+		pNumber('PA7', 'degree', 0, -120, 120, 1),
+		pNumber('PA8', 'degree', 0, -120, 120, 1),
+		pNumber('PA9', 'degree', 0, -120, 120, 1),
+		pNumber('PA10', 'degree', 0, -120, 120, 1),
 		pSectionSeparator('Enable parts for 3D'),
 		pCheckbox('D3E0', true),
 		pCheckbox('D3E1', true),
@@ -106,8 +106,8 @@ const pDef: tParamDef = {
 		LB: 'long2d_top.svg',
 		DA: 'long2d_top.svg',
 		DB: 'long2d_top.svg',
-		HA: 'long2d_top.svg',
-		HB: 'long2d_top.svg',
+		HA: 'long2d_side.svg',
+		HB: 'long2d_side.svg',
 		EL: 'long2d_top.svg',
 		ED1: 'long2d_top.svg',
 		ED2: 'long2d_top.svg',
@@ -115,16 +115,15 @@ const pDef: tParamDef = {
 		EH2: 'long2d_side.svg',
 		EH3: 'long2d_side.svg',
 		T3: 'long2d_top.svg',
-		E1: 'long2d_top.svg',
+		E1: 'long2d_side.svg',
 		L3: 'long2d_top.svg',
 		L4: 'long2d_top.svg',
 		W5: 'long2d_top.svg',
 		R34: 'long2d_top.svg',
 		T4: 'long2d_top.svg',
-		W8: 'long2d_top.svg',
-		H8: 'long2d_top.svg',
-		D8: 'long2d_top.svg',
-		PA0: 'long2d_top.svg',
+		W8: 'long2d_back.svg',
+		H8: 'long2d_back.svg',
+		D8: 'long2d_back.svg',
 		PA1: 'long2d_top.svg',
 		PA2: 'long2d_top.svg',
 		PA3: 'long2d_top.svg',
@@ -134,6 +133,7 @@ const pDef: tParamDef = {
 		PA7: 'long2d_top.svg',
 		PA8: 'long2d_top.svg',
 		PA9: 'long2d_top.svg',
+		PA10: 'long2d_top.svg',
 		D3E0: 'long2d_top.svg',
 		D3E1: 'long2d_top.svg',
 		D3E2: 'long2d_top.svg',
@@ -164,6 +164,19 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-4 : some preparation calculation
 		const ER1 = param.ED1 / 2;
 		const ER2 = param.ED2 / 2;
+		const R8 = param.D8 / 2;
+		const PA: number[] = [
+			param.PA1,
+			param.PA2,
+			param.PA3,
+			param.PA4,
+			param.PA5,
+			param.PA6,
+			param.PA7,
+			param.PA8,
+			param.PA9,
+			param.PA10
+		];
 		const BL: number[] = Array(param.NB).fill(param.EL);
 		const BD1: number[] = Array(param.NB + 1).fill(param.ED1);
 		const BD2: number[] = Array(param.NB + 1).fill(param.ED2);
@@ -178,19 +191,29 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		//const BR1 = BD1.map((aD1: number) => aD1 / 2);
 		const BR2 = BD2.map((aD1: number) => aD1 / 2);
+		const CH1 = BH1[0];
 		const BLtot = BL.reduce((acc: number, val: number) => acc + val, 0);
 		const Ltot = param.L4 + param.L3 + BR2[0] + BLtot + BR2[param.NB];
-		const Htot = BH1[0] + 2 * (param.EH2 + param.EH3);
+		const Htot = CH1 + 2 * (param.EH2 + param.EH3);
+		const lastOrientation = PA.reduce((acc: number, val: number) => acc + val, 0);
+		const X8 = (param.W5 - param.W8) / 2;
+		const Y8 = (CH1 - param.H8) / 2;
 		// step-5 : checks on the parameter values
 		if (ER2 < ER1 + 2 * param.T3) {
-			throw `err132: ED2 ${ffix(2 * ER2)} is too small compare to ED1 ${ffix(2 * ER1)} and T3 ${ffix(param.T3)}`;
+			throw `err192: ED2 ${ffix(2 * ER2)} is too small compare to ED1 ${ffix(2 * ER1)} and T3 ${ffix(param.T3)}`;
+		}
+		if (X8 < R8) {
+			throw `err195: W5 ${ffix(param.W5)} is too small compare to D8 ${ffix(2 * R8)} and W8 ${ffix(param.W8)}`;
+		}
+		if (Y8 < R8) {
+			throw `err198: H1 ${ffix(CH1)} is too small compare to D8 ${ffix(2 * R8)} and H8 ${ffix(param.H8)}`;
 		}
 		// warnings
 		if (param.H3 === 0) {
 			rGeome.logstr += 'warn125: Warning H3 is zero\n';
 		}
 		// step-6 : any logs
-		rGeome.logstr += `length ${ffix(Ltot)}  height ${ffix(Htot)}\n`;
+		rGeome.logstr += `length ${ffix(Ltot)}  height ${ffix(Htot)}  lastOrientation ${ffix(lastOrientation)}\n`;
 		for (let ii = 0; ii < param.NB; ii++) {
 			rGeome.logstr += `leg-${ii + 1} : BL ${ffix(BL[ii])}, D12 ${ffix(BD2[ii])}, D22 ${ffix(BD2[ii + 1])},`;
 			rGeome.logstr += ` BH1 ${ffix(BH1[ii + 1])}\n`;

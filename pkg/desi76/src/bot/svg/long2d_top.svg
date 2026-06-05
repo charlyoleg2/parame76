@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
-     inkscape:zoom="1.569683"
-     inkscape:cx="339.559"
-     inkscape:cy="738.68418"
+     inkscape:zoom="2.219867"
+     inkscape:cx="339.65999"
+     inkscape:cy="349.79573"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="66"
@@ -43,6 +43,24 @@
   </sodipodi:namedview>
   <defs
      id="defs1">
+    <rect
+       x="547.78058"
+       y="395.5192"
+       width="57.210636"
+       height="30.632465"
+       id="rect30" />
+    <rect
+       x="527.05859"
+       y="493.72327"
+       width="55.408726"
+       height="31.983898"
+       id="rect29" />
+    <rect
+       x="527.50909"
+       y="445.52219"
+       width="56.760159"
+       height="34.686764"
+       id="rect28" />
     <rect
        x="95.501221"
        y="620.75793"
@@ -756,5 +774,67 @@
          x="95.501953"
          y="634.99425"
          id="tspan25">D3E3</tspan></text>
+    <path
+       style="fill:#ffffff;stroke:#00ffff;stroke-width:0.264583;stroke-linejoin:round"
+       d="M 35.26546,98.963188 V 88.438105"
+       id="path12" />
+    <path
+       style="fill:#ffffff;stroke:#ff0000;stroke-width:0.264583;stroke-linejoin:round"
+       d="M 35.275274,98.975039 44.55232,92.611873"
+       id="path13" />
+    <path
+       style="display:inline;fill:#ffffff;stroke:#ff0000;stroke-width:0.264583;stroke-linejoin:round"
+       d="m 61.046547,81.181602 9.27705,-6.363166"
+       id="path13-1" />
+    <path
+       style="fill:#ffffff;stroke:#008080;stroke-width:0.264583;stroke-linejoin:round"
+       d="m 61.066826,81.134233 11.197743,2.059521"
+       id="path24" />
+    <path
+       style="display:inline;fill:#ffffff;stroke:#008080;stroke-width:0.264583;stroke-linejoin:round"
+       d="m 91.781876,87.191063 11.197744,2.059521"
+       id="path24-3" />
+    <path
+       style="fill:#ffffff;stroke:#aad400;stroke-width:0.264583;stroke-linejoin:round"
+       d="M 91.798654,87.245429 104.60455,86.011377"
+       id="path25" />
+    <path
+       style="fill:#ffffff;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-end:url(#ArrowWide-2)"
+       d="m 35.27989,94.516735 c 0,0 1.353462,0.322098 1.907022,0.715132 0.506021,0.359281 1.19189,1.430266 1.19189,1.430266"
+       id="path26"
+       sodipodi:nodetypes="cac" />
+    <path
+       style="fill:#ffffff;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-end:url(#ArrowWide-2)"
+       d="m 65.077096,78.664622 c 0,0 0.643493,0.985143 0.715134,1.549455 0.05594,0.440654 -0.238379,1.311077 -0.238379,1.311077"
+       id="path27"
+       sodipodi:nodetypes="cac" />
+    <path
+       style="fill:#ffffff;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-end:url(#ArrowWide-2)"
+       d="m 100.59537,86.411894 0.11918,1.311077 -0.23837,0.595945"
+       id="path28" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-104.05184,-27.532618)"
+       id="text28"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect28);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="527.50977"
+         y="459.75793"
+         id="tspan26">PA1</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-72.82437,-53.277404)"
+       id="text29"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect29);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="527.05859"
+         y="507.9591"
+         id="tspan27">PA2</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-43.623109,-20.142911)"
+       id="text30"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect30);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="547.78125"
+         y="409.75597"
+         id="tspan28">PA3</tspan></text>
   </g>
 </svg>
