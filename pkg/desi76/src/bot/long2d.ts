@@ -36,6 +36,8 @@ import {
 	pDropdown,
 	pSectionSeparator,
 	initGeom,
+	transform2d,
+	//transform3d,
 	EExtrude,
 	EBVolume
 } from 'geometrix';
@@ -79,7 +81,8 @@ const pDef: tParamDef = {
 		pNumber('W8', 'mm', 20, 1, 1000, 1),
 		pNumber('H8', 'mm', 30, 1, 1000, 1),
 		pNumber('D8', 'mm', 5, 1, 1000, 1),
-		pSectionSeparator('Leg roundings'),
+		pSectionSeparator('Leg details'),
+		pNumber('S12', 'mm', 1, 0, 100, 1),
 		pNumber('Ri', 'mm', 1, 0, 10, 0.1),
 		pNumber('Re', 'mm', 0.4, 0, 10, 0.1),
 		pSectionSeparator('Angles and 3D parts'),
@@ -136,6 +139,9 @@ const pDef: tParamDef = {
 		W8: 'long2d_back.svg',
 		H8: 'long2d_back.svg',
 		D8: 'long2d_back.svg',
+		S12: 'long2d_top.svg',
+		Ri: 'long2d_top.svg',
+		Re: 'long2d_top.svg',
 		PA1: 'long2d_top.svg',
 		PA2: 'long2d_top.svg',
 		PA3: 'long2d_top.svg',
@@ -193,11 +199,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const BR2 = BD2.map((aD1: number) => aD1 / 2);
 		const CH1 = BH1[0];
 		const BLtot = BL.reduce((acc: number, val: number) => acc + val, 0);
-		const Ltot = param.L4 + param.L3 + BR2[0] + BLtot + BR2[param.NB];
+		const L432 = param.L4 + param.L3 + BR2[0];
+		const Ltot = L432 + BLtot + BR2[param.NB];
 		const Htot = CH1 + 2 * (param.EH2 + param.EH3);
 		const lastOrientation = PA.reduce((acc: number, val: number) => acc + val, 0);
+		const W52 = param.W5 / 2;
 		const X8 = (param.W5 - param.W8) / 2;
 		const Y8 = (CH1 - param.H8) / 2;
+		const pi2 = Math.PI / 2;
 		// step-5 : checks on the parameter values
 		if (ER2 < ER1 + 2 * param.T3) {
 			throw `err192: ED2 ${ffix(2 * ER2)} is too small compare to ED1 ${ffix(2 * ER1)} and T3 ${ffix(param.T3)}`;
@@ -249,7 +258,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// sub-scara
 		//const scaraLegParam: DesignParam[] = [];
 		const scaraLegGeom: tGeom[] = [];
-		for (let ii = 1; ii < param.NB; ii++) {
+		for (let ii = 0; ii < param.NB; ii++) {
 			const iiParam = designParam(scaraDef.pDef, (ii + 1).toString());
 			iiParam.setVal('L1', BL[ii]);
 			iiParam.setVal('D11', param.ED1 + param.E2);
@@ -261,12 +270,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			iiParam.setVal('A1', 90);
 			iiParam.setVal('T1', param.T3);
 			iiParam.setVal('T2', param.T3);
-			iiParam.setVal('S2', 1.2 * BR2[ii]);
+			iiParam.setVal('S2', BR2[ii] + param.S12);
 			iiParam.setVal('R1i', param.Ri);
 			iiParam.setVal('R1e', param.Re);
 			iiParam.setVal('iiEn', 1);
 			iiParam.setVal('N2', 2);
-			iiParam.setVal('S1', 1.2 * BR2[ii + 1]);
+			iiParam.setVal('S1', BR2[ii + 1] + param.S12);
 			iiParam.setVal('T3', param.T3);
 			iiParam.setVal('R2i', param.Ri);
 			iiParam.setVal('R2e', param.Re);
@@ -284,7 +293,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// sub-functions
 		// figTop
 		figTop.mergeFigure(scarabaseGeom.fig.faceT3);
-		figTop.mergeFigure(scaraLegGeom[0].fig.faceExtern);
+		for (let ii = 0; ii < param.NB; ii++) {
+			const iiT2d = transform2d()
+				.addTranslation(-BR2[ii], 0)
+				.addRotation(pi2)
+				.addTranslation(W52, L432 + ii * param.EL);
+			const iiTa = iiT2d.getRotation();
+			const [iiTx, iiTy] = iiT2d.getTranslation();
+			figTop.mergeFigure(
+				scaraLegGeom[ii].fig.faceExtern.rotate(0, 0, iiTa).translate(iiTx, iiTy)
+			);
+		}
 		// figSide
 		// figBack
 		// final figure list
