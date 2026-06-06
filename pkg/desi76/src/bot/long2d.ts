@@ -40,7 +40,7 @@ import {
 	EBVolume
 } from 'geometrix';
 //import { triAPiPi, triAArA, triALArLL, triLALrL, triALLrL, triALLrLAA, triLLLrA, triLLLrAAA } from 'triangule';
-//import { scaraDef } from './scara';
+import { scaraDef } from './scara';
 import { scarabaseDef } from './scarabase';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
@@ -79,6 +79,9 @@ const pDef: tParamDef = {
 		pNumber('W8', 'mm', 20, 1, 1000, 1),
 		pNumber('H8', 'mm', 30, 1, 1000, 1),
 		pNumber('D8', 'mm', 5, 1, 1000, 1),
+		pSectionSeparator('Leg roundings'),
+		pNumber('Ri', 'mm', 1, 0, 10, 0.1),
+		pNumber('Re', 'mm', 0.4, 0, 10, 0.1),
 		pSectionSeparator('Angles and 3D parts'),
 		pNumber('PA1', 'degree', 0, -120, 120, 1),
 		pNumber('PA2', 'degree', 0, -120, 120, 1),
@@ -178,18 +181,15 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		];
 		const PA = PAall.slice(0, param.NB);
 		const BL: number[] = Array(param.NB).fill(param.EL);
-		const BD1: number[] = Array(param.NB + 1).fill(param.ED1);
 		const BD2: number[] = Array(param.NB + 1).fill(param.ED2);
 		const BH1: number[] = Array(param.NB + 1).fill(param.EH1);
 		for (let ii = param.NB - 2; ii >= 0; ii--) {
 			BL[ii] = BL[ii + 1] * param.LA + param.LB;
 		}
 		for (let ii = param.NB - 1; ii >= 0; ii--) {
-			BD1[ii] = BD1[ii + 1] * param.DA + param.DB;
 			BD2[ii] = BD2[ii + 1] * param.DA + param.DB;
 			BH1[ii] = BH1[ii + 1] * param.HA + param.HB + 2 * (param.EH2 + param.E1);
 		}
-		//const BR1 = BD1.map((aD1: number) => aD1 / 2);
 		const BR2 = BD2.map((aD1: number) => aD1 / 2);
 		const CH1 = BH1[0];
 		const BLtot = BL.reduce((acc: number, val: number) => acc + val, 0);
@@ -220,6 +220,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// step-7 : drawing of the figures
 		// inherite
+		// sub-scarabase
 		const scarabaseParam = designParam(scarabaseDef.pDef, '');
 		scarabaseParam.setVal('D1', 2 * (ER1 + param.E3));
 		scarabaseParam.setVal('D2', 2 * BR2[0]);
@@ -245,9 +246,45 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		);
 		checkGeom(scarabaseGeom);
 		rGeome.logstr += prefixLog(scarabaseGeom.logstr, scarabaseParam.getPartNameSuffix());
+		// sub-scara
+		//const scaraLegParam: DesignParam[] = [];
+		const scaraLegGeom: tGeom[] = [];
+		for (let ii = 1; ii < param.NB; ii++) {
+			const iiParam = designParam(scaraDef.pDef, (ii + 1).toString());
+			iiParam.setVal('L1', BL[ii]);
+			iiParam.setVal('D11', param.ED1 + param.E2);
+			iiParam.setVal('D12', BD2[ii]);
+			iiParam.setVal('D21', param.ED1 + param.E3);
+			iiParam.setVal('D22', BD2[ii + 1]);
+			iiParam.setVal('firstEnd', 0);
+			iiParam.setVal('secondEnd', 0);
+			iiParam.setVal('A1', 90);
+			iiParam.setVal('T1', param.T3);
+			iiParam.setVal('T2', param.T3);
+			iiParam.setVal('S2', 1.2 * BR2[ii]);
+			iiParam.setVal('R1i', param.Ri);
+			iiParam.setVal('R1e', param.Re);
+			iiParam.setVal('iiEn', 1);
+			iiParam.setVal('N2', 2);
+			iiParam.setVal('S1', 1.2 * BR2[ii + 1]);
+			iiParam.setVal('T3', param.T3);
+			iiParam.setVal('R2i', param.Ri);
+			iiParam.setVal('R2e', param.Re);
+			iiParam.setVal('H1', BH1[ii + 1]);
+			iiParam.setVal('H2', param.EH2);
+			iiParam.setVal('H3', param.EH3);
+			iiParam.setVal('H41', 0);
+			iiParam.setVal('H42', 0);
+			const iiGeom = scaraDef.pGeom(0, iiParam.getParamVal(), iiParam.getSuffix());
+			checkGeom(iiGeom);
+			rGeome.logstr += prefixLog(iiGeom.logstr, iiParam.getPartNameSuffix());
+			//scaraLegParam.push(iiParam);
+			scaraLegGeom.push(iiGeom);
+		}
 		// sub-functions
 		// figTop
 		figTop.mergeFigure(scarabaseGeom.fig.faceT3);
+		figTop.mergeFigure(scaraLegGeom[0].fig.faceExtern);
 		// figSide
 		// figBack
 		// final figure list
