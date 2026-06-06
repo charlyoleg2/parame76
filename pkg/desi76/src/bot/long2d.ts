@@ -9,15 +9,15 @@ import type {
 	tParamDef,
 	tParamVal,
 	tGeom,
-	tExtrude,
+	//tExtrude,
 	tPageDef
 	//tSubInst
 	//tSubDesign
 } from 'geometrix';
 import {
-	//designParam,
-	//checkGeom,
-	//prefixLog,
+	designParam,
+	checkGeom,
+	prefixLog,
 	//point,
 	//Point,
 	//ShapePoint,
@@ -32,8 +32,8 @@ import {
 	//pointCoord,
 	ffix,
 	pNumber,
-	pCheckbox,
-	//pDropdown,
+	//pCheckbox,
+	pDropdown,
 	pSectionSeparator,
 	initGeom,
 	EExtrude,
@@ -41,7 +41,7 @@ import {
 } from 'geometrix';
 //import { triAPiPi, triAArA, triALArLL, triLALrL, triALLrL, triALLrLAA, triLLLrA, triLLLrAAA } from 'triangule';
 //import { scaraDef } from './scara';
-//import { scarabaseDef } from './scarabase';
+import { scarabaseDef } from './scarabase';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
@@ -79,7 +79,7 @@ const pDef: tParamDef = {
 		pNumber('W8', 'mm', 20, 1, 1000, 1),
 		pNumber('H8', 'mm', 30, 1, 1000, 1),
 		pNumber('D8', 'mm', 5, 1, 1000, 1),
-		pSectionSeparator('Angles'),
+		pSectionSeparator('Angles and 3D parts'),
 		pNumber('PA1', 'degree', 0, -120, 120, 1),
 		pNumber('PA2', 'degree', 0, -120, 120, 1),
 		pNumber('PA3', 'degree', 0, -120, 120, 1),
@@ -90,18 +90,21 @@ const pDef: tParamDef = {
 		pNumber('PA8', 'degree', 0, -120, 120, 1),
 		pNumber('PA9', 'degree', 0, -120, 120, 1),
 		pNumber('PA10', 'degree', 0, -120, 120, 1),
-		pSectionSeparator('Enable parts for 3D'),
-		pCheckbox('D3E0', true),
-		pCheckbox('D3E1', true),
-		pCheckbox('D3E2', true),
-		pCheckbox('D3E3', true),
-		pCheckbox('D3E4', true),
-		pCheckbox('D3E5', true),
-		pCheckbox('D3E6', true),
-		pCheckbox('D3E7', true),
-		pCheckbox('D3E8', true),
-		pCheckbox('D3E9', true),
-		pCheckbox('D3E10', true)
+		pDropdown('D3Enable', [
+			'assembly',
+			'base',
+			'axis',
+			'leg1',
+			'leg2',
+			'leg3',
+			'leg4',
+			'leg5',
+			'leg6',
+			'leg7',
+			'leg8',
+			'leg9',
+			'leg10'
+		])
 	],
 	paramSvg: {
 		NB: 'long2d_top.svg',
@@ -140,17 +143,7 @@ const pDef: tParamDef = {
 		PA8: 'long2d_top.svg',
 		PA9: 'long2d_top.svg',
 		PA10: 'long2d_top.svg',
-		D3E0: 'long2d_top.svg',
-		D3E1: 'long2d_top.svg',
-		D3E2: 'long2d_top.svg',
-		D3E3: 'long2d_top.svg',
-		D3E4: 'long2d_top.svg',
-		D3E5: 'long2d_top.svg',
-		D3E6: 'long2d_top.svg',
-		D3E7: 'long2d_top.svg',
-		D3E8: 'long2d_top.svg',
-		D3E9: 'long2d_top.svg',
-		D3E10: 'long2d_top.svg'
+		D3Enable: 'long2d_top.svg'
 	},
 	sim: {
 		tMax: 100,
@@ -171,7 +164,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const ER1 = param.ED1 / 2;
 		const ER2 = param.ED2 / 2;
 		const R8 = param.D8 / 2;
-		const PA: number[] = [
+		const PAall: number[] = [
 			param.PA1,
 			param.PA2,
 			param.PA3,
@@ -183,6 +176,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			param.PA9,
 			param.PA10
 		];
+		const PA = PAall.slice(0, param.NB);
 		const BL: number[] = Array(param.NB).fill(param.EL);
 		const BD1: number[] = Array(param.NB + 1).fill(param.ED1);
 		const BD2: number[] = Array(param.NB + 1).fill(param.ED2);
@@ -225,8 +219,35 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			rGeome.logstr += ` BH1 ${ffix(BH1[ii + 1])}\n`;
 		}
 		// step-7 : drawing of the figures
+		// inherite
+		const scarabaseParam = designParam(scarabaseDef.pDef, '');
+		scarabaseParam.setVal('D1', 2 * (ER1 + param.E3));
+		scarabaseParam.setVal('D2', 2 * BR2[0]);
+		scarabaseParam.setVal('L3', param.L3);
+		scarabaseParam.setVal('L4', param.L4);
+		scarabaseParam.setVal('W5', param.W5);
+		scarabaseParam.setVal('Nac', 0); // single
+		scarabaseParam.setVal('R34', param.R34);
+		scarabaseParam.setVal('A5', 0);
+		scarabaseParam.setVal('W6', 10);
+		scarabaseParam.setVal('T3', param.T3);
+		scarabaseParam.setVal('T4', param.T4);
+		scarabaseParam.setVal('H1', CH1);
+		scarabaseParam.setVal('H2', param.EH2);
+		scarabaseParam.setVal('H3', param.EH3);
+		scarabaseParam.setVal('W8', param.W8);
+		scarabaseParam.setVal('H8', param.H8);
+		scarabaseParam.setVal('D8', param.D8);
+		const scarabaseGeom = scarabaseDef.pGeom(
+			0,
+			scarabaseParam.getParamVal(),
+			scarabaseParam.getSuffix()
+		);
+		checkGeom(scarabaseGeom);
+		rGeome.logstr += prefixLog(scarabaseGeom.logstr, scarabaseParam.getPartNameSuffix());
 		// sub-functions
 		// figTop
+		figTop.mergeFigure(scarabaseGeom.fig.faceT3);
 		// figSide
 		// figBack
 		// final figure list
@@ -237,46 +258,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
-		const lExtrudes: tExtrude[] = [];
-		const lUnion: string[] = [];
-		if (param.H3 > 0) {
-			lExtrudes.push({
-				outName: `subpax_${designName}_t31`,
-				face: `${designName}_faceT3`,
-				extrudeMethod: EExtrude.eLinearOrtho,
-				length: param.H3,
-				rotate: [0, 0, 0],
-				translate: [0, 0, 0]
-			});
-			lUnion.push(`subpax_${designName}_t31`);
-			lExtrudes.push({
-				outName: `subpax_${designName}_t35`,
-				face: `${designName}_faceT3`,
-				extrudeMethod: EExtrude.eLinearOrtho,
-				length: param.H3,
-				rotate: [0, 0, 0],
-				translate: [0, 0, param.EH2]
-			});
-			lUnion.push(`subpax_${designName}_t35`);
-		}
 		rGeome.vol = {
-			extrudes: [
+			inherits: [
 				{
-					outName: `subpax_${designName}_plate2`,
-					face: `${designName}_facePlate`,
-					extrudeMethod: EExtrude.eLinearOrtho,
-					length: param.EH2,
-					rotate: [0, 0, 0],
-					translate: [0, 0, param.EH3]
-				},
-				{
-					outName: `subpax_${designName}_plate4`,
-					face: `${designName}_facePlate`,
-					extrudeMethod: EExtrude.eLinearOrtho,
-					length: param.EH2,
+					outName: `inpax_${designName}_base`,
+					subdesign: 'pax_scarabase',
+					subgeom: scarabaseGeom,
 					rotate: [0, 0, 0],
 					translate: [0, 0, 0]
-				},
+				}
+			],
+			extrudes: [
 				{
 					outName: `subpax_${designName}_back`,
 					face: `${designName}_faceBack`,
@@ -284,19 +276,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					length: param.T4,
 					rotate: [0, 0, 0],
 					translate: [0, param.T4, 0]
-				},
-				...lExtrudes
+				}
 			],
 			volumes: [
 				{
 					outName: `pax_${designName}`,
 					boolMethod: EBVolume.eUnion,
-					inList: [
-						`subpax_${designName}_plate2`,
-						`subpax_${designName}_plate4`,
-						`subpax_${designName}_back`,
-						...lUnion
-					]
+					inList: [`inpax_${designName}_base`, `subpax_${designName}_back`]
 				}
 			]
 		};
