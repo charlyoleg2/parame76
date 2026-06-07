@@ -27,8 +27,8 @@ import {
 	//contourCircle,
 	//ctrRectangle,
 	figure,
-	//degToRad,
-	//radToDeg,
+	degToRad,
+	radToDeg,
 	//pointCoord,
 	ffix,
 	pNumber,
@@ -53,11 +53,11 @@ const pDef: tParamDef = {
 		//pNumber(name, unit, init, min, max, step)
 		pNumber('NB', 'leg', 3, 1, 10, 1),
 		pNumber('LA', 'L-factor', 1, 0.1, 10, 0.1),
-		pNumber('LB', 'L-add', 0, -10, 10, 0.1),
+		pNumber('LB', 'L-add', 0, -10, 100, 0.1),
 		pNumber('DA', 'D-factor', 1, 0.1, 10, 0.1),
-		pNumber('DB', 'D-add', 0, -10, 10, 0.1),
+		pNumber('DB', 'D-add', 0, -10, 100, 0.1),
 		pNumber('HA', 'L-factor', 1, 0.1, 10, 0.1),
-		pNumber('HB', 'L-add', 0, -10, 10, 0.1),
+		pNumber('HB', 'L-add', 0, -10, 100, 0.1),
 		pSectionSeparator('Ending parameters'),
 		pNumber('EL', 'mm', 100, 1, 1000, 1),
 		pNumber('ED2', 'mm', 60, 1, 1000, 1),
@@ -185,7 +185,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			param.PA9,
 			param.PA10
 		];
-		const PA = PAall.slice(0, param.NB);
+		const PA = PAall.slice(0, param.NB).map((iAngle) => degToRad(iAngle));
 		const BL: number[] = Array(param.NB).fill(param.EL);
 		const BD2: number[] = Array(param.NB + 1).fill(param.ED2);
 		const BH1: number[] = Array(param.NB + 1).fill(param.EH1);
@@ -222,7 +222,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			rGeome.logstr += 'warn125: Warning H3 is zero\n';
 		}
 		// step-6 : any logs
-		rGeome.logstr += `length ${ffix(Ltot)}  height ${ffix(Htot)}  lastOrientation ${ffix(lastOrientation)}\n`;
+		rGeome.logstr += `length ${ffix(Ltot)}  height ${ffix(Htot)}\n`;
+		rGeome.logstr += `lastOrientation ${ffix(radToDeg(lastOrientation))}\n`;
 		for (let ii = 0; ii < param.NB; ii++) {
 			rGeome.logstr += `leg-${ii + 1} : BL ${ffix(BL[ii])}, D12 ${ffix(BD2[ii])}, D22 ${ffix(BD2[ii + 1])},`;
 			rGeome.logstr += ` BH1 ${ffix(BH1[ii + 1])}\n`;
@@ -270,12 +271,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			iiParam.setVal('A1', 90);
 			iiParam.setVal('T1', param.T3);
 			iiParam.setVal('T2', param.T3);
-			iiParam.setVal('S2', BR2[ii] + param.S12);
+			iiParam.setVal('S2', BR2[ii + 1] + param.S12);
 			iiParam.setVal('R1i', param.Ri);
 			iiParam.setVal('R1e', param.Re);
 			iiParam.setVal('iiEn', 1);
 			iiParam.setVal('N2', 2);
-			iiParam.setVal('S1', BR2[ii + 1] + param.S12);
+			iiParam.setVal('S1', BR2[ii] + param.S12);
 			iiParam.setVal('T3', param.T3);
 			iiParam.setVal('R2i', param.Ri);
 			iiParam.setVal('R2e', param.Re);
@@ -294,14 +295,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figTop
 		figTop.mergeFigure(scarabaseGeom.fig.faceT3);
 		for (let ii = 0; ii < param.NB; ii++) {
-			const iiT2d = transform2d()
-				.addTranslation(-BR2[ii], 0)
-				.addRotation(pi2)
-				.addTranslation(W52, L432 + ii * param.EL);
+			const iiT2d = transform2d().addRotation(pi2 + PA[ii]);
+			for (let jj = ii; jj > 0; jj--) {
+				iiT2d.addTranslation(0, BL[jj - 1]).addRotation(PA[jj - 1]);
+			}
+			iiT2d.addTranslation(W52, L432);
 			const iiTa = iiT2d.getRotation();
 			const [iiTx, iiTy] = iiT2d.getTranslation();
 			figTop.mergeFigure(
-				scaraLegGeom[ii].fig.faceExtern.rotate(0, 0, iiTa).translate(iiTx, iiTy)
+				scaraLegGeom[ii].fig.faceExtern
+					.translate(-BR2[ii], 0)
+					.rotate(0, 0, iiTa)
+					.translate(iiTx, iiTy)
 			);
 		}
 		// figSide
