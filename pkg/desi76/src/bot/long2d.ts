@@ -4,6 +4,7 @@
 // step-1 : import from geometrix
 import type {
 	//Contour,
+	Figure,
 	//tContour,
 	//tOuterInner,
 	tParamDef,
@@ -24,8 +25,8 @@ import {
 	//line,
 	//vector,
 	//contour,
-	//contourCircle,
-	//ctrRectangle,
+	contourCircle,
+	ctrRectangle,
 	figure,
 	degToRad,
 	radToDeg,
@@ -168,6 +169,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const figTop = figure();
 	const figSide = figure();
 	const figBack = figure();
+	const figAxis = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -194,6 +196,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		for (let ii = param.NB - 2; ii >= 0; ii--) {
 			BL[ii] = BL[ii + 1] * param.LA + param.LB;
 		}
+		const EH23 = 2 * (param.EH2 + param.EH3);
 		for (let ii = param.NB - 1; ii >= 0; ii--) {
 			BD2[ii] = BD2[ii + 1] * param.DA + param.DB;
 			BH1[ii] = BH1[ii + 1] * param.HA + param.HB + 2 * (param.EH2 + param.E1);
@@ -203,7 +206,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const BLtot = BL.reduce((acc: number, val: number) => acc + val, 0);
 		const L432 = param.L4 + param.L3 + BR2[0];
 		const Ltot = L432 + BLtot + BR2[param.NB];
-		const Htot = CH1 + 2 * (param.EH2 + param.EH3);
+		const Htot = CH1 + param.EH23;
 		const lastOrientation = PA.reduce((acc: number, val: number) => acc + val, 0);
 		const W52 = param.W5 / 2;
 		const X8 = (param.W5 - param.W8) / 2;
@@ -297,6 +300,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			scaraLegGeom.push(iiGeom);
 		}
 		// sub-functions
+		function figAxisCut(ix: number, iy: number, ih: number): Figure {
+			const rFig = figure();
+			rFig.addMainO(ctrRectangle(ix, iy, param.T1, ih));
+			rFig.addMainO(ctrRectangle(ix + 2 * ER1 - param.T1, iy, param.T1, ih));
+			return rFig;
+		}
 		// figTop
 		figTop.mergeFigure(scarabaseGeom.fig.faceT3);
 		for (let ii = 0; ii < param.NB; ii++) {
@@ -322,16 +331,21 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			if (ii > 0) {
 				posX += BR2[ii - 1] + BL[ii - 1] - BR2[ii];
 			}
+			figSide.mergeFigure(figAxisCut(posX + BR2[ii] - ER1, posY, BH1[ii] + EH23));
 			posY += param.EH2 + param.E1;
 			figSide.mergeFigure(scaraLegGeom[ii].fig.faceSide.translate(posX, posY));
 		}
 		// figBack
 		figBack.mergeFigure(scarabaseGeom.fig.faceBack);
+		// figAxis
+		figAxis.addMainOI([contourCircle(0, 0, ER1), contourCircle(0, 0, ER1i)]);
+		figAxis.addSecond(contourCircle(0, 0, ER1 + param.T3));
 		// final figure list
 		rGeome.fig = {
 			faceTop: figTop,
 			faceSide: figSide,
-			faceBack: figBack
+			faceBack: figBack,
+			faceAxis: figAxis
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
