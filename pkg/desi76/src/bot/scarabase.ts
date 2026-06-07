@@ -99,6 +99,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const figPlate = figure();
 	const figBack = figure();
 	const figT3 = figure();
+	const figSide = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -294,11 +295,47 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			]);
 		}
 		figT3.mergeFigure(figPlate, true);
+		// figSide
+		const ctrSide1 = contour(0, param.H3)
+			.addSegStrokeR(L432 - R1 - param.T3, 0)
+			.addSegStrokeR(0, -param.H3)
+			.addSegStrokeR(param.T3, 0)
+			.addSegStrokeR(0, param.H3 + param.H2)
+			.addSegStrokeR(-L432 + R1 + param.T4, 0)
+			.addSegStrokeR(0, param.H1)
+			.addSegStrokeR(L432 - R1 - param.T4, 0)
+			.addSegStrokeR(0, param.H3 + param.H2)
+			.addSegStrokeR(-param.T3, 0)
+			.addSegStrokeR(0, -param.H3)
+			.addSegStrokeR(-L432 + R1 + param.T3, 0)
+			.closeSegStroke();
+		const ctrSide2 = contour(L432 + R1, 0)
+			.addSegStrokeR(param.T3, 0)
+			.addSegStrokeR(0, param.H3)
+			.addSegStrokeR(R2 - R1 - 2 * param.T3, 0)
+			.addSegStrokeR(0, -param.H3)
+			.addSegStrokeR(param.T3, 0)
+			.addSegStrokeR(0, param.H3 + param.H2)
+			.addSegStrokeR(-R2 + R1, 0)
+			.closeSegStroke();
+		const ctrSide3 = contour(L432 + R1, H123)
+			.addSegStrokeR(R2 - R1, 0)
+			.addSegStrokeR(0, param.H3 + param.H2)
+			.addSegStrokeR(-param.T3, 0)
+			.addSegStrokeR(0, -param.H3)
+			.addSegStrokeR(-R2 + R1 + 2 * param.T3, 0)
+			.addSegStrokeR(0, param.H3)
+			.addSegStrokeR(-param.T3, 0)
+			.closeSegStroke();
+		figSide.addMainO(ctrSide1);
+		figSide.addMainO(ctrSide2);
+		figSide.addMainO(ctrSide3);
 		// final figure list
 		rGeome.fig = {
 			facePlate: figPlate,
 			faceBack: figBack,
-			faceT3: figT3
+			faceT3: figT3,
+			faceSide: figSide
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;

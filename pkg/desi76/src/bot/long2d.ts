@@ -310,7 +310,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			);
 		}
 		// figSide
+		figSide.mergeFigure(scarabaseGeom.fig.faceSide);
+		let posX = param.L4 + param.L3;
+		let posY = 0;
+		for (let ii = 0; ii < param.NB; ii++) {
+			if (ii > 0) {
+				posX += BR2[ii - 1] + BL[ii - 1] - BR2[ii];
+			}
+			posY += param.EH2 + param.E1;
+			figSide.mergeFigure(scaraLegGeom[ii].fig.faceSide.translate(posX, posY));
+		}
 		// figBack
+		figBack.mergeFigure(scarabaseGeom.fig.faceBack);
 		// final figure list
 		rGeome.fig = {
 			faceTop: figTop,
