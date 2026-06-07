@@ -98,8 +98,9 @@ const pDef: tParamDef = {
 		pNumber('PA10', 'degree', 0, -120, 120, 1),
 		pDropdown('D3Enable', [
 			'assembly',
+			'parts',
+			'axisall',
 			'base',
-			'axis',
 			'leg1',
 			'leg2',
 			'leg3',
@@ -172,6 +173,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-4 : some preparation calculation
 		const ER1 = param.ED1 / 2;
 		const ER2 = param.ED2 / 2;
+		const ER1i = ER1 - param.T1;
 		const R8 = param.D8 / 2;
 		const PAall: number[] = [
 			param.PA1,
@@ -210,6 +212,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-5 : checks on the parameter values
 		if (ER2 < ER1 + 2 * param.T3) {
 			throw `err192: ED2 ${ffix(2 * ER2)} is too small compare to ED1 ${ffix(2 * ER1)} and T3 ${ffix(param.T3)}`;
+		}
+		if (ER1i < 0) {
+			throw `err216: ED1 ${ffix(2 * ER1)} is too small compare to T1 ${ffix(param.T1)}`;
 		}
 		if (X8 < R8) {
 			throw `err195: W5 ${ffix(param.W5)} is too small compare to D8 ${ffix(2 * R8)} and W8 ${ffix(param.W8)}`;
