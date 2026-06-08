@@ -73,9 +73,9 @@ const pDef: tParamDef = {
 		pNumber('ED1', 'mm', 20, 1, 1000, 1),
 		pNumber('T1', 'mm', 5, 1, 100, 1),
 		pNumber('T3', 'mm', 3, 1, 100, 1),
-		pNumber('E1', 'mm', 0, -10, 10, 0.1),
-		pNumber('E2', 'mm', 0, -10, 10, 0.1),
-		pNumber('E3', 'mm', 0, -10, 10, 0.1),
+		pNumber('E1', 'mm', 0.5, -10, 10, 0.1),
+		pNumber('E2', 'mm', 0.5, -10, 10, 0.1),
+		pNumber('E3', 'mm', 0.5, -10, 10, 0.1),
 		pSectionSeparator('Base'),
 		pNumber('L3', 'mm', 30, 0, 1000, 1),
 		pNumber('L4', 'mm', 20, 1, 100, 1),
@@ -313,6 +313,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figTop
 		figTop.mergeFigure(scarabaseGeom.fig.faceT3);
 		const legT3d: Transform3d[] = [];
+		const axisT3d: Transform3d[] = [];
 		for (let ii = 0; ii < param.NB; ii++) {
 			const iiT2d = transform2d().addRotation(pi2 + PA[ii]);
 			for (let jj = ii; jj > 0; jj--) {
@@ -321,7 +322,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			iiT2d.addTranslation(W52, L432);
 			const iiTa = iiT2d.getRotation();
 			const [iiTx, iiTy] = iiT2d.getTranslation();
-			legT3d.push(transform3d().addRotation(0, 0, iiTa).addTranslation(iiTx, iiTy, 0));
+			legT3d.push(
+				transform3d()
+					.addTranslation(-BR2[ii], 0, 0)
+					.addRotation(0, 0, iiTa)
+					.addTranslation(iiTx, iiTy, 0)
+			);
+			axisT3d.push(transform3d().addRotation(0, 0, iiTa).addTranslation(iiTx, iiTy, 0));
 			figTop.mergeFigure(
 				scaraLegGeom[ii].fig.faceExtern
 					.translate(-BR2[ii], 0)
@@ -338,6 +345,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				posX += BR2[ii - 1] + BL[ii - 1] - BR2[ii];
 			}
 			figSide.mergeFigure(figAxisCut(posX + BR2[ii] - ER1, posY, BH1[ii] + EH23));
+			axisT3d[ii].addTranslation(0, 0, posY);
 			posY += param.EH2 + param.E1;
 			legT3d[ii].addTranslation(0, 0, posY);
 			figSide.mergeFigure(scaraLegGeom[ii].fig.faceSide.translate(posX, posY));
@@ -390,8 +398,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				face: `${designName}_faceAxis`,
 				extrudeMethod: EExtrude.eLinearOrtho,
 				length: BH1[ii] + EH23,
-				rotate: legT3d[ii].getRotation(),
-				translate: legT3d[ii].addTranslation(L432, W52, 0).getTranslation()
+				rotate: axisT3d[ii].getRotation(),
+				translate: axisT3d[ii].getTranslation()
 			};
 			partExtrude.push(iiPartAxis);
 			partList.push(iiName);
