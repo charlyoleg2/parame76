@@ -244,7 +244,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// inherite
 		// sub-scarabase
 		const scarabaseParam = designParam(scarabaseDef.pDef, '');
-		scarabaseParam.setVal('D1', 2 * (ER1 + param.E3));
+		scarabaseParam.setVal('D1', 2 * ER1 + param.E3);
 		scarabaseParam.setVal('D2', 2 * BR2[0]);
 		scarabaseParam.setVal('L3', param.L3);
 		scarabaseParam.setVal('L4', param.L4);
@@ -276,7 +276,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			iiParam.setVal('L1', BL[ii]);
 			iiParam.setVal('D11', param.ED1 + param.E2);
 			iiParam.setVal('D12', BD2[ii]);
-			iiParam.setVal('D21', param.ED1 + param.E3);
+			iiParam.setVal('D21', 2 * ER1 + param.E3);
 			iiParam.setVal('D22', BD2[ii + 1]);
 			iiParam.setVal('firstEnd', 0);
 			iiParam.setVal('secondEnd', 0);
