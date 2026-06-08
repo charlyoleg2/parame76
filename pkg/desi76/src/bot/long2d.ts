@@ -216,6 +216,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const X8 = (param.W5 - param.W8) / 2;
 		const Y8 = (CH1 - param.H8) / 2;
 		const pi2 = Math.PI / 2;
+		const fabStepX = 1.2 * Math.max(2 * W52, 2 * BR2[0]);
 		// step-5 : checks on the parameter values
 		if (ER2 < ER1 + 2 * param.T3) {
 			throw `err192: ED2 ${ffix(2 * ER2)} is too small compare to ED1 ${ffix(2 * ER1)} and T3 ${ffix(param.T3)}`;
@@ -232,6 +233,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// warnings
 		if (param.H3 === 0) {
 			rGeome.logstr += 'warn125: Warning H3 is zero\n';
+		}
+		if (param.D3Enable > param.NB + 3) {
+			rGeome.logstr += `warn238: Warning D3Enable ${param.D3Enable} select a not existing part for 3D\n`;
 		}
 		// step-6 : any logs
 		rGeome.logstr += `length ${ffix(Ltot)}  height ${ffix(Htot)}\n`;
@@ -368,41 +372,54 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const partExtrude: tExtrude[] = [];
 		const partList: string[] = [];
 		// part3D scarabase
-		const partScarabase: tInherit = {
-			outName: `inpax_${designName}_base`,
-			subdesign: 'pax_scarabase',
-			subgeom: scarabaseGeom,
-			rotate: [0, 0, 0],
-			translate: [0, 0, 0]
-		};
-		partInherit.push(partScarabase);
-		partList.push(`inpax_${designName}_base`);
+		if ([0, 1, 3].includes(param.D3Enable)) {
+			const fabStepY2 = param.D3Enable === 0 ? 0 : 4 * ER1;
+			const partScarabase: tInherit = {
+				outName: `inpax_${designName}_base`,
+				subdesign: 'pax_scarabase',
+				subgeom: scarabaseGeom,
+				rotate: [0, 0, 0],
+				translate: [0, fabStepY2, 0]
+			};
+			partInherit.push(partScarabase);
+			partList.push(`inpax_${designName}_base`);
+		}
 		// part3D scaraLeg
 		for (let ii = 0; ii < param.NB; ii++) {
-			const iiName = `inpax_${designName}_leg_${ii + 1}`;
-			const iiPartScaraLeg: tInherit = {
-				outName: iiName,
-				subdesign: `pax_${scaraLegParam[ii].getPartNameSuffix()}`,
-				subgeom: scaraLegGeom[ii],
-				rotate: legT3d[ii].getRotation(),
-				translate: legT3d[ii].getTranslation()
-			};
-			partInherit.push(iiPartScaraLeg);
-			partList.push(iiName);
+			if ([0, 1].includes(param.D3Enable) || ii - param.D3Enable === -4) {
+				const iiName = `inpax_${designName}_leg_${ii + 1}`;
+				const iiLegT3d2 = transform3d()
+					.addRotation(0, 0, pi2)
+					.addTranslation((ii + 1) * fabStepX, 4 * ER1, 0);
+				const iiLegT3d = param.D3Enable === 0 ? legT3d[ii] : iiLegT3d2;
+				const iiPartScaraLeg: tInherit = {
+					outName: iiName,
+					subdesign: `pax_${scaraLegParam[ii].getPartNameSuffix()}`,
+					subgeom: scaraLegGeom[ii],
+					rotate: iiLegT3d.getRotation(),
+					translate: iiLegT3d.getTranslation()
+				};
+				partInherit.push(iiPartScaraLeg);
+				partList.push(iiName);
+			}
 		}
 		// part3D axis
-		for (let ii = 0; ii < param.NB; ii++) {
-			const iiName = `subpax_${designName}_axis_${ii + 1}`;
-			const iiPartAxis: tExtrude = {
-				outName: iiName,
-				face: `${designName}_faceAxis`,
-				extrudeMethod: EExtrude.eLinearOrtho,
-				length: BH1[ii] + EH23,
-				rotate: axisT3d[ii].getRotation(),
-				translate: axisT3d[ii].getTranslation()
-			};
-			partExtrude.push(iiPartAxis);
-			partList.push(iiName);
+		if ([0, 1, 2].includes(param.D3Enable)) {
+			for (let ii = 0; ii < param.NB; ii++) {
+				const iiName = `subpax_${designName}_axis_${ii + 1}`;
+				const iiAxisT3d2 = transform3d().addTranslation((ii + 1) * 3 * ER1, 2 * ER1, 0);
+				const iiAxisT3d = param.D3Enable === 0 ? axisT3d[ii] : iiAxisT3d2;
+				const iiPartAxis: tExtrude = {
+					outName: iiName,
+					face: `${designName}_faceAxis`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: BH1[ii] + EH23,
+					rotate: iiAxisT3d.getRotation(),
+					translate: iiAxisT3d.getTranslation()
+				};
+				partExtrude.push(iiPartAxis);
+				partList.push(iiName);
+			}
 		}
 		// part3D output
 		rGeome.vol = {
