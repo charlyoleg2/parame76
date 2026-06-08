@@ -15,8 +15,8 @@ import type {
 	tExtrude,
 	tSubInst,
 	//tSubDesign
-	//Transform2D,
-	//Transform3D,
+	//Transform2d,
+	Transform3d,
 	tPageDef
 } from 'geometrix';
 import {
@@ -312,6 +312,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// figTop
 		figTop.mergeFigure(scarabaseGeom.fig.faceT3);
+		const legT3d: Transform3d[] = [];
 		for (let ii = 0; ii < param.NB; ii++) {
 			const iiT2d = transform2d().addRotation(pi2 + PA[ii]);
 			for (let jj = ii; jj > 0; jj--) {
@@ -320,6 +321,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			iiT2d.addTranslation(W52, L432);
 			const iiTa = iiT2d.getRotation();
 			const [iiTx, iiTy] = iiT2d.getTranslation();
+			legT3d.push(transform3d().addRotation(0, 0, iiTa).addTranslation(iiTx, iiTy, 0));
 			figTop.mergeFigure(
 				scaraLegGeom[ii].fig.faceExtern
 					.translate(-BR2[ii], 0)
@@ -337,6 +339,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			}
 			figSide.mergeFigure(figAxisCut(posX + BR2[ii] - ER1, posY, BH1[ii] + EH23));
 			posY += param.EH2 + param.E1;
+			legT3d[ii].addTranslation(0, 0, posY);
 			figSide.mergeFigure(scaraLegGeom[ii].fig.faceSide.translate(posX, posY));
 		}
 		// figBack
@@ -366,18 +369,33 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		};
 		partInherit.push(partScarabase);
 		partList.push(`inpax_${designName}_base`);
+		// part3D scaraLeg
+		for (let ii = 0; ii < param.NB; ii++) {
+			const iiName = `inpax_${designName}_leg_${ii + 1}`;
+			const iiPartScaraLeg: tInherit = {
+				outName: iiName,
+				subdesign: `pax_${scaraLegParam[ii].getPartNameSuffix()}`,
+				subgeom: scaraLegGeom[ii],
+				rotate: legT3d[ii].getRotation(),
+				translate: legT3d[ii].getTranslation()
+			};
+			partInherit.push(iiPartScaraLeg);
+			partList.push(iiName);
+		}
 		// part3D axis
-		const axis0T3d = transform3d();
-		const partAxis0: tExtrude = {
-			outName: `subpax_${designName}_axis0`,
-			face: `${designName}_faceAxis`,
-			extrudeMethod: EExtrude.eLinearOrtho,
-			length: BH1[0],
-			rotate: axis0T3d.getRotation(),
-			translate: axis0T3d.getTranslation()
-		};
-		partExtrude.push(partAxis0);
-		partList.push(`subpax_${designName}_axis0`);
+		for (let ii = 0; ii < param.NB; ii++) {
+			const iiName = `subpax_${designName}_axis_${ii + 1}`;
+			const iiPartAxis: tExtrude = {
+				outName: iiName,
+				face: `${designName}_faceAxis`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: BH1[ii] + EH23,
+				rotate: legT3d[ii].getRotation(),
+				translate: legT3d[ii].addTranslation(L432, W52, 0).getTranslation()
+			};
+			partExtrude.push(iiPartAxis);
+			partList.push(iiName);
+		}
 		// part3D output
 		rGeome.vol = {
 			inherits: partInherit,
@@ -405,8 +423,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const subLeg: tSubInst = {
 				partName: scaraLegParam[ii].getPartName(),
 				dparam: scaraLegParam[ii].getDesignParamList(),
-				orientation: axis0T3d.getRotation(),
-				position: axis0T3d.getTranslation()
+				orientation: legT3d[ii].getRotation(),
+				position: legT3d[ii].getTranslation()
 			};
 			rGeome.sub[`scaraLeg_${ii + 1}`] = subLeg;
 		}
