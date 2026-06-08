@@ -10,7 +10,8 @@ import type {
 	tParamDef,
 	tParamVal,
 	tGeom,
-	//tExtrude,
+	tExtrude,
+	tInherit,
 	tPageDef
 	//tSubInst
 	//tSubDesign
@@ -38,7 +39,7 @@ import {
 	pSectionSeparator,
 	initGeom,
 	transform2d,
-	//transform3d,
+	transform3d,
 	EExtrude,
 	EBVolume
 } from 'geometrix';
@@ -349,31 +350,40 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
+		const partInherit: tInherit[] = [];
+		const partExtrude: tExtrude[] = [];
+		const partList: string[] = [];
+		// part3D scarabase
+		const partScarabase: tInherit = {
+			outName: `inpax_${designName}_base`,
+			subdesign: 'pax_scarabase',
+			subgeom: scarabaseGeom,
+			rotate: [0, 0, 0],
+			translate: [0, 0, 0]
+		};
+		partInherit.push(partScarabase);
+		partList.push(`inpax_${designName}_base`);
+		// part3D axis
+		const axis0T3d = transform3d();
+		const partAxis0: tExtrude = {
+			outName: `subpax_${designName}_axis0`,
+			face: `${designName}_faceAxis`,
+			extrudeMethod: EExtrude.eLinearOrtho,
+			length: BH1[0],
+			rotate: axis0T3d.getRotation(),
+			translate: axis0T3d.getTranslation()
+		};
+		partExtrude.push(partAxis0);
+		partList.push(`subpax_${designName}_axis0`);
+		// part3D output
 		rGeome.vol = {
-			inherits: [
-				{
-					outName: `inpax_${designName}_base`,
-					subdesign: 'pax_scarabase',
-					subgeom: scarabaseGeom,
-					rotate: [0, 0, 0],
-					translate: [0, 0, 0]
-				}
-			],
-			extrudes: [
-				{
-					outName: `subpax_${designName}_back`,
-					face: `${designName}_faceBack`,
-					extrudeMethod: EExtrude.eLinearOrtho,
-					length: param.T4,
-					rotate: [0, 0, 0],
-					translate: [0, param.T4, 0]
-				}
-			],
+			inherits: partInherit,
+			extrudes: partExtrude,
 			volumes: [
 				{
 					outName: `pax_${designName}`,
 					boolMethod: EBVolume.eUnion,
-					inList: [`inpax_${designName}_base`, `subpax_${designName}_back`]
+					inList: partList
 				}
 			]
 		};
