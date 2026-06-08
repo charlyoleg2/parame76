@@ -10,11 +10,14 @@ import type {
 	tParamDef,
 	tParamVal,
 	tGeom,
-	tExtrude,
+	DesignParam,
 	tInherit,
-	tPageDef
-	//tSubInst
+	tExtrude,
+	tSubInst,
 	//tSubDesign
+	//Transform2D,
+	//Transform3D,
+	tPageDef
 } from 'geometrix';
 import {
 	designParam,
@@ -266,7 +269,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		checkGeom(scarabaseGeom);
 		rGeome.logstr += prefixLog(scarabaseGeom.logstr, scarabaseParam.getPartNameSuffix());
 		// sub-scara
-		//const scaraLegParam: DesignParam[] = [];
+		const scaraLegParam: DesignParam[] = [];
 		const scaraLegGeom: tGeom[] = [];
 		for (let ii = 0; ii < param.NB; ii++) {
 			const iiParam = designParam(scaraDef.pDef, (ii + 1).toString());
@@ -297,7 +300,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const iiGeom = scaraDef.pGeom(0, iiParam.getParamVal(), iiParam.getSuffix());
 			checkGeom(iiGeom);
 			rGeome.logstr += prefixLog(iiGeom.logstr, iiParam.getPartNameSuffix());
-			//scaraLegParam.push(iiParam);
+			scaraLegParam.push(iiParam);
 			scaraLegGeom.push(iiGeom);
 		}
 		// sub-functions
@@ -389,7 +392,24 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		};
 		// step-9 : optional sub-design parameter export
 		// sub-design
-		rGeome.sub = {};
+		const subBase: tSubInst = {
+			partName: scarabaseParam.getPartName(),
+			dparam: scarabaseParam.getDesignParamList(),
+			orientation: [0, 0, 0],
+			position: [0, 0, 0]
+		};
+		rGeome.sub = {
+			scaraBase: subBase
+		};
+		for (let ii = 0; ii < param.NB; ii++) {
+			const subLeg: tSubInst = {
+				partName: scaraLegParam[ii].getPartName(),
+				dparam: scaraLegParam[ii].getDesignParamList(),
+				orientation: axis0T3d.getRotation(),
+				position: axis0T3d.getTranslation()
+			};
+			rGeome.sub[`scaraLeg_${ii + 1}`] = subLeg;
+		}
 		// step-10 : final log message
 		// finalize
 		rGeome.logstr += 'Long2D drawn successfully!\n';
