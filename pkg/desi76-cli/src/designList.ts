@@ -9,7 +9,8 @@ import {
 	voilaDef,
 	scaraDef,
 	scarabaseDef,
-	long2dDef
+	long2dDef,
+	losangeDef
 } from 'desi76';
 
 const designList: tAllPageDef = {
@@ -19,6 +20,7 @@ const designList: tAllPageDef = {
 	'desi76/scara': scaraDef,
 	'desi76/scarabase': scarabaseDef,
 	'desi76/long2d': long2dDef,
+	'desi76/losange': losangeDef,
 	'desi76/cuisine': cuisineDef,
 	'desi76/voila': voilaDef
 };
