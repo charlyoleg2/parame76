@@ -61,8 +61,6 @@ const pDef: tParamDef = {
 		pNumber('LB', 'L-add', 0, -10, 100, 0.1),
 		pNumber('DA', 'D-factor', 1, 0.1, 10, 0.1),
 		pNumber('DB', 'D-add', 0, -10, 100, 0.1),
-		pNumber('HA', 'L-factor', 1, 0.1, 10, 0.1),
-		pNumber('HB', 'L-add', 0, -10, 100, 0.1),
 		pSectionSeparator('Ending parameters'),
 		pNumber('EL', 'mm', 100, 1, 1000, 1),
 		pNumber('ED2', 'mm', 60, 1, 1000, 1),
@@ -124,8 +122,6 @@ const pDef: tParamDef = {
 		LB: 'long2d_top.svg',
 		DA: 'long2d_top.svg',
 		DB: 'long2d_top.svg',
-		HA: 'long2d_side.svg',
-		HB: 'long2d_side.svg',
 		EL: 'long2d_top.svg',
 		ED2: 'long2d_top.svg',
 		EH1: 'long2d_side.svg',
@@ -203,7 +199,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const EH23 = 2 * (param.EH2 + param.EH3);
 		for (let ii = param.NB - 1; ii >= 0; ii--) {
 			BD2[ii] = BD2[ii + 1] * param.DA + param.DB;
-			BH1[ii] = BH1[ii + 1] * param.HA + param.HB + 2 * (param.EH2 + param.E1);
+			BH1[ii] = BH1[ii + 1] + 2 * (param.EH2 + param.E1);
 		}
 		const BR2 = BD2.map((aD1: number) => aD1 / 2);
 		const CH1 = BH1[0];
