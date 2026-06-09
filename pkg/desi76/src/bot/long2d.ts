@@ -390,7 +390,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				const iiName = `inpax_${designName}_leg_${ii + 1}`;
 				const iiLegT3d2 = transform3d()
 					.addRotation(0, 0, pi2)
-					.addTranslation((ii + 1) * fabStepX, 4 * ER1, 0);
+					.addTranslation((ii + 1.5) * fabStepX, 4 * ER1, 0);
 				const iiLegT3d = param.D3Enable === 0 ? legT3d[ii] : iiLegT3d2;
 				const iiPartScaraLeg: tInherit = {
 					outName: iiName,
