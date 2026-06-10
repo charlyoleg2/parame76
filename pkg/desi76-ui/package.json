@@ -1,7 +1,7 @@
 {
 	"name": "desi76-ui",
 	"description": "sveltekit-ui for desi76",
-	"version": "0.1.15",
+	"version": "0.1.16",
 	"private": true,
 	"repository": {
 		"type": "git",
