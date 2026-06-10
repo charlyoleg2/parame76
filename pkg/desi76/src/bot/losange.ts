@@ -56,6 +56,21 @@ const pDef: tParamDef = {
 	partName: 'losange',
 	params: [
 		//pNumber(name, unit, init, min, max, step)
+		pNumber('L0', 'mm', 100, 1, 1000, 1),
+		pNumber('LA1', 'mm', 200, 1, 1000, 1),
+		pNumber('LA2', 'mm', 200, 1, 1000, 1),
+		pNumber('LB1', 'mm', 200, 1, 1000, 1),
+		pNumber('LB2', 'mm', 200, 1, 1000, 1),
+		pSectionSeparator('Joint diameters'),
+		pNumber('D0i', 'mm', 50, 1, 1000, 1),
+		pNumber('D0e', 'mm', 90, 1, 1000, 1),
+		pNumber('DAi', 'mm', 30, 1, 1000, 1),
+		pNumber('DAe', 'mm', 70, 1, 1000, 1),
+		pNumber('DBi', 'mm', 30, 1, 1000, 1),
+		pNumber('DBe', 'mm', 70, 1, 1000, 1),
+		pNumber('DEi', 'mm', 10, 1, 1000, 1),
+		pNumber('DEe', 'mm', 30, 1, 1000, 1),
+		pSectionSeparator('Old'),
 		pNumber('NB', 'leg', 3, 1, 10, 1),
 		pNumber('LA', 'L-factor', 1, 0.1, 10, 0.1),
 		pNumber('LB', 'L-add', 0, -10, 100, 0.1),
@@ -88,35 +103,37 @@ const pDef: tParamDef = {
 		pNumber('S12', 'mm', 1, 0, 100, 1),
 		pNumber('Ri', 'mm', 1, 0, 10, 0.1),
 		pNumber('Re', 'mm', 0.4, 0, 10, 0.1),
-		pSectionSeparator('Angles and 3D parts'),
-		pNumber('PA1', 'degree', 0, -120, 120, 1),
-		pNumber('PA2', 'degree', 0, -120, 120, 1),
-		pNumber('PA3', 'degree', 0, -120, 120, 1),
-		pNumber('PA4', 'degree', 0, -120, 120, 1),
-		pNumber('PA5', 'degree', 0, -120, 120, 1),
-		pNumber('PA6', 'degree', 0, -120, 120, 1),
-		pNumber('PA7', 'degree', 0, -120, 120, 1),
-		pNumber('PA8', 'degree', 0, -120, 120, 1),
-		pNumber('PA9', 'degree', 0, -120, 120, 1),
-		pNumber('PA10', 'degree', 0, -120, 120, 1),
-		pDropdown('D3Enable', [
+		pSectionSeparator('Assembly'),
+		pDropdown('positionDriver', ['angle0', 'endXY']),
+		pNumber('A0A', 'degree', 0, -120, 120, 1),
+		pNumber('A0B', 'degree', 0, -120, 120, 1),
+		pNumber('Ex', 'mm', 0, -1000, 1000, 1),
+		pNumber('Ey', 'mm', 0, -1000, 1000, 1),
+		pDropdown('output3D', [
 			'assembly',
-			'parts',
-			'axisall',
+			'allParts',
+			'allAxis',
 			'base',
-			'leg1',
-			'leg2',
-			'leg3',
-			'leg4',
-			'leg5',
-			'leg6',
-			'leg7',
-			'leg8',
-			'leg9',
-			'leg10'
+			'legA1',
+			'legA2',
+			'legB1',
+			'legB2'
 		])
 	],
 	paramSvg: {
+		L0: 'losange_top.svg',
+		LA1: 'losange_top.svg',
+		LA2: 'losange_top.svg',
+		LB1: 'losange_top.svg',
+		LB2: 'losange_top.svg',
+		D0i: 'losange_top.svg',
+		D0e: 'losange_top.svg',
+		DAi: 'losange_top.svg',
+		DAe: 'losange_top.svg',
+		DBi: 'losange_top.svg',
+		DBe: 'losange_top.svg',
+		DEi: 'losange_top.svg',
+		DEe: 'losange_top.svg',
 		NB: 'losange_top.svg',
 		LA: 'losange_top.svg',
 		LB: 'losange_top.svg',
@@ -144,17 +161,12 @@ const pDef: tParamDef = {
 		S12: 'losange_top.svg',
 		Ri: 'losange_top.svg',
 		Re: 'losange_top.svg',
-		PA1: 'losange_top.svg',
-		PA2: 'losange_top.svg',
-		PA3: 'losange_top.svg',
-		PA4: 'losange_top.svg',
-		PA5: 'losange_top.svg',
-		PA6: 'losange_top.svg',
-		PA7: 'losange_top.svg',
-		PA8: 'losange_top.svg',
-		PA9: 'losange_top.svg',
-		PA10: 'losange_top.svg',
-		D3Enable: 'losange_top.svg'
+		positionDriver: 'losange_top.svg',
+		A0A: 'losange_top.svg',
+		A0B: 'losange_top.svg',
+		Ex: 'losange_top.svg',
+		Ey: 'losange_top.svg',
+		output3D: 'losange_top.svg'
 	},
 	sim: {
 		tMax: 100,
@@ -177,18 +189,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const ER2 = param.ED2 / 2;
 		const ER1i = ER1 - param.T1;
 		const R8 = param.D8 / 2;
-		const PAall: number[] = [
-			param.PA1,
-			param.PA2,
-			param.PA3,
-			param.PA4,
-			param.PA5,
-			param.PA6,
-			param.PA7,
-			param.PA8,
-			param.PA9,
-			param.PA10
-		];
+		const PAall: number[] = Array(param.NB).fill(0);
 		const PA = PAall.slice(0, param.NB).map((iAngle) => degToRad(iAngle));
 		const BL: number[] = Array(param.NB).fill(param.EL);
 		const BD2: number[] = Array(param.NB + 1).fill(param.ED2);
@@ -229,9 +230,6 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// warnings
 		if (param.H3 === 0) {
 			rGeome.logstr += 'warn125: Warning H3 is zero\n';
-		}
-		if (param.D3Enable > param.NB + 3) {
-			rGeome.logstr += `warn238: Warning D3Enable ${param.D3Enable} select a not existing part for 3D\n`;
 		}
 		// step-6 : any logs
 		rGeome.logstr += `length ${ffix(Ltot)}  height ${ffix(Htot)}\n`;
@@ -368,8 +366,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const partExtrude: tExtrude[] = [];
 		const partList: string[] = [];
 		// part3D scarabase
-		if ([0, 1, 3].includes(param.D3Enable)) {
-			const fabStepY2 = param.D3Enable === 0 ? 0 : 4 * ER1;
+		if ([0, 1, 3].includes(param.output3D)) {
+			const fabStepY2 = param.output3D === 0 ? 0 : 4 * ER1;
 			const partScarabase: tInherit = {
 				outName: `inpax_${designName}_base`,
 				subdesign: 'pax_scarabase',
@@ -382,12 +380,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// part3D scaraLeg
 		for (let ii = 0; ii < param.NB; ii++) {
-			if ([0, 1].includes(param.D3Enable) || ii - param.D3Enable === -4) {
+			if ([0, 1].includes(param.output3D) || ii - param.output3D === -4) {
 				const iiName = `inpax_${designName}_leg_${ii + 1}`;
 				const iiLegT3d2 = transform3d()
 					.addRotation(0, 0, pi2)
 					.addTranslation((ii + 1.5) * fabStepX, 4 * ER1, 0);
-				const iiLegT3d = param.D3Enable === 0 ? legT3d[ii] : iiLegT3d2;
+				const iiLegT3d = param.output3D === 0 ? legT3d[ii] : iiLegT3d2;
 				const iiPartScaraLeg: tInherit = {
 					outName: iiName,
 					subdesign: `pax_${scaraLegParam[ii].getPartNameSuffix()}`,
@@ -400,11 +398,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			}
 		}
 		// part3D axis
-		if ([0, 1, 2].includes(param.D3Enable)) {
+		if ([0, 1, 2].includes(param.output3D)) {
 			for (let ii = 0; ii < param.NB; ii++) {
 				const iiName = `subpax_${designName}_axis_${ii + 1}`;
 				const iiAxisT3d2 = transform3d().addTranslation((ii + 1) * 3 * ER1, 2 * ER1, 0);
-				const iiAxisT3d = param.D3Enable === 0 ? axisT3d[ii] : iiAxisT3d2;
+				const iiAxisT3d = param.output3D === 0 ? axisT3d[ii] : iiAxisT3d2;
 				const iiPartAxis: tExtrude = {
 					outName: iiName,
 					face: `${designName}_faceAxis`,
