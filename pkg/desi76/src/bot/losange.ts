@@ -56,7 +56,7 @@ const pDef: tParamDef = {
 	partName: 'losange',
 	params: [
 		//pNumber(name, unit, init, min, max, step)
-		pNumber('L0', 'mm', 100, 1, 1000, 1),
+		//pNumber('L0', 'mm', 100, 1, 1000, 1),
 		pNumber('LA1', 'mm', 200, 1, 1000, 1),
 		pNumber('LA2', 'mm', 200, 1, 1000, 1),
 		pNumber('LB1', 'mm', 200, 1, 1000, 1),
@@ -70,39 +70,30 @@ const pDef: tParamDef = {
 		pNumber('DBe', 'mm', 70, 1, 1000, 1),
 		pNumber('DEi', 'mm', 10, 1, 1000, 1),
 		pNumber('DEe', 'mm', 30, 1, 1000, 1),
-		pSectionSeparator('Old'),
-		pNumber('NB', 'leg', 3, 1, 10, 1),
-		pNumber('LA', 'L-factor', 1, 0.1, 10, 0.1),
-		pNumber('LB', 'L-add', 0, -10, 100, 0.1),
-		pNumber('DA', 'D-factor', 1, 0.1, 10, 0.1),
-		pNumber('DB', 'D-add', 0, -10, 100, 0.1),
-		pSectionSeparator('Ending parameters'),
-		pNumber('EL', 'mm', 100, 1, 1000, 1),
-		pNumber('ED2', 'mm', 60, 1, 1000, 1),
-		pNumber('EH1', 'mm', 50, 1, 1000, 1),
-		pSectionSeparator('Constant parameters'),
-		pNumber('EH2', 'mm', 10, 1, 1000, 1),
-		pNumber('EH3', 'mm', 10, 0, 1000, 1),
-		pNumber('ED1', 'mm', 20, 1, 1000, 1),
+		pSectionSeparator('Wall thickness'),
 		pNumber('T1', 'mm', 5, 1, 100, 1),
 		pNumber('T3', 'mm', 3, 1, 100, 1),
-		pNumber('E1', 'mm', 0.5, -10, 10, 0.1),
-		pNumber('E2', 'mm', 0.5, -10, 10, 0.1),
-		pNumber('E3', 'mm', 0.5, -10, 10, 0.1),
-		pSectionSeparator('Base'),
-		pNumber('L3', 'mm', 30, 0, 1000, 1),
-		pNumber('L4', 'mm', 20, 1, 100, 1),
-		pNumber('W5', 'mm', 40, 1, 1000, 1),
-		pNumber('R34', 'mm', 2, 0, 10, 0.1),
-		pNumber('T4', 'mm', 10, 1, 100, 1),
-		pSectionSeparator('Base back'),
-		pNumber('W8', 'mm', 20, 1, 1000, 1),
-		pNumber('H8', 'mm', 30, 1, 1000, 1),
-		pNumber('D8', 'mm', 5, 1, 1000, 1),
-		pSectionSeparator('Leg details'),
 		pNumber('S12', 'mm', 1, 0, 100, 1),
 		pNumber('Ri', 'mm', 1, 0, 10, 0.1),
 		pNumber('Re', 'mm', 0.4, 0, 10, 0.1),
+		pNumber('E2', 'mm', 0.4, -10, 10, 0.1),
+		pNumber('E3', 'mm', 0.7, -10, 10, 0.1),
+		pSectionSeparator('Heights'),
+		pNumber('EH1', 'mm', 50, 1, 1000, 1),
+		pNumber('EH2', 'mm', 10, 1, 1000, 1),
+		pNumber('EH3', 'mm', 10, 0, 1000, 1),
+		pNumber('E1', 'mm', 0.5, -10, 10, 0.1),
+		pSectionSeparator('Base'),
+		pNumber('L3', 'mm', 30, 0, 1000, 1),
+		pNumber('L4', 'mm', 20, 1, 100, 1),
+		pNumber('A5', 'degree', 90, 0, 180, 1),
+		pNumber('W5', 'mm', 40, 1, 1000, 1),
+		pNumber('W6', 'mm', 10, 0, 1000, 1),
+		pNumber('R34', 'mm', 2, 0, 10, 0.1),
+		pNumber('T4', 'mm', 10, 1, 100, 1),
+		pNumber('W8', 'mm', 20, 1, 1000, 1),
+		pNumber('H8', 'mm', 30, 1, 1000, 1),
+		pNumber('D8', 'mm', 5, 1, 1000, 1),
 		pSectionSeparator('Assembly'),
 		pDropdown('positionDriver', ['angle0', 'endXY']),
 		pNumber('A0A', 'degree', 0, -120, 120, 1),
@@ -121,7 +112,7 @@ const pDef: tParamDef = {
 		])
 	],
 	paramSvg: {
-		L0: 'losange_top.svg',
+		//L0: 'losange_top.svg',
 		LA1: 'losange_top.svg',
 		LA2: 'losange_top.svg',
 		LB1: 'losange_top.svg',
@@ -134,33 +125,27 @@ const pDef: tParamDef = {
 		DBe: 'losange_top.svg',
 		DEi: 'losange_top.svg',
 		DEe: 'losange_top.svg',
-		NB: 'losange_top.svg',
-		LA: 'losange_top.svg',
-		LB: 'losange_top.svg',
-		DA: 'losange_top.svg',
-		DB: 'losange_top.svg',
-		EL: 'losange_top.svg',
-		ED2: 'losange_top.svg',
+		T1: 'losange_top.svg',
+		T3: 'losange_top.svg',
+		S12: 'losange_top.svg',
+		Ri: 'losange_top.svg',
+		Re: 'losange_top.svg',
+		E2: 'losange_top.svg',
+		E3: 'losange_top.svg',
 		EH1: 'losange_top.svg',
 		EH2: 'losange_top.svg',
 		EH3: 'losange_top.svg',
-		ED1: 'losange_top.svg',
-		T1: 'losange_top.svg',
-		T3: 'losange_top.svg',
 		E1: 'losange_top.svg',
-		E2: 'losange_top.svg',
-		E3: 'losange_top.svg',
 		L3: 'losange_top.svg',
 		L4: 'losange_top.svg',
+		A5: 'losange_top.svg',
 		W5: 'losange_top.svg',
+		W6: 'losange_top.svg',
 		R34: 'losange_top.svg',
 		T4: 'losange_top.svg',
 		W8: 'losange_top.svg',
 		H8: 'losange_top.svg',
 		D8: 'losange_top.svg',
-		S12: 'losange_top.svg',
-		Ri: 'losange_top.svg',
-		Re: 'losange_top.svg',
 		positionDriver: 'losange_top.svg',
 		A0A: 'losange_top.svg',
 		A0B: 'losange_top.svg',
@@ -185,41 +170,52 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
-		const ER1 = param.ED1 / 2;
-		const ER2 = param.ED2 / 2;
-		const ER1i = ER1 - param.T1;
+		const legNb = 4;
+		const H22 = 2 * param.EH2 + param.E1;
+		const H122 = param.EH1 + H22;
+		const H124 = H122 + H22;
+		// A1, A2, B1, B2
+		const LR1e: number[] = [param.D0e / 2, param.DAe / 2, param.D0e / 2, param.DBe / 2];
+		const LR1i: number[] = [param.D0i / 2, param.DAi / 2, param.D0i / 2, param.DBi / 2];
+		const LR2e: number[] = [param.DAe / 2, param.DEe / 2, param.DBe / 2, param.DEe / 2];
+		const LR2i: number[] = [param.DAi / 2, param.DEi / 2, param.DBi / 2, param.DEi / 2];
+		const LL: number[] = [param.LA1, param.LA2, param.LB1, param.LB2];
+		const LH: number[] = [H124, H122, H124, param.H1];
+		// 0, A, B, E
+		const ARe: number[] = [param.D0i / 2, param.DAi / 2, param.DBi / 2, param.DEi / 2];
+		const ARi: number[] = ARe.map((iR) => iR - param.T1);
 		const R8 = param.D8 / 2;
-		const PAall: number[] = Array(param.NB).fill(0);
-		const PA = PAall.slice(0, param.NB).map((iAngle) => degToRad(iAngle));
-		const BL: number[] = Array(param.NB).fill(param.EL);
-		const BD2: number[] = Array(param.NB + 1).fill(param.ED2);
-		const BH1: number[] = Array(param.NB + 1).fill(param.EH1);
-		for (let ii = param.NB - 2; ii >= 0; ii--) {
-			BL[ii] = BL[ii + 1] * param.LA + param.LB;
-		}
+		const pi2 = Math.PI / 2;
+		const LA: number[] = [pi2 + degToRad(param.A0A), pi2 + degToRad(param.A0B), 0, 0];
 		const EH23 = 2 * (param.EH2 + param.EH3);
-		for (let ii = param.NB - 1; ii >= 0; ii--) {
-			BD2[ii] = BD2[ii + 1] * param.DA + param.DB;
-			BH1[ii] = BH1[ii + 1] + 2 * (param.EH2 + param.E1);
-		}
-		const BR2 = BD2.map((aD1: number) => aD1 / 2);
-		const CH1 = BH1[0];
-		const BLtot = BL.reduce((acc: number, val: number) => acc + val, 0);
-		const L432 = param.L4 + param.L3 + BR2[0];
-		const Ltot = L432 + BLtot + BR2[param.NB];
+		const CH1 = H124 + H22;
+		const L432 = param.L4 + param.L3 + LR1e[0];
+		const Ltot = Math.min(LL[0] + LL[1], LL[2] + LL[3]);
 		const Htot = CH1 + param.EH23;
-		const lastOrientation = PA.reduce((acc: number, val: number) => acc + val, 0);
 		const W52 = param.W5 / 2;
 		const X8 = (param.W5 - param.W8) / 2;
 		const Y8 = (CH1 - param.H8) / 2;
-		const pi2 = Math.PI / 2;
-		const fabStepX = 1.2 * Math.max(2 * W52, 2 * BR2[0]);
+		const fabStepX = 1.2 * Math.max(...LR1e, ...LR2e);
+		const eX = 0;
+		const eY = 0;
+		const eA = 0;
+		const eL = 0;
+		const a0A = 0;
+		const a0B = 0;
 		// step-5 : checks on the parameter values
-		if (ER2 < ER1 + 2 * param.T3) {
-			throw `err192: ED2 ${ffix(2 * ER2)} is too small compare to ED1 ${ffix(2 * ER1)} and T3 ${ffix(param.T3)}`;
-		}
-		if (ER1i < 0) {
-			throw `err216: ED1 ${ffix(2 * ER1)} is too small compare to T1 ${ffix(param.T1)}`;
+		for (let ii = 0; ii < legNb; ii++) {
+			if (LR1e[ii] < LR1i[ii] + 2 * param.T3) {
+				throw `err197: idx ${ii} LR1e ${ffix(2 * LR1e[ii])} is too small compare to LR1i ${ffix(2 * LR1i[ii])} and T3 ${ffix(param.T3)}`;
+			}
+			if (LR2e[ii] < LR2i[ii] + 2 * param.T3) {
+				throw `err200: idx ${ii} LR2e[ii] ${ffix(2 * LR2e[ii])} is too small compare to LR2i ${ffix(2 * LR2i[ii])} and T3 ${ffix(param.T3)}`;
+			}
+			if (LL[ii] < LR1e[ii] + LR2e[ii]) {
+				throw `err203: idx ${ii} LL ${ffix(LL[ii])} is too small compare to LR1e ${ffix(LR1e[ii])} and LR2e ${ffix(LR2e[ii])}`;
+			}
+			if (ARi[ii] < 0) {
+				throw `err206: idx ${ii} ARe ${ffix(2 * ARe[ii])} is too small compare to T1 ${ffix(param.T1)}`;
+			}
 		}
 		if (X8 < R8) {
 			throw `err195: W5 ${ffix(param.W5)} is too small compare to D8 ${ffix(2 * R8)} and W8 ${ffix(param.W8)}`;
@@ -227,30 +223,24 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (Y8 < R8) {
 			throw `err198: H1 ${ffix(CH1)} is too small compare to D8 ${ffix(2 * R8)} and H8 ${ffix(param.H8)}`;
 		}
-		// warnings
-		if (param.H3 === 0) {
-			rGeome.logstr += 'warn125: Warning H3 is zero\n';
-		}
 		// step-6 : any logs
 		rGeome.logstr += `length ${ffix(Ltot)}  height ${ffix(Htot)}\n`;
-		rGeome.logstr += `lastOrientation ${ffix(radToDeg(lastOrientation))}\n`;
-		for (let ii = 0; ii < param.NB; ii++) {
-			rGeome.logstr += `leg-${ii + 1} : BL ${ffix(BL[ii])}, D12 ${ffix(BD2[ii])}, D22 ${ffix(BD2[ii + 1])},`;
-			rGeome.logstr += ` BH1 ${ffix(BH1[ii + 1])}\n`;
-		}
+		rGeome.logstr += `Position: X ${ffix(eX)}  Y ${ffix(eY)} mm\n`;
+		rGeome.logstr += `Position: A ${ffix(radToDeg(eA))} degree  L ${ffix(eL)} mm\n`;
+		rGeome.logstr += `Angle0 A0A ${ffix(radToDeg(a0A))}  A0B ${ffix(radToDeg(a0B))} degree\n`;
 		// step-7 : drawing of the figures
 		// inherite
 		// sub-scarabase
 		const scarabaseParam = designParam(scarabaseDef.pDef, '');
-		scarabaseParam.setVal('D1', 2 * ER1 + param.E3);
-		scarabaseParam.setVal('D2', 2 * BR2[0]);
+		scarabaseParam.setVal('D1', 2 * LR1i[0] + param.E3);
+		scarabaseParam.setVal('D2', 2 * LR1e[0]);
 		scarabaseParam.setVal('L3', param.L3);
 		scarabaseParam.setVal('L4', param.L4);
 		scarabaseParam.setVal('W5', param.W5);
-		scarabaseParam.setVal('Nac', 0); // single
+		scarabaseParam.setVal('Nac', 1); // double
 		scarabaseParam.setVal('R34', param.R34);
-		scarabaseParam.setVal('A5', 0);
-		scarabaseParam.setVal('W6', 10);
+		scarabaseParam.setVal('A5', param.A5);
+		scarabaseParam.setVal('W6', param.W6);
 		scarabaseParam.setVal('T3', param.T3);
 		scarabaseParam.setVal('T4', param.T4);
 		scarabaseParam.setVal('H1', CH1);
@@ -269,32 +259,32 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// sub-scara
 		const scaraLegParam: DesignParam[] = [];
 		const scaraLegGeom: tGeom[] = [];
-		for (let ii = 0; ii < param.NB; ii++) {
+		for (let ii = 0; ii < legNb; ii++) {
 			const iiParam = designParam(scaraDef.pDef, (ii + 1).toString());
-			iiParam.setVal('L1', BL[ii]);
-			iiParam.setVal('D11', param.ED1 + param.E2);
-			iiParam.setVal('D12', BD2[ii]);
-			iiParam.setVal('D21', 2 * ER1 + param.E3);
-			iiParam.setVal('D22', BD2[ii + 1]);
+			iiParam.setVal('L1', LL[ii]);
+			iiParam.setVal('D11', 2 * LR1i[ii] + param.E2);
+			iiParam.setVal('D12', 2 * LR1e[ii]);
+			iiParam.setVal('D21', 2 * LR2i[ii] + (ii < 3 ? param.E3 : param.E2));
+			iiParam.setVal('D22', 2 * LR2e[ii]);
 			iiParam.setVal('firstEnd', 0);
-			iiParam.setVal('secondEnd', 0);
+			iiParam.setVal('secondEnd', ii < 3 ? 0 : 1);
 			iiParam.setVal('A1', 90);
 			iiParam.setVal('T1', param.T3);
 			iiParam.setVal('T2', param.T3);
-			iiParam.setVal('S2', BR2[ii + 1] + param.S12);
+			iiParam.setVal('S2', LR2e[ii] + param.S12);
 			iiParam.setVal('R1i', param.Ri);
 			iiParam.setVal('R1e', param.Re);
 			iiParam.setVal('iiEn', 1);
 			iiParam.setVal('N2', 2);
-			iiParam.setVal('S1', BR2[ii] + param.S12);
+			iiParam.setVal('S1', LR1e[ii] + param.S12);
 			iiParam.setVal('T3', param.T3);
 			iiParam.setVal('R2i', param.Ri);
 			iiParam.setVal('R2e', param.Re);
-			iiParam.setVal('H1', BH1[ii + 1]);
+			iiParam.setVal('H1', LH[ii]);
 			iiParam.setVal('H2', param.EH2);
 			iiParam.setVal('H3', param.EH3);
 			iiParam.setVal('H41', 0);
-			iiParam.setVal('H42', 0);
+			iiParam.setVal('H42', ii < 3 ? 0 : param.H2 + param.E1 / 2);
 			const iiGeom = scaraDef.pGeom(0, iiParam.getParamVal(), iiParam.getSuffix());
 			checkGeom(iiGeom);
 			rGeome.logstr += prefixLog(iiGeom.logstr, iiParam.getPartNameSuffix());
@@ -302,34 +292,34 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			scaraLegGeom.push(iiGeom);
 		}
 		// sub-functions
-		function figAxisCut(ix: number, iy: number, ih: number): Figure {
+		function figAxisCut(ix: number, iy: number, ire: number, ih: number): Figure {
 			const rFig = figure();
 			rFig.addMainO(ctrRectangle(ix, iy, param.T1, ih));
-			rFig.addMainO(ctrRectangle(ix + 2 * ER1 - param.T1, iy, param.T1, ih));
+			rFig.addMainO(ctrRectangle(ix + 2 * ire - param.T1, iy, param.T1, ih));
 			return rFig;
 		}
 		// figTop
 		figTop.mergeFigure(scarabaseGeom.fig.faceT3);
 		const legT3d: Transform3d[] = [];
 		const axisT3d: Transform3d[] = [];
-		for (let ii = 0; ii < param.NB; ii++) {
-			const iiT2d = transform2d().addRotation(pi2 + PA[ii]);
+		for (let ii = 0; ii < legNb; ii++) {
+			const iiT2d = transform2d().addRotation(LA[ii]);
 			for (let jj = ii; jj > 0; jj--) {
-				iiT2d.addTranslation(0, BL[jj - 1]).addRotation(PA[jj - 1]);
+				iiT2d.addTranslation(0, LL[jj - 1]).addRotation(LA[jj - 1]);
 			}
 			iiT2d.addTranslation(W52, L432);
 			const iiTa = iiT2d.getRotation();
 			const [iiTx, iiTy] = iiT2d.getTranslation();
 			legT3d.push(
 				transform3d()
-					.addTranslation(-BR2[ii], 0, 0)
+					.addTranslation(-LR1e[ii], 0, 0)
 					.addRotation(0, 0, iiTa)
 					.addTranslation(iiTx, iiTy, 0)
 			);
 			axisT3d.push(transform3d().addRotation(0, 0, iiTa).addTranslation(iiTx, iiTy, 0));
 			figTop.mergeFigure(
 				scaraLegGeom[ii].fig.faceExtern
-					.translate(-BR2[ii], 0)
+					.translate(-LR1e[ii], 0)
 					.rotate(0, 0, iiTa)
 					.translate(iiTx, iiTy)
 			);
@@ -338,21 +328,23 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figSide.mergeFigure(scarabaseGeom.fig.faceSide);
 		let posX = param.L4 + param.L3;
 		let posY = 0;
-		for (let ii = 0; ii < param.NB; ii++) {
+		for (let ii = 0; ii < legNb; ii++) {
 			if (ii > 0) {
-				posX += BR2[ii - 1] + BL[ii - 1] - BR2[ii];
+				posX += LR1e[ii - 1] + LL[ii - 1] - LR1e[ii];
 			}
-			figSide.mergeFigure(figAxisCut(posX + BR2[ii] - ER1, posY, BH1[ii] + EH23));
+			figSide.mergeFigure(
+				figAxisCut(posX + LR1e[ii] - LR1i[ii], posY, LR1i[ii], LH[ii] + EH23)
+			);
 			axisT3d[ii].addTranslation(0, 0, posY);
-			posY += param.EH2 + param.E1;
+			posY += param.EH2 + param.E1 / 2;
 			legT3d[ii].addTranslation(0, 0, posY);
 			figSide.mergeFigure(scaraLegGeom[ii].fig.faceSide.translate(posX, posY));
 		}
 		// figBack
 		figBack.mergeFigure(scarabaseGeom.fig.faceBack);
 		// figAxis
-		figAxis.addMainOI([contourCircle(0, 0, ER1), contourCircle(0, 0, ER1i)]);
-		figAxis.addSecond(contourCircle(0, 0, ER1 + param.T3));
+		figAxis.addMainOI([contourCircle(0, 0, ARe[0]), contourCircle(0, 0, ARi[0])]);
+		figAxis.addSecond(contourCircle(0, 0, ARe[0] + param.T3));
 		// final figure list
 		rGeome.fig = {
 			faceTop: figTop,
@@ -367,7 +359,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const partList: string[] = [];
 		// part3D scarabase
 		if ([0, 1, 3].includes(param.output3D)) {
-			const fabStepY2 = param.output3D === 0 ? 0 : 4 * ER1;
+			const fabStepY2 = param.output3D === 0 ? 0 : 4 * ARe[0];
 			const partScarabase: tInherit = {
 				outName: `inpax_${designName}_base`,
 				subdesign: 'pax_scarabase',
@@ -379,12 +371,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			partList.push(`inpax_${designName}_base`);
 		}
 		// part3D scaraLeg
-		for (let ii = 0; ii < param.NB; ii++) {
+		for (let ii = 0; ii < legNb; ii++) {
 			if ([0, 1].includes(param.output3D) || ii - param.output3D === -4) {
 				const iiName = `inpax_${designName}_leg_${ii + 1}`;
 				const iiLegT3d2 = transform3d()
 					.addRotation(0, 0, pi2)
-					.addTranslation((ii + 1.5) * fabStepX, 4 * ER1, 0);
+					.addTranslation((ii + 1.5) * fabStepX, 4 * ARe[0], 0);
 				const iiLegT3d = param.output3D === 0 ? legT3d[ii] : iiLegT3d2;
 				const iiPartScaraLeg: tInherit = {
 					outName: iiName,
@@ -399,15 +391,19 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// part3D axis
 		if ([0, 1, 2].includes(param.output3D)) {
-			for (let ii = 0; ii < param.NB; ii++) {
+			for (let ii = 0; ii < legNb; ii++) {
 				const iiName = `subpax_${designName}_axis_${ii + 1}`;
-				const iiAxisT3d2 = transform3d().addTranslation((ii + 1) * 3 * ER1, 2 * ER1, 0);
+				const iiAxisT3d2 = transform3d().addTranslation(
+					(ii + 1) * 3 * ARe[0],
+					2 * ARe[0],
+					0
+				);
 				const iiAxisT3d = param.output3D === 0 ? axisT3d[ii] : iiAxisT3d2;
 				const iiPartAxis: tExtrude = {
 					outName: iiName,
 					face: `${designName}_faceAxis`,
 					extrudeMethod: EExtrude.eLinearOrtho,
-					length: BH1[ii] + EH23,
+					length: LH[ii] + EH23,
 					rotate: iiAxisT3d.getRotation(),
 					translate: iiAxisT3d.getTranslation()
 				};
@@ -438,7 +434,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.sub = {
 			scaraBase: subBase
 		};
-		for (let ii = 0; ii < param.NB; ii++) {
+		for (let ii = 0; ii < legNb; ii++) {
 			const subLeg: tSubInst = {
 				partName: scaraLegParam[ii].getPartName(),
 				dparam: scaraLegParam[ii].getDesignParamList(),
