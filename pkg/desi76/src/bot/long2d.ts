@@ -199,7 +199,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const EH23 = 2 * (param.EH2 + param.EH3);
 		for (let ii = param.NB - 1; ii >= 0; ii--) {
 			BD2[ii] = BD2[ii + 1] * param.DA + param.DB;
-			BH1[ii] = BH1[ii + 1] + 2 * (param.EH2 + param.E1);
+			BH1[ii] = BH1[ii + 1] + 2 * param.EH2 + param.E1;
 		}
 		const BR2 = BD2.map((aD1: number) => aD1 / 2);
 		const CH1 = BH1[0];
@@ -346,7 +346,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			}
 			figSide.mergeFigure(figAxisCut(posX + BR2[ii] - ER1, posY, BH1[ii] + EH23));
 			axisT3d[ii].addTranslation(0, 0, posY);
-			posY += param.EH2 + param.E1;
+			posY += param.EH2 + param.E1 / 2;
 			legT3d[ii].addTranslation(0, 0, posY);
 			figSide.mergeFigure(scaraLegGeom[ii].fig.faceSide.translate(posX, posY));
 		}
