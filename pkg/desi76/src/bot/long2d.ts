@@ -99,7 +99,7 @@ const pDef: tParamDef = {
 		pNumber('PA8', 'degree', 0, -120, 120, 1),
 		pNumber('PA9', 'degree', 0, -120, 120, 1),
 		pNumber('PA10', 'degree', 0, -120, 120, 1),
-		pDropdown('D3Enable', [
+		pDropdown('output3D', [
 			'assembly',
 			'parts',
 			'axisall',
@@ -154,7 +154,7 @@ const pDef: tParamDef = {
 		PA8: 'long2d_top.svg',
 		PA9: 'long2d_top.svg',
 		PA10: 'long2d_top.svg',
-		D3Enable: 'long2d_top.svg'
+		output3D: 'long2d_top.svg'
 	},
 	sim: {
 		tMax: 100,
@@ -230,8 +230,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (param.H3 === 0) {
 			rGeome.logstr += 'warn125: Warning H3 is zero\n';
 		}
-		if (param.D3Enable > param.NB + 3) {
-			rGeome.logstr += `warn238: Warning D3Enable ${param.D3Enable} select a not existing part for 3D\n`;
+		if (param.output3D > param.NB + 3) {
+			rGeome.logstr += `warn238: Warning output3D ${param.output3D} select a not existing part for 3D\n`;
 		}
 		// step-6 : any logs
 		rGeome.logstr += `length ${ffix(Ltot)}  height ${ffix(Htot)}\n`;
@@ -368,8 +368,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const partExtrude: tExtrude[] = [];
 		const partList: string[] = [];
 		// part3D scarabase
-		if ([0, 1, 3].includes(param.D3Enable)) {
-			const fabStepY2 = param.D3Enable === 0 ? 0 : 4 * ER1;
+		if ([0, 1, 3].includes(param.output3D)) {
+			const fabStepY2 = param.output3D === 0 ? 0 : 4 * ER1;
 			const partScarabase: tInherit = {
 				outName: `inpax_${designName}_base`,
 				subdesign: 'pax_scarabase',
@@ -382,12 +382,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// part3D scaraLeg
 		for (let ii = 0; ii < param.NB; ii++) {
-			if ([0, 1].includes(param.D3Enable) || ii - param.D3Enable === -4) {
+			if ([0, 1].includes(param.output3D) || ii - param.output3D === -4) {
 				const iiName = `inpax_${designName}_leg_${ii + 1}`;
 				const iiLegT3d2 = transform3d()
 					.addRotation(0, 0, pi2)
 					.addTranslation((ii + 1.5) * fabStepX, 4 * ER1, 0);
-				const iiLegT3d = param.D3Enable === 0 ? legT3d[ii] : iiLegT3d2;
+				const iiLegT3d = param.output3D === 0 ? legT3d[ii] : iiLegT3d2;
 				const iiPartScaraLeg: tInherit = {
 					outName: iiName,
 					subdesign: `pax_${scaraLegParam[ii].getPartNameSuffix()}`,
@@ -400,11 +400,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			}
 		}
 		// part3D axis
-		if ([0, 1, 2].includes(param.D3Enable)) {
+		if ([0, 1, 2].includes(param.output3D)) {
 			for (let ii = 0; ii < param.NB; ii++) {
 				const iiName = `subpax_${designName}_axis_${ii + 1}`;
 				const iiAxisT3d2 = transform3d().addTranslation((ii + 1) * 3 * ER1, 2 * ER1, 0);
-				const iiAxisT3d = param.D3Enable === 0 ? axisT3d[ii] : iiAxisT3d2;
+				const iiAxisT3d = param.output3D === 0 ? axisT3d[ii] : iiAxisT3d2;
 				const iiPartAxis: tExtrude = {
 					outName: iiName,
 					face: `${designName}_faceAxis`,
