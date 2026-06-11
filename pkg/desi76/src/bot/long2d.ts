@@ -47,8 +47,8 @@ import {
 	EBVolume
 } from 'geometrix';
 //import { triAPiPi, triAArA, triALArLL, triLALrL, triALLrL, triALLrLAA, triLLLrA, triLLLrAAA } from 'triangule';
-import { scaraDef } from './scara';
-import { scarabaseDef } from './scarabase';
+import { scaraDef } from './scara.ts';
+import { scarabaseDef } from './scarabase.ts';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
