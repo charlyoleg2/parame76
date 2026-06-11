@@ -57,14 +57,14 @@
 		"clean": "rimraf build dist node_modules"
 	},
 	"dependencies": {
-		"desi76": "^0.1.15",
+		"desi76": "^0.1.16",
 		"geomcli": "^1.0.34",
 		"geometrix": "^1.0.34"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
 		"@types/eslint__js": "^8.42.3",
-		"@types/node": "^25.9.2",
+		"@types/node": "^25.9.3",
 		"bats": "^1.13.0",
 		"eslint": "^10.4.1",
 		"eslint-config-prettier": "^10.1.8",
