@@ -23,8 +23,8 @@ import {
 	designParam,
 	checkGeom,
 	prefixLog,
-	//point,
-	//Point,
+	point,
+	Point,
 	//ShapePoint,
 	//line,
 	//vector,
@@ -41,12 +41,13 @@ import {
 	pDropdown,
 	pSectionSeparator,
 	initGeom,
-	transform2d,
+	//transform2d,
 	transform3d,
 	EExtrude,
 	EBVolume
 } from 'geometrix';
 //import { triAPiPi, triAArA, triALArLL, triLALrL, triALLrL, triALLrLAA, triLLLrA, triLLLrAAA } from 'triangule';
+import { triLLLrAAA } from 'triangule';
 import { scaraDef } from './scara';
 import { scarabaseDef } from './scarabase';
 
@@ -186,20 +187,43 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const ARi: number[] = ARe.map((iR) => iR - param.T1);
 		const R8 = param.D8 / 2;
 		const pi2 = Math.PI / 2;
-		const LA: number[] = [pi2 + degToRad(param.A0A), pi2 + degToRad(param.A0B), 0, 0];
 		const EH23 = 2 * (param.EH2 + param.EH3);
 		const CH1 = H124 + H22;
-		const L432 = param.L4 + param.L3 + LR1e[0];
 		const Ltot = Math.min(LL[0] + LL[1], LL[2] + LL[3]);
 		const Htot = CH1 + param.EH23;
-		const W52 = param.W5 / 2;
 		const X8 = (param.W5 - param.W8) / 2;
 		const Y8 = (CH1 - param.H8) / 2;
+		// positions
+		const LA: number[] = [pi2 + degToRad(param.A0A), 0, pi2 + degToRad(param.A0B), 0];
+		const a5 = degToRad(param.A5) / 2;
+		const W7 = 2 * param.W5 * Math.cos(a5) + param.W6;
+		const pA0 = point(0, param.L4)
+			.translatePolar(a5, param.W5 / 2)
+			.translatePolar(a5 + pi2, param.L3 + LR1e[0]);
+		const pB0 = point(W7, param.L4)
+			.translatePolar(Math.PI - a5, param.W5 / 2)
+			.translatePolar(pi2 - a5, param.L3 + LR1e[0]);
+		const pA1 = pA0.translatePolar(LA[0], LL[0]);
+		const pB1 = pB0.translatePolar(LA[2], LL[2]);
+		const Lpt: Point[] = [pA0, pA1, pB0, pB1];
+		const L0 = pA0.distanceToPoint(pB0);
+		const lAB = pA1.distanceToPoint(pB1);
+		const aAB = pA1.angleToPoint(pB1);
+		const [ta12, ta23, ta31, tStr1] = triLLLrAAA(LL[1], lAB, LL[3]);
+		LA[1] = aAB + ta12;
+		LA[3] = Math.PI + aAB - ta23;
+		const pA2 = pA1.translatePolar(LA[1], LL[1]);
+		const pB2 = pB1.translatePolar(LA[3], LL[3]);
+		if (pA2.distanceToPoint(pB2) < 0.1) {
+			throw `err215: pA2 x ${ffix(pA2.cx)} y ${ffix(pA2.cy)} is too far from pB2 x ${ffix(pB2.cx)} y ${ffix(pB2.cy)}`;
+		}
+		//
 		const fabStepX = 1.2 * Math.max(...LR1e, ...LR2e);
-		const eX = 0;
-		const eY = 0;
-		const eA = 0;
-		const eL = 0;
+		const eX = pA2.cx;
+		const eY = pA2.cy;
+		const eA = pA2.angleOrig();
+		const eL = pA2.distanceOrig();
+		const aA2B2 = ta31;
 		const a0A = 0;
 		const a0B = 0;
 		// step-5 : checks on the parameter values
@@ -224,9 +248,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			throw `err198: H1 ${ffix(CH1)} is too small compare to D8 ${ffix(2 * R8)} and H8 ${ffix(param.H8)}`;
 		}
 		// step-6 : any logs
+		rGeome.logstr += tStr1;
 		rGeome.logstr += `length ${ffix(Ltot)}  height ${ffix(Htot)}\n`;
 		rGeome.logstr += `Position: X ${ffix(eX)}  Y ${ffix(eY)} mm\n`;
 		rGeome.logstr += `Position: A ${ffix(radToDeg(eA))} degree  L ${ffix(eL)} mm\n`;
+		rGeome.logstr += `L0 ${ffix(L0)} mm  aA2B2 ${ffix(radToDeg(aA2B2))} degree\n`;
 		rGeome.logstr += `Angle0 A0A ${ffix(radToDeg(a0A))}  A0B ${ffix(radToDeg(a0B))} degree\n`;
 		// step-7 : drawing of the figures
 		// inherite
@@ -303,25 +329,20 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const legT3d: Transform3d[] = [];
 		const axisT3d: Transform3d[] = [];
 		for (let ii = 0; ii < legNb; ii++) {
-			const iiT2d = transform2d().addRotation(LA[ii]);
-			for (let jj = ii; jj > 0; jj--) {
-				iiT2d.addTranslation(0, LL[jj - 1]).addRotation(LA[jj - 1]);
-			}
-			iiT2d.addTranslation(W52, L432);
-			const iiTa = iiT2d.getRotation();
-			const [iiTx, iiTy] = iiT2d.getTranslation();
 			legT3d.push(
 				transform3d()
 					.addTranslation(-LR1e[ii], 0, 0)
-					.addRotation(0, 0, iiTa)
-					.addTranslation(iiTx, iiTy, 0)
+					.addRotation(0, 0, LA[ii])
+					.addTranslation(Lpt[ii].cx, Lpt[ii].cy, 0)
 			);
-			axisT3d.push(transform3d().addRotation(0, 0, iiTa).addTranslation(iiTx, iiTy, 0));
+			axisT3d.push(
+				transform3d().addRotation(0, 0, LA[ii]).addTranslation(Lpt[ii].cx, Lpt[ii].cy, 0)
+			);
 			figTop.mergeFigure(
 				scaraLegGeom[ii].fig.faceExtern
 					.translate(-LR1e[ii], 0)
-					.rotate(0, 0, iiTa)
-					.translate(iiTx, iiTy)
+					.rotate(0, 0, LA[ii])
+					.translate(Lpt[ii].cx, Lpt[ii].cy)
 			);
 		}
 		// figSide
