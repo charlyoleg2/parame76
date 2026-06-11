@@ -209,12 +209,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const L0 = pA0.distanceToPoint(pB0);
 		const lAB = pA1.distanceToPoint(pB1);
 		const aAB = pA1.angleToPoint(pB1);
-		const [ta12, ta23, ta31, tStr1] = triLLLrAAA(LL[1], lAB, LL[3]);
+		const [ta31, ta12, ta23, tStr1] = triLLLrAAA(LL[1], lAB, LL[3]);
 		LA[1] = aAB + ta12;
 		LA[3] = Math.PI + aAB - ta23;
 		const pA2 = pA1.translatePolar(LA[1], LL[1]);
 		const pB2 = pB1.translatePolar(LA[3], LL[3]);
-		if (pA2.distanceToPoint(pB2) < 0.1) {
+		if (pA2.distanceToPoint(pB2) > 0.1) {
 			throw `err215: pA2 x ${ffix(pA2.cx)} y ${ffix(pA2.cy)} is too far from pB2 x ${ffix(pB2.cx)} y ${ffix(pB2.cy)}`;
 		}
 		//
