@@ -295,7 +295,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					.addCornerRounded(param.R2e)
 					.closeSegStroke();
 				figExtern.addMainOI([ctrE3, contourCircle(R12, 0, R11)]);
-			} else {
+			} else if (pFirstEnd === 1 && pSecondEnd === 1) {
 				const ctrE2 = contour(p13.cx, p13.cy)
 					.addPointA(param.T3, 0)
 					.addPointA(p13.cx, -p13.cy)
@@ -320,6 +320,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					.addCornerRounded(param.R2i)
 					.closeSegStroke();
 				figExtern.addMainOI([ctrE3, contourCircle(R12, 0, R11), contourCircle(X2, 0, R21)]);
+			} else {
+				figExtern.addMainOI([
+					ctrPlate,
+					contourCircle(R12, 0, R11),
+					contourCircle(X2, 0, R21)
+				]);
 			}
 		} else {
 			const aB = (2 * Math.PI) / (param.N2 + 1);
@@ -434,7 +440,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					.addCornerRounded(param.R2e)
 					.closeSegStroke();
 				figExtern.addMainOI([ctrE6, ...hollowL]);
-			} else {
+			} else if (pFirstEnd === 1 && pSecondEnd === 1) {
 				function ctrE4(iyk: number): tContour {
 					const rCtr = contour(p13.cx, iyk * p13.cy)
 						.addPointA(p93.cx, iyk * p93.cy)
@@ -458,6 +464,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					return rCtr;
 				}
 				figExtern.addMainOI([ctrPlate, ctrE4(1), ctrE4(-1), ...hollowL, ...hollowR]);
+			} else {
+				figExtern.addMainOI([ctrPlate, hollowL[0], hollowR[0]]);
 			}
 		}
 		figExtern.mergeFigure(figPlate, true);
