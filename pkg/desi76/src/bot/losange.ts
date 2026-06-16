@@ -197,9 +197,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// axis heights
 		const EH23 = 2 * (param.EH2 + param.EH3);
 		const CH1 = H124 + H22;
+		const cH41 = param.EH2 + param.E1 / 2;
 		// 0A, A, E and 0B, B, E
 		const axisHa: number[] = [CH1, LH[0], LH[1]];
-		const axisHb: number[] = [CH1, LH[2], LH[3]];
+		const axisHb: number[] = [CH1, LH[2], LH[3] + 2 * cH41]; // [CH1, LH[2], LH[1]]
 		const LR1eA: number[] = [LR1e[0], LR1e[1], LR2e[1]];
 		const LR1eB: number[] = [LR1e[2], LR1e[3], LR2e[3]];
 		const LR1iA: number[] = [LR1i[0], LR1i[1], LR2i[1]];
@@ -323,7 +324,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			iiParam.setVal('H1', LH[ii]);
 			iiParam.setVal('H2', param.EH2);
 			iiParam.setVal('H3', param.EH3);
-			iiParam.setVal('H41', ii < 3 ? 0 : param.EH2 + param.E1 / 2);
+			iiParam.setVal('H41', ii < 3 ? 0 : cH41);
 			iiParam.setVal('H42', 0);
 			const iiGeom = scaraDef.pGeom(0, iiParam.getParamVal(), iiParam.getSuffix());
 			checkGeom(iiGeom);
@@ -386,13 +387,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				const jji6 = ii + jj * axisPerLine;
 				axisT3d6[jji6].addTranslation(0, 0, posY);
 				posY += param.EH2 + param.E1 / 2;
-				if (jji6 === 4) {
-					posY += param.EH2 + param.E1 / 2;
-				}
+				const posY2 = jji6 === 4 ? posY + cH41 : posY;
 				if (ii < axisPerLine - 1) {
 					const jji4 = ii + jj * (axisPerLine - 1); // 0..3
-					legT3d[jji4].addTranslation(0, 0, posY);
-					figSide.mergeFigure(scaraLegGeom[jji4].fig.faceSide.translate(posX, posY));
+					legT3d[jji4].addTranslation(0, 0, posY2);
+					figSide.mergeFigure(scaraLegGeom[jji4].fig.faceSide.translate(posX, posY2));
 				}
 			}
 		}
