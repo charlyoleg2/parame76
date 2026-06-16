@@ -72,7 +72,7 @@ const pDef: tParamDef = {
 		pNumber('DEi', 'mm', 10, 1, 1000, 1),
 		pNumber('DEe', 'mm', 30, 1, 1000, 1),
 		pSectionSeparator('Wall thickness'),
-		pNumber('T1', 'mm', 5, 1, 100, 1),
+		pNumber('T1', 'mm', 4, 1, 100, 1),
 		pNumber('T3', 'mm', 3, 1, 100, 1),
 		pNumber('S12', 'mm', 1, 0, 100, 1),
 		pNumber('Ri', 'mm', 1, 0, 10, 0.1),
@@ -167,7 +167,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const figTop = figure();
 	const figSide = figure();
 	const figBack = figure();
-	const figAxis = figure();
+	const figAxis0 = figure();
+	const figAxisA = figure();
+	const figAxisB = figure();
+	const figAxisE = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -183,6 +186,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const LL: number[] = [param.LA1, param.LA2, param.LB1, param.LB2];
 		const LH: number[] = [H124, H122, H124, param.H1];
 		// 0, A, B, E
+		const Lidx: string[] = ['0', 'A', 'B', 'E'];
+		const ARee: number[] = [param.D0e / 2, param.DAe / 2, param.DBe / 2, param.DEe / 2];
 		const ARe: number[] = [param.D0i / 2, param.DAi / 2, param.DBi / 2, param.DEi / 2];
 		const ARi: number[] = ARe.map((iR) => iR - param.T1);
 		const R8 = param.D8 / 2;
@@ -363,15 +368,35 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// figBack
 		figBack.mergeFigure(scarabaseGeom.fig.faceBack);
-		// figAxis
-		figAxis.addMainOI([contourCircle(0, 0, ARe[0]), contourCircle(0, 0, ARi[0])]);
-		figAxis.addSecond(contourCircle(0, 0, ARe[0] + param.T3));
+		// figAxis0
+		figAxis0.addMainOI([contourCircle(0, 0, ARe[0]), contourCircle(0, 0, ARi[0])]);
+		figAxis0.addSecond(contourCircle(0, 0, ARe[0] + param.T3));
+		figAxis0.addSecond(contourCircle(0, 0, ARee[0] - param.T3));
+		figAxis0.addSecond(contourCircle(0, 0, ARee[0]));
+		// figAxisA
+		figAxisA.addMainOI([contourCircle(0, 0, ARe[1]), contourCircle(0, 0, ARi[1])]);
+		figAxisA.addSecond(contourCircle(0, 0, ARe[1] + param.T3));
+		figAxisA.addSecond(contourCircle(0, 0, ARee[1] - param.T3));
+		figAxisA.addSecond(contourCircle(0, 0, ARee[1]));
+		// figAxisB
+		figAxisB.addMainOI([contourCircle(0, 0, ARe[2]), contourCircle(0, 0, ARi[2])]);
+		figAxisB.addSecond(contourCircle(0, 0, ARe[2] + param.T3));
+		figAxisB.addSecond(contourCircle(0, 0, ARee[2] - param.T3));
+		figAxisB.addSecond(contourCircle(0, 0, ARee[2]));
+		// figAxisE
+		figAxisE.addMainOI([contourCircle(0, 0, ARe[3]), contourCircle(0, 0, ARi[3])]);
+		figAxisE.addSecond(contourCircle(0, 0, ARe[3] + param.T3));
+		figAxisE.addSecond(contourCircle(0, 0, ARee[3] - param.T3));
+		figAxisE.addSecond(contourCircle(0, 0, ARee[3]));
 		// final figure list
 		rGeome.fig = {
 			faceTop: figTop,
 			faceSide: figSide,
 			faceBack: figBack,
-			faceAxis: figAxis
+			faceAxis0: figAxis0,
+			faceAxisA: figAxisA,
+			faceAxisB: figAxisB,
+			faceAxisE: figAxisE
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
@@ -422,7 +447,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				const iiAxisT3d = param.output3D === 0 ? axisT3d[ii] : iiAxisT3d2;
 				const iiPartAxis: tExtrude = {
 					outName: iiName,
-					face: `${designName}_faceAxis`,
+					face: `${designName}_faceAxis${Lidx[ii]}`,
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: LH[ii] + EH23,
 					rotate: iiAxisT3d.getRotation(),
