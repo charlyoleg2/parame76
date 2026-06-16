@@ -171,6 +171,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const figAxisA = figure();
 	const figAxisB = figure();
 	const figAxisE = figure();
+	const figTopWithAxis = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -361,9 +362,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					.translate(Lpt[ii].cx, Lpt[ii].cy)
 			);
 		}
-		const axisT3dE = transform3d()
-			.addRotation(0, 0, LA[2])
-			.addTranslation(Lpt[2].cx, Lpt[2].cy, 0);
+		const axisT3dE = transform3d().addTranslation(pA2.cx, pA2.cy, 0);
 		const axisT3d6 = [axisT3d4[0], axisT3d4[1], axisT3dE, axisT3d4[2], axisT3d4[3], axisT3dE];
 		// figSide
 		const Yoffset = Htot * 1.5;
@@ -408,21 +407,28 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figAxis0.addSecond(contourCircle(0, 0, ARe[0] + param.T3));
 		figAxis0.addSecond(contourCircle(0, 0, ARee[0] - param.T3));
 		figAxis0.addSecond(contourCircle(0, 0, ARee[0]));
+		figTopWithAxis.mergeFigure(figAxis0.translate(Lpt[0].cx, Lpt[0].cy));
+		figTopWithAxis.mergeFigure(figAxis0.translate(Lpt[2].cx, Lpt[2].cy));
 		// figAxisA
 		figAxisA.addMainOI([contourCircle(0, 0, ARe[1]), contourCircle(0, 0, ARi[1])]);
 		figAxisA.addSecond(contourCircle(0, 0, ARe[1] + param.T3));
 		figAxisA.addSecond(contourCircle(0, 0, ARee[1] - param.T3));
 		figAxisA.addSecond(contourCircle(0, 0, ARee[1]));
+		figTopWithAxis.mergeFigure(figAxisA.translate(Lpt[1].cx, Lpt[1].cy));
 		// figAxisB
 		figAxisB.addMainOI([contourCircle(0, 0, ARe[2]), contourCircle(0, 0, ARi[2])]);
 		figAxisB.addSecond(contourCircle(0, 0, ARe[2] + param.T3));
 		figAxisB.addSecond(contourCircle(0, 0, ARee[2] - param.T3));
 		figAxisB.addSecond(contourCircle(0, 0, ARee[2]));
+		figTopWithAxis.mergeFigure(figAxisB.translate(Lpt[3].cx, Lpt[3].cy));
 		// figAxisE
 		figAxisE.addMainOI([contourCircle(0, 0, ARe[3]), contourCircle(0, 0, ARi[3])]);
 		figAxisE.addSecond(contourCircle(0, 0, ARe[3] + param.T3));
 		figAxisE.addSecond(contourCircle(0, 0, ARee[3] - param.T3));
 		figAxisE.addSecond(contourCircle(0, 0, ARee[3]));
+		figTopWithAxis.mergeFigure(figAxisE.translate(pA2.cx, pA2.cy));
+		// figTopWithAxis
+		figTopWithAxis.mergeFigure(figTop);
 		// final figure list
 		rGeome.fig = {
 			faceTop: figTop,
@@ -431,7 +437,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			faceAxis0: figAxis0,
 			faceAxisA: figAxisA,
 			faceAxisB: figAxisB,
-			faceAxisE: figAxisE
+			faceAxisE: figAxisE,
+			faceTopWithAxis: figTopWithAxis
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
