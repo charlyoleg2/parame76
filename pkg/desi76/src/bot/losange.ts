@@ -81,8 +81,8 @@ const pDef: tParamDef = {
 		pNumber('E3', 'mm', 0.7, -10, 10, 0.1),
 		pSectionSeparator('Heights'),
 		pNumber('EH1', 'mm', 50, 1, 1000, 1),
-		pNumber('EH2', 'mm', 10, 1, 1000, 1),
-		pNumber('EH3', 'mm', 10, 0, 1000, 1),
+		pNumber('EH2', 'mm', 8, 1, 1000, 1),
+		pNumber('EH3', 'mm', 15, 0, 1000, 1),
 		pNumber('E1', 'mm', 0.5, -10, 10, 0.1),
 		pSectionSeparator('Base'),
 		pNumber('L3', 'mm', 30, 0, 1000, 1),
@@ -175,6 +175,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	try {
 		// step-4 : some preparation calculation
 		const legNb = 4;
+		const axisNb = 5;
 		const H22 = 2 * param.EH2 + param.E1;
 		const H122 = param.EH1 + H22;
 		const H124 = H122 + H22;
@@ -196,9 +197,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// axis heights
 		const EH23 = 2 * (param.EH2 + param.EH3);
 		const CH1 = H124 + H22;
-		// 0A, A, E, B, 0B
-		const axisH: number[] = [CH1, LH[0], LH[1], LH[3], CH1];
-		const Htot = axisH[0] + EH23; // or Math.max(...axisH) + EH23
+		// 0A, A, E and 0B, B, E
+		const axisHa: number[] = [CH1, LH[0], LH[1]];
+		const axisHb: number[] = [CH1, LH[2], LH[3]];
+		const LR1eA: number[] = [LR1e[0], LR1e[1], LR2e[1]];
+		const LR1eB: number[] = [LR1e[2], LR1e[3], LR2e[3]];
+		const LR1iA: number[] = [LR1i[0], LR1i[1], LR2i[1]];
+		const LR1iB: number[] = [LR1i[2], LR1i[3], LR2i[3]];
+		const Htot = axisHa[0] + EH23; // or Math.max(...axisHa, ...axisHb) + EH23
 		// positions
 		const LA: number[] = [pi2 + degToRad(param.A0A), 0, pi2 + degToRad(param.A0B), 0];
 		const a5 = degToRad(param.A5) / 2;
@@ -317,8 +323,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			iiParam.setVal('H1', LH[ii]);
 			iiParam.setVal('H2', param.EH2);
 			iiParam.setVal('H3', param.EH3);
-			iiParam.setVal('H41', 0);
-			iiParam.setVal('H42', ii < 3 ? 0 : param.EH2 + param.E1 / 2);
+			iiParam.setVal('H41', ii < 3 ? 0 : param.EH2 + param.E1 / 2);
+			iiParam.setVal('H42', 0);
 			const iiGeom = scaraDef.pGeom(0, iiParam.getParamVal(), iiParam.getSuffix());
 			checkGeom(iiGeom);
 			rGeome.logstr += prefixLog(iiGeom.logstr, iiParam.getPartNameSuffix());
@@ -327,6 +333,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// sub-functions
 		function figAxisCut(ix: number, iy: number, ire: number, ih: number): Figure {
+			//rGeome.logstr += `dbg335 ix ${ffix(ix)}  iy ${ffix(iy)}  ire ${ffix(ire)}  ih ${ffix(ih)}\n`;
 			const rFig = figure();
 			rFig.addMainO(ctrRectangle(ix, iy, param.T1, ih));
 			rFig.addMainO(ctrRectangle(ix + 2 * ire - param.T1, iy, param.T1, ih));
@@ -335,7 +342,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figTop
 		figTop.mergeFigure(scarabaseGeom.fig.faceT3);
 		const legT3d: Transform3d[] = [];
-		const axisT3d: Transform3d[] = [];
+		const axisT3d4: Transform3d[] = [];
 		for (let ii = 0; ii < legNb; ii++) {
 			legT3d.push(
 				transform3d()
@@ -343,7 +350,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					.addRotation(0, 0, LA[ii])
 					.addTranslation(Lpt[ii].cx, Lpt[ii].cy, 0)
 			);
-			axisT3d.push(
+			axisT3d4.push(
 				transform3d().addRotation(0, 0, LA[ii]).addTranslation(Lpt[ii].cx, Lpt[ii].cy, 0)
 			);
 			figTop.mergeFigure(
@@ -353,21 +360,47 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					.translate(Lpt[ii].cx, Lpt[ii].cy)
 			);
 		}
+		const axisT3dE = transform3d()
+			.addRotation(0, 0, LA[2])
+			.addTranslation(Lpt[2].cx, Lpt[2].cy, 0);
+		const axisT3d6 = [axisT3d4[0], axisT3d4[1], axisT3dE, axisT3d4[2], axisT3d4[3], axisT3dE];
 		// figSide
-		figSide.mergeFigure(scarabaseGeom.fig.faceSide);
-		let posX = param.L4 + param.L3;
-		let posY = 0;
-		for (let ii = 0; ii < legNb; ii++) {
-			if (ii > 0) {
-				posX += LR1e[ii - 1] + LL[ii - 1] - LR1e[ii];
+		const Yoffset = Htot * 1.5;
+		const lineNb = 2;
+		const axisPerLine = axisHa.length; // 3 or axisNb/2
+		for (let jj = 0; jj < lineNb; jj++) {
+			figSide.mergeFigure(scarabaseGeom.fig.faceSide.translate(0, jj * Yoffset));
+			let posX = param.L4 + param.L3;
+			let posY = jj * Yoffset;
+			const jjAxisH = jj === 0 ? axisHa : axisHb;
+			const jjLR1e = jj === 0 ? LR1eA : LR1eB;
+			const jjLR1i = jj === 0 ? LR1iA : LR1iB;
+			const jjLL = jj === 0 ? LL.slice(0, 2) : LL.slice(2, 4);
+			for (let ii = 0; ii < axisPerLine; ii++) {
+				if (ii > 0) {
+					posX += jjLR1e[ii - 1] + jjLL[ii - 1] - jjLR1e[ii];
+				}
+				figSide.mergeFigure(
+					figAxisCut(posX + jjLR1e[ii] - jjLR1i[ii], posY, jjLR1i[ii], jjAxisH[ii] + EH23)
+				);
+				const jji6 = ii + jj * axisPerLine;
+				axisT3d6[jji6].addTranslation(0, 0, posY);
+				posY += param.EH2 + param.E1 / 2;
+				if (jji6 === 4) {
+					posY += param.EH2 + param.E1 / 2;
+				}
+				if (ii < axisPerLine - 1) {
+					const jji4 = ii + jj * (axisPerLine - 1); // 0..3
+					legT3d[jji4].addTranslation(0, 0, posY);
+					figSide.mergeFigure(scaraLegGeom[jji4].fig.faceSide.translate(posX, posY));
+				}
 			}
-			figSide.mergeFigure(
-				figAxisCut(posX + LR1e[ii] - LR1i[ii], posY, LR1i[ii], axisH[ii] + EH23)
-			);
-			axisT3d[ii].addTranslation(0, 0, posY);
-			posY += param.EH2 + param.E1 / 2;
-			legT3d[ii].addTranslation(0, 0, posY);
-			figSide.mergeFigure(scaraLegGeom[ii].fig.faceSide.translate(posX, posY));
+		}
+		// additional check
+		const checkZ2 = axisT3d6[2].getTranslation()[2];
+		const checkZ5 = axisT3d6[5].getTranslation()[2];
+		if (Math.abs(checkZ2 - checkZ5) > 0.001) {
+			throw `err396: axisT3d6[2] ${ffix(checkZ2)} and axisT3d6[5] ${ffix(checkZ5)} differ`;
 		}
 		// figBack
 		figBack.mergeFigure(scarabaseGeom.fig.faceBack);
@@ -440,14 +473,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// part3D axis
 		if ([0, 1, 2].includes(param.output3D)) {
-			for (let ii = 0; ii < legNb; ii++) {
+			for (let ii = 0; ii < axisNb; ii++) {
 				const iiName = `subpax_${designName}_axis_${ii + 1}`;
 				const iiAxisT3d2 = transform3d().addTranslation(
 					(ii + 1) * 3 * ARe[0],
 					2 * ARe[0],
 					0
 				);
-				const iiAxisT3d = param.output3D === 0 ? axisT3d[ii] : iiAxisT3d2;
+				const iiAxisT3d = param.output3D === 0 ? axisT3d6[ii] : iiAxisT3d2;
 				const iiPartAxis: tExtrude = {
 					outName: iiName,
 					face: `${designName}_faceAxis${Lidx[ii]}`,
