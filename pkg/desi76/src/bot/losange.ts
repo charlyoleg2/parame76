@@ -184,7 +184,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const LR2e: number[] = [param.DAe / 2, param.DEe / 2, param.DBe / 2, param.DEe / 2];
 		const LR2i: number[] = [param.DAi / 2, param.DEi / 2, param.DBi / 2, param.DEi / 2];
 		const LL: number[] = [param.LA1, param.LA2, param.LB1, param.LB2];
-		const LH: number[] = [H124, H122, H124, param.H1];
+		const LH: number[] = [H124, H122, H124, param.EH1];
 		// 0, A, B, E
 		const Lidx: string[] = ['0', 'A', 'B', 'E'];
 		const ARee: number[] = [param.D0e / 2, param.DAe / 2, param.DBe / 2, param.DEe / 2];
@@ -192,10 +192,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const ARi: number[] = ARe.map((iR) => iR - param.T1);
 		const R8 = param.D8 / 2;
 		const pi2 = Math.PI / 2;
+		const Ltot = Math.min(LL[0] + LL[1], LL[2] + LL[3]);
+		// axis heights
 		const EH23 = 2 * (param.EH2 + param.EH3);
 		const CH1 = H124 + H22;
-		const Ltot = Math.min(LL[0] + LL[1], LL[2] + LL[3]);
-		const Htot = CH1 + param.EH23;
+		// 0A, A, E, B, 0B
+		const axisH: number[] = [CH1, LH[0], LH[1], LH[3], CH1];
+		const Htot = axisH[0] + EH23; // or Math.max(...axisH) + EH23
 		// positions
 		const LA: number[] = [pi2 + degToRad(param.A0A), 0, pi2 + degToRad(param.A0B), 0];
 		const a5 = degToRad(param.A5) / 2;
@@ -315,7 +318,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			iiParam.setVal('H2', param.EH2);
 			iiParam.setVal('H3', param.EH3);
 			iiParam.setVal('H41', 0);
-			iiParam.setVal('H42', ii < 3 ? 0 : param.H2 + param.E1 / 2);
+			iiParam.setVal('H42', ii < 3 ? 0 : param.EH2 + param.E1 / 2);
 			const iiGeom = scaraDef.pGeom(0, iiParam.getParamVal(), iiParam.getSuffix());
 			checkGeom(iiGeom);
 			rGeome.logstr += prefixLog(iiGeom.logstr, iiParam.getPartNameSuffix());
@@ -359,7 +362,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				posX += LR1e[ii - 1] + LL[ii - 1] - LR1e[ii];
 			}
 			figSide.mergeFigure(
-				figAxisCut(posX + LR1e[ii] - LR1i[ii], posY, LR1i[ii], LH[ii] + EH23)
+				figAxisCut(posX + LR1e[ii] - LR1i[ii], posY, LR1i[ii], axisH[ii] + EH23)
 			);
 			axisT3d[ii].addTranslation(0, 0, posY);
 			posY += param.EH2 + param.E1 / 2;
