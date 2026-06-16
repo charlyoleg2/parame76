@@ -195,9 +195,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			throw `err170: S2 ${ffix(param.S2)} is too small`;
 		}
 		// warnings
-		if (param.H3 === 0) {
-			rGeome.logstr += 'warn167: Warning H3 is zero\n';
-		}
+		//if (param.H3 === 0) {
+		//	rGeome.logstr += 'warn167: Warning H3 is zero\n';
+		//}
 		// step-6 : any logs
 		rGeome.logstr += `length ${ffix(Ltot)}  height ${ffix(Htot)}\n`;
 		// step-7 : drawing of the figures
