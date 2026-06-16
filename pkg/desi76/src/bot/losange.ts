@@ -191,12 +191,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const CH1 = H124 + H22;
 		const Ltot = Math.min(LL[0] + LL[1], LL[2] + LL[3]);
 		const Htot = CH1 + param.EH23;
-		const X8 = (param.W5 - param.W8) / 2;
-		const Y8 = (CH1 - param.H8) / 2;
 		// positions
 		const LA: number[] = [pi2 + degToRad(param.A0A), 0, pi2 + degToRad(param.A0B), 0];
 		const a5 = degToRad(param.A5) / 2;
 		const W7 = 2 * param.W5 * Math.cos(a5) + param.W6;
+		const X8 = (W7 - param.W8) / 2;
+		const Y8 = (CH1 - param.H8) / 2;
 		const pA0 = point(0, param.L4)
 			.translatePolar(a5, param.W5 / 2)
 			.translatePolar(a5 + pi2, param.L3 + LR1e[0]);
