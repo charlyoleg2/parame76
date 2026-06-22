@@ -254,8 +254,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const eL = pA2.distanceOrig();
 		const aA2B2 = ta31;
 		// for allParts
-		const fabStepX = 1.2 * Math.max(...LR1e, ...LR2e);
-		const fabY2 = fabStepX;
+		const fabStepX = 2.4 * Math.max(...LR1e, ...LR2e);
+		const fabY1 = fabStepX / 2;
+		const fabY2 = fabY1 + fabStepX;
 		const fabY3 = fabY2 + Math.max(...LL) + fabStepX;
 		// step-5 : checks on the parameter values
 		for (let ii = 0; ii < legNb; ii++) {
@@ -487,7 +488,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				const iiName = `inpax_${designName}_leg_${ii + 1}`;
 				const iiLegT3d2 = transform3d()
 					.addRotation(0, 0, pi2)
-					.addTranslation((ii + 1.5) * fabStepX, fabY2, 0);
+					.addTranslation(ii * fabStepX, fabY2, 0);
 				const iiLegT3d = param.output3D === 0 ? legT3d[ii] : iiLegT3d2;
 				const iiPartScaraLeg: tInherit = {
 					outName: iiName,
@@ -504,7 +505,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if ([0, 1, 2].includes(param.output3D)) {
 			for (let ii = 0; ii < axisNb; ii++) {
 				const iiName = `subpax_${designName}_axis_${ii + 1}`;
-				const iiAxisT3d2 = transform3d().addTranslation((ii + 1) * fabStepX, 0, 0);
+				const iiAxisT3d2 = transform3d().addTranslation(ii * fabStepX, fabY1, 0);
 				const iiAxisT3d = param.output3D === 0 ? axisT3d6[ii] : iiAxisT3d2;
 				const iiPartAxis: tExtrude = {
 					outName: iiName,
