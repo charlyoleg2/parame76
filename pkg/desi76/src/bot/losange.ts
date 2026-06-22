@@ -47,7 +47,7 @@ import {
 	EBVolume
 } from 'geometrix';
 //import { triAPiPi, triAArA, triALArLL, triLALrL, triALLrL, triALLrLAA, triLLLrA, triLLLrAAA } from 'triangule';
-import { triLLLrAAA } from 'triangule';
+import { triLLLrAAA, triLLLrA } from 'triangule';
 import { scaraDef } from './scara.ts';
 import { scarabaseDef } from './scarabase.ts';
 
@@ -208,7 +208,6 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const LR1iB: number[] = [LR1i[2], LR1i[3], LR2i[3]];
 		const Htot = axisHa[0] + EH23; // or Math.max(...axisHa, ...axisHb) + EH23
 		// positions
-		const LA: number[] = [pi2 + degToRad(param.A0A), 0, pi2 + degToRad(param.A0B), 0];
 		const a5 = degToRad(param.A5) / 2;
 		const W7 = 2 * param.W5 * Math.cos(a5) + param.W6;
 		const X8 = (W7 - param.W8) / 2;
@@ -219,6 +218,20 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const pB0 = point(W7, param.L4)
 			.translatePolar(Math.PI - a5, param.W5 / 2)
 			.translatePolar(pi2 - a5, param.L3 + LR1e[0]);
+		let a0A = degToRad(param.A0A);
+		let a0B = degToRad(param.A0B);
+		if (param.positionDriver === 1) {
+			const ba0A = Math.atan2(param.Ey - pA0.cy, param.Ex - pA0.cx);
+			const ba0B = Math.atan2(param.Ey - pB0.cy, param.Ex - pB0.cx);
+			const lA02 = Math.sqrt((param.Ey - pA0.cy) ** 2 + (param.Ex - pA0.cx) ** 2);
+			const lB02 = Math.sqrt((param.Ey - pB0.cy) ** 2 + (param.Ex - pB0.cx) ** 2);
+			const [aA0p, tStr2] = triLLLrA(lA02, param.LA2, param.LA1);
+			const [aB0p, tStr3] = triLLLrA(param.LA1, param.LA2, lB02);
+			a0A = ba0A + aA0p - pi2;
+			a0B = ba0B - aB0p - pi2;
+			rGeome.logstr += tStr2 + tStr3;
+		}
+		const LA: number[] = [pi2 + a0A, 0, pi2 + a0B, 0];
 		const pA1 = pA0.translatePolar(LA[0], LL[0]);
 		const pB1 = pB0.translatePolar(LA[2], LL[2]);
 		const Lpt: Point[] = [pA0, pA1, pB0, pB1];
@@ -240,8 +253,6 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const eA = pA2.angleOrig();
 		const eL = pA2.distanceOrig();
 		const aA2B2 = ta31;
-		const a0A = 0;
-		const a0B = 0;
 		// step-5 : checks on the parameter values
 		for (let ii = 0; ii < legNb; ii++) {
 			if (LR1e[ii] < LR1i[ii] + 2 * param.T3) {
