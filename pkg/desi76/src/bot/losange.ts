@@ -188,7 +188,6 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const LL: number[] = [param.LA1, param.LA2, param.LB1, param.LB2];
 		const LH: number[] = [H124, H122, H124, param.EH1];
 		// 0, A, B, E
-		const Lidx: string[] = ['0', 'A', 'B', 'E'];
 		const ARee: number[] = [param.D0e / 2, param.DAe / 2, param.DBe / 2, param.DEe / 2];
 		const ARe: number[] = [param.D0i / 2, param.DAi / 2, param.DBi / 2, param.DEi / 2];
 		const ARi: number[] = ARe.map((iR) => iR - param.T1);
@@ -200,8 +199,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const CH1 = H124 + H22;
 		const cH41 = param.EH2 + param.E1 / 2;
 		// 0A, A, E and 0B, B, E
+		const Cidx: string[] = ['0', 'A', 'E', '0', 'B', 'E'];
 		const axisHa: number[] = [CH1, LH[0], LH[1]];
 		const axisHb: number[] = [CH1, LH[2], LH[3] + 2 * cH41]; // [CH1, LH[2], LH[1]]
+		const axisHc = axisHa.concat(axisHb);
 		const LR1eA: number[] = [LR1e[0], LR1e[1], LR2e[1]];
 		const LR1eB: number[] = [LR1e[2], LR1e[3], LR2e[3]];
 		const LR1iA: number[] = [LR1i[0], LR1i[1], LR2i[1]];
@@ -247,12 +248,15 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			throw `err215: pA2 x ${ffix(pA2.cx)} y ${ffix(pA2.cy)} is too far from pB2 x ${ffix(pB2.cx)} y ${ffix(pB2.cy)}`;
 		}
 		//
-		const fabStepX = 1.2 * Math.max(...LR1e, ...LR2e);
 		const eX = pA2.cx;
 		const eY = pA2.cy;
 		const eA = pA2.angleOrig();
 		const eL = pA2.distanceOrig();
 		const aA2B2 = ta31;
+		// for allParts
+		const fabStepX = 1.2 * Math.max(...LR1e, ...LR2e);
+		const fabY2 = fabStepX;
+		const fabY3 = fabY2 + Math.max(...LL) + fabStepX;
 		// step-5 : checks on the parameter values
 		for (let ii = 0; ii < legNb; ii++) {
 			if (LR1e[ii] < LR1i[ii] + 2 * param.T3) {
@@ -382,7 +386,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		for (let jj = 0; jj < lineNb; jj++) {
 			figSide.mergeFigure(scarabaseGeom.fig.faceSide.translate(0, jj * Yoffset));
 			let posX = param.L4 + param.L3;
-			let posY = jj * Yoffset;
+			const posYb = jj * Yoffset;
+			let posY = 0;
 			const jjAxisH = jj === 0 ? axisHa : axisHb;
 			const jjLR1e = jj === 0 ? LR1eA : LR1eB;
 			const jjLR1i = jj === 0 ? LR1iA : LR1iB;
@@ -392,7 +397,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					posX += jjLR1e[ii - 1] + jjLL[ii - 1] - jjLR1e[ii];
 				}
 				figSide.mergeFigure(
-					figAxisCut(posX + jjLR1e[ii] - jjLR1i[ii], posY, jjLR1i[ii], jjAxisH[ii] + EH23)
+					figAxisCut(
+						posX + jjLR1e[ii] - jjLR1i[ii],
+						posY + posYb,
+						jjLR1i[ii],
+						jjAxisH[ii] + EH23
+					)
 				);
 				const jji6 = ii + jj * axisPerLine;
 				axisT3d6[jji6].addTranslation(0, 0, posY);
@@ -401,7 +411,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				if (ii < axisPerLine - 1) {
 					const jji4 = ii + jj * (axisPerLine - 1); // 0..3
 					legT3d[jji4].addTranslation(0, 0, posY2);
-					figSide.mergeFigure(scaraLegGeom[jji4].fig.faceSide.translate(posX, posY2));
+					figSide.mergeFigure(
+						scaraLegGeom[jji4].fig.faceSide.translate(posX, posY2 + posYb)
+					);
 				}
 			}
 		}
@@ -458,13 +470,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const partList: string[] = [];
 		// part3D scarabase
 		if ([0, 1, 3].includes(param.output3D)) {
-			const fabStepY2 = param.output3D === 0 ? 0 : 4 * ARe[0];
+			const baseY = param.output3D === 0 ? 0 : fabY3;
 			const partScarabase: tInherit = {
 				outName: `inpax_${designName}_base`,
 				subdesign: 'pax_scarabase',
 				subgeom: scarabaseGeom,
 				rotate: [0, 0, 0],
-				translate: [0, fabStepY2, 0]
+				translate: [0, baseY, 0]
 			};
 			partInherit.push(partScarabase);
 			partList.push(`inpax_${designName}_base`);
@@ -475,7 +487,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				const iiName = `inpax_${designName}_leg_${ii + 1}`;
 				const iiLegT3d2 = transform3d()
 					.addRotation(0, 0, pi2)
-					.addTranslation((ii + 1.5) * fabStepX, 4 * ARe[0], 0);
+					.addTranslation((ii + 1.5) * fabStepX, fabY2, 0);
 				const iiLegT3d = param.output3D === 0 ? legT3d[ii] : iiLegT3d2;
 				const iiPartScaraLeg: tInherit = {
 					outName: iiName,
@@ -492,17 +504,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if ([0, 1, 2].includes(param.output3D)) {
 			for (let ii = 0; ii < axisNb; ii++) {
 				const iiName = `subpax_${designName}_axis_${ii + 1}`;
-				const iiAxisT3d2 = transform3d().addTranslation(
-					(ii + 1) * 3 * ARe[0],
-					2 * ARe[0],
-					0
-				);
+				const iiAxisT3d2 = transform3d().addTranslation((ii + 1) * fabStepX, 0, 0);
 				const iiAxisT3d = param.output3D === 0 ? axisT3d6[ii] : iiAxisT3d2;
 				const iiPartAxis: tExtrude = {
 					outName: iiName,
-					face: `${designName}_faceAxis${Lidx[ii]}`,
+					face: `${designName}_faceAxis${Cidx[ii]}`,
 					extrudeMethod: EExtrude.eLinearOrtho,
-					length: LH[ii] + EH23,
+					length: axisHc[ii] + EH23,
 					rotate: iiAxisT3d.getRotation(),
 					translate: iiAxisT3d.getTranslation()
 				};
