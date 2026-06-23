@@ -379,7 +379,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			);
 		}
 		const axisT3dE = transform3d().addTranslation(pA2.cx, pA2.cy, 0);
-		const axisT3d6 = [axisT3d4[0], axisT3d4[1], axisT3dE, axisT3d4[2], axisT3d4[3], axisT3dE];
+		const axisT3dE2 = transform3d().addTranslation(pA2.cx, pA2.cy, 0); // copy for getting 2 instances
+		const axisT3d6 = [axisT3d4[0], axisT3d4[1], axisT3dE, axisT3d4[2], axisT3d4[3], axisT3dE2];
 		// figSide
 		const Yoffset = Htot * 1.5;
 		const lineNb = 2;
@@ -406,6 +407,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					)
 				);
 				const jji6 = ii + jj * axisPerLine;
+				//rGeome.logstr += `dbg409: jji6 ${jji6}  posY ${ffix(posY)}\n`;
 				axisT3d6[jji6].addTranslation(0, 0, posY);
 				posY += param.EH2 + param.E1 / 2;
 				const posY2 = jji6 === 4 ? posY + param.EH3 : posY;
@@ -507,6 +509,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				const iiName = `subpax_${designName}_axis_${ii + 1}`;
 				const iiAxisT3d2 = transform3d().addTranslation(ii * fabStepX, fabY1, 0);
 				const iiAxisT3d = param.output3D === 0 ? axisT3d6[ii] : iiAxisT3d2;
+				//rGeome.logstr += `dbg511: ii ${ii}  iiAxisT3d ${ffix(iiAxisT3d.getTranslation()[2])}\n`;
 				const iiPartAxis: tExtrude = {
 					outName: iiName,
 					face: `${designName}_faceAxis${Cidx[ii]}`,
