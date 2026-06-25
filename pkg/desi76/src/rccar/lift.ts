@@ -31,19 +31,72 @@ const pDef: tParamDef = {
 	partName: 'lift',
 	params: [
 		//pNumber(name, unit, init, min, max, step)
-		pNumber('H1', 'mm', 40, 1, 4000, 1),
-		pNumber('H2', 'mm', 50, 1, 4000, 1),
-		pNumber('radius', 'mm', 10, 1, 4000, 1),
-		pSectionSeparator('corners'),
-		pNumber('R1', 'mm', 10, 0, 400, 1),
-		pNumber('Rc', 'mm', 10, 0, 400, 1)
+		pNumber('D1', 'mm', 60, 1, 1000, 1),
+		pNumber('D2', 'mm', 100, 1, 1000, 1),
+		pNumber('T1', 'mm', 5, 1, 100, 1),
+		pNumber('T2', 'mm', 2, 1, 100, 1),
+		pNumber('A1', 'degree', 120, 1, 200, 1),
+		pSectionSeparator('top details'),
+		pNumber('S1', 'mm', 0, 0, 500, 1),
+		pNumber('T3', 'mm', 6, 1, 100, 1),
+		pNumber('S2min', 'mm', 20, 1, 500, 1),
+		pNumber('R1', 'mm', 2, 0, 100, 1),
+		pNumber('R2', 'mm', 2, 0, 100, 1),
+		pNumber('T4', 'mm', 3, 1, 100, 1),
+		pNumber('T5', 'mm', 10, 1, 100, 1),
+		pNumber('T6', 'mm', 3, 1, 100, 1),
+		pNumber('T7', 'mm', 10, 1, 100, 1),
+		pSectionSeparator('side'),
+		pNumber('H1', 'mm', 100, 1, 1000, 1),
+		pNumber('H2', 'mm', 3, 1, 100, 1),
+		pNumber('H3', 'mm', 20, 1, 100, 1),
+		pNumber('H4', 'mm', 20, 1, 100, 1),
+		pNumber('LD1', 'mm', 20, 1, 500, 1),
+		pNumber('LD2', 'mm', 50, 1, 500, 1),
+		pNumber('LX1', 'mm', 26, 1, 500, 1),
+		pNumber('LY1', 'mm', 5, 0, 500, 1),
+		pNumber('LX2', 'mm', 0, 0, 500, 1),
+		pNumber('LY2', 'mm', 0, 0, 500, 1),
+		pNumber('LR2', 'mm', 10, 0, 500, 1),
+		pNumber('MD1', 'mm', 20, 1, 500, 1),
+		pNumber('MD2', 'mm', 50, 1, 500, 1),
+		pNumber('MX1', 'mm', 26, 1, 500, 1),
+		pNumber('MY1', 'mm', 5, 0, 500, 1),
+		pNumber('MY2', 'mm', 50, 0, 500, 1),
+		pNumber('MY3', 'mm', 5, 0, 500, 1)
 	],
 	paramSvg: {
-		H1: 'lift_top1.svg',
-		H2: 'lift_top2.svg',
-		radius: 'lift_side1.svg',
-		R1: 'lift_side2.svg',
-		Rc: 'lift_back.svg'
+		D1: 'lift_top1.svg',
+		D2: 'lift_top1.svg',
+		T1: 'lift_top1.svg',
+		T2: 'lift_top1.svg',
+		A1: 'lift_top1.svg',
+		S1: 'lift_top1.svg',
+		T3: 'lift_top1.svg',
+		S2min: 'lift_top2.svg',
+		R1: 'lift_top1.svg',
+		R2: 'lift_top1.svg',
+		T4: 'lift_top1.svg',
+		T5: 'lift_top1.svg',
+		T6: 'lift_back.svg',
+		T7: 'lift_back.svg',
+		H1: 'lift_side1.svg',
+		H2: 'lift_side1.svg',
+		H3: 'lift_side1.svg',
+		H4: 'lift_side1.svg',
+		LD1: 'lift_side1.svg',
+		LD2: 'lift_side1.svg',
+		LX1: 'lift_side1.svg',
+		LY1: 'lift_side1.svg',
+		LX2: 'lift_side1.svg',
+		LY2: 'lift_side1.svg',
+		LR2: 'lift_side1.svg',
+		MD1: 'lift_side2.svg',
+		MD2: 'lift_side2.svg',
+		MX1: 'lift_side2.svg',
+		MY1: 'lift_side2.svg',
+		MY2: 'lift_side2.svg',
+		MY3: 'lift_side2.svg'
 	},
 	sim: {
 		tMax: 180,
@@ -60,14 +113,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figFace
 		const face1: tOuterInner = [];
 		const ctrPoleFace = contour(-param.H1 / 2, -param.H2 / 2)
-			.addCornerRounded(param.Rc)
+			.addCornerRounded(0)
 			.addSegStrokeA(param.H1 / 2, -param.H2 / 2)
 			.addSegStrokeA(param.H1 / 2, param.H2 / 2)
-			.addCornerRounded(param.Rc)
+			.addCornerRounded(0)
 			.addSegStrokeA(-param.H1 / 2, param.H2 / 2)
 			.closeSegStroke();
 		face1.push(ctrPoleFace);
-		face1.push(contourCircle(0, 0, param.radius));
+		face1.push(contourCircle(0, 0, 10));
 		figFace.addMainOI(face1);
 		// final figure list
 		rGeome.fig = {
