@@ -9,3 +9,4 @@ export * from './bot/scara.ts';
 export * from './bot/scarabase.ts';
 export * from './bot/long2d.ts';
 export * from './bot/losange.ts';
+export * from './rccar/lift.ts';

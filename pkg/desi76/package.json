@@ -52,7 +52,8 @@
 		"svgo2": "svgo -f src/stone/svg -o dist/pgdsvg/",
 		"svgo3": "svgo -f src/charpente/svg -o dist/pgdsvg/",
 		"svgo4": "svgo -f src/bot/svg -o dist/pgdsvg/",
-		"svgo": "run-s svgo1 svgo2 svgo3 svgo4",
+		"svgo5": "svgo -f src/rccar/svg -o dist/pgdsvg/",
+		"svgo": "run-s svgo1 svgo2 svgo3 svgo4 svgo5",
 		"browserBundleA": "esbuild src/boat/catamaran.ts --bundle --format=esm --outfile=dist2/catamaran.js",
 		"browserBundleAll": "esbuild dist/index.js --bundle --format=esm --outfile=dist2/desi76.js",
 		"clean": "rimraf dist dist2 node_modules"
