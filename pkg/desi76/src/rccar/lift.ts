@@ -191,15 +191,19 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addCornerRounded(param.R2)
 			.closeSegStroke();
 		figTopPlate.addMainOI([ctrTopPlate, contourCircle(0, CY, R1)]);
-		figTopPlate.addSecond(contourCircle(0, CY, R2));
-		figTopPlate.addSecond(contourCircle(0, CY, R2 + param.S2min));
-		figTopPlate.addSecond(ctrRectangle(-W72, 0, 2 * W72, param.T3));
 		figTopPlate.addSecond(ctrRectangle(-W72, -LY, param.T4, LY));
 		figTopPlate.addSecond(ctrRectangle(-W72 + T45, -LY, param.T4, LY));
 		figTopPlate.addSecond(ctrRectangle(W72 - T445, -LY, param.T4, LY));
 		figTopPlate.addSecond(ctrRectangle(W72 - param.T4, -LY, param.T4, LY));
 		figTopPlate.addSecond(ctrRectangle(-T6672, -MY, param.T6, MY));
 		figTopPlate.addSecond(ctrRectangle(T6672 - param.T6, -MY, param.T6, MY));
+		// figTopEnd
+		// figTopBack
+		figTopBack.mergeFigure(figTopPlate, true);
+		// figTopPlate again
+		figTopPlate.addSecond(ctrRectangle(-W72, 0, 2 * W72, param.T3));
+		figTopPlate.addSecond(contourCircle(0, CY, R2));
+		figTopPlate.addSecond(contourCircle(0, CY, R2 + param.S2min));
 		// final figure list
 		rGeome.fig = {
 			faceTopPlate: figTopPlate,
