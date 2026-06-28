@@ -119,9 +119,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const R1 = param.D1 / 2;
 		const R2 = param.D2 / 2;
 		const a12 = degToRad(param.A1) / 2;
-		const W72a = Math.sin(a12) * (R2 + param.S2min);
+		const W72a = Math.tan(a12) * (R2 + param.S1);
 		const W72b = R2;
-		const W72c = Math.tan(a12) * (R2 + param.S1);
+		const W72c = Math.sin(a12) * (R2 + param.S2min);
+		const CY = param.T3 + param.S1 + R2;
+		const AX = Math.sin(a12) * R2;
+		const AY = CY - Math.cos(a12) * R2;
+		const BX = W72c;
+		const BY = CY - Math.cos(a12) * (R2 + param.S2min);
 		let outlineMode = 1; // 1, 2 or 3
 		let W72 = W72a;
 		if (W72b < W72a) {
@@ -133,7 +138,6 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				W72 = W72b;
 			}
 		}
-		const CY = param.T3 + param.S1 + R2;
 		// step-5 : checks on the parameter values
 		if (R2 < R1 + param.T1 + param.T2) {
 			throw `err230: D2 ${ffix(2 * R2)} is too small compare to D1 ${ffix(2 * R1)}, T1 ${ffix(param.T1)} and T2 ${ffix(param.T2)}`;
@@ -147,14 +151,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeA(W72, 0)
 			//.addCornerRounded(param.R2)
 			.addSegStrokeA(W72, param.T3)
-			.addSegStrokeA(R2, CY)
+			.addSegStrokeA(BX, BY)
+			.addSegStrokeA(AX, AY)
 			.addPointA(0, CY + R2)
-			.addPointA(-R2, CY)
+			.addPointA(-AX, AY)
 			.addSegArc2()
+			.addSegStrokeA(-BX, BY)
 			.addSegStrokeA(-W72, param.T3)
 			.closeSegStroke();
 		figTopPlate.addMainOI([ctrTopPlate, contourCircle(0, CY, R1)]);
 		figTopPlate.addSecond(contourCircle(0, CY, R2));
+		figTopPlate.addSecond(contourCircle(0, CY, R2 + param.S2min));
 		// final figure list
 		rGeome.fig = {
 			faceTopPlate: figTopPlate,
