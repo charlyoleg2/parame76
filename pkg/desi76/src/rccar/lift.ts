@@ -1,9 +1,10 @@
 // lift.ts
 // the holder of pivot of rc-car
 
+// step-1 : import from geometrix
 import type {
 	//tContour,
-	tOuterInner,
+	//tOuterInner,
 	tParamDef,
 	tParamVal,
 	tGeom,
@@ -15,9 +16,9 @@ import {
 	contour,
 	contourCircle,
 	figure,
-	//degToRad,
+	degToRad,
 	//radToDeg,
-	//ffix,
+	ffix,
 	pNumber,
 	//pCheckbox,
 	//pDropdown,
@@ -27,6 +28,7 @@ import {
 	initGeom
 } from 'geometrix';
 
+// step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
 	partName: 'lift',
 	params: [
@@ -105,34 +107,56 @@ const pDef: tParamDef = {
 	}
 };
 
+// step-3 : definition of the function that creates from the parameter-values the figures and construct the 3D
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
-	const figFace = figure();
+	const figTopPlate = figure();
+	const figTopEnd = figure();
+	const figTopBack = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
-		// figFace
-		const face1: tOuterInner = [];
-		const ctrPoleFace = contour(-param.H1 / 2, -param.H2 / 2)
-			.addCornerRounded(0)
-			.addSegStrokeA(param.H1 / 2, -param.H2 / 2)
-			.addSegStrokeA(param.H1 / 2, param.H2 / 2)
-			.addCornerRounded(0)
-			.addSegStrokeA(-param.H1 / 2, param.H2 / 2)
+		// step-4 : some preparation calculation
+		const R1 = param.D1 / 2;
+		const R2 = param.D2 / 2;
+		const a12 = degToRad(param.A1) / 2;
+		const W72a = Math.sin(a12) * (R2 + param.S2min);
+		const W72c = Math.tan(a12) * (R1 + param.S1);
+		const W72 = Math.max(W72a, W72c);
+		const outlineMode = W72a > W72c ? 1 : 2;
+		const CY = param.T3 + param.S1 + R2;
+		// step-5 : checks on the parameter values
+		if (R2 < R1 + param.T1 + param.T2) {
+			throw `err230: D2 ${ffix(2 * R2)} is too small compare to D1 ${ffix(2 * R1)}, T1 ${ffix(param.T1)} and T2 ${ffix(param.T2)}`;
+		}
+		// step-6 : any logs
+		rGeome.logstr += `W7 ${ffix(2 * W72)}  outline-mode ${ffix(outlineMode)}\n`;
+		// step-7 : drawing of the figures
+		// figTopPlate
+		const ctrTopPlate = contour(-W72, 0)
+			//.addCornerRounded(param.R2)
+			.addSegStrokeA(W72, 0)
+			//.addCornerRounded(param.R2)
+			.addSegStrokeA(W72, param.T3)
+			.addCornerRounded(param.R2)
+			.addSegStrokeA(-W72, param.T3)
+			.addCornerRounded(param.R2)
 			.closeSegStroke();
-		face1.push(ctrPoleFace);
-		face1.push(contourCircle(0, 0, 10));
-		figFace.addMainOI(face1);
+		figTopPlate.addMainOI([ctrTopPlate, contourCircle(0, CY, R1)]);
+		figTopPlate.addSecond(contourCircle(0, CY, R2));
 		// final figure list
 		rGeome.fig = {
-			faceVoila: figFace
+			faceTopPlate: figTopPlate,
+			faceTopEnd: figTopEnd,
+			faceTopBack: figTopBack
 		};
+		// step-8 : recipes of the 3D construction
 		// volume
 		const designName = rGeome.partName;
 		rGeome.vol = {
 			extrudes: [
 				{
 					outName: `subpax_${designName}_top`,
-					face: `${designName}_faceVoila`,
+					face: `${designName}_faceTopPlate`,
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: 10,
 					rotate: [0, 0, 0],
@@ -147,8 +171,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				}
 			]
 		};
+		// step-9 : optional sub-design parameter export
 		// sub-design
 		rGeome.sub = {};
+		// step-10 : final log message
 		// finalize
 		rGeome.logstr += 'lift drawn successfully!\n';
 		rGeome.calcErr = false;
@@ -159,6 +185,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	return rGeome;
 }
 
+// step-11 : definiton of the final object that gathers the precedent object and function
 const liftDef: tPageDef = {
 	pTitle: 'lift',
 	pDescription: 'the holder of pivot of rc-car',
@@ -166,4 +193,5 @@ const liftDef: tPageDef = {
 	pGeom: pGeom
 };
 
+// step-12 : export the final object
 export { liftDef };
