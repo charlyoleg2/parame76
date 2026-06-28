@@ -15,9 +15,10 @@ import type {
 import {
 	contour,
 	contourCircle,
+	ctrRectangle,
 	figure,
 	degToRad,
-	//radToDeg,
+	radToDeg,
 	ffix,
 	pNumber,
 	//pCheckbox,
@@ -118,50 +119,66 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-4 : some preparation calculation
 		const R1 = param.D1 / 2;
 		const R2 = param.D2 / 2;
+		const pi2 = Math.PI / 2;
+		const epsilon = 0.01;
 		const a12 = degToRad(param.A1) / 2;
+		const a12b1 = Math.atan2(R2, R2 + param.S1);
+		const a12b2 = pi2 - Math.acos(R2 / (R2 + param.S2min));
 		const W72a = Math.tan(a12) * (R2 + param.S1);
-		const W72b = R2;
 		const W72c = Math.sin(a12) * (R2 + param.S2min);
 		const CY = param.T3 + param.S1 + R2;
 		const AX = Math.sin(a12) * R2;
 		const AY = CY - Math.cos(a12) * R2;
-		const BX = W72c;
-		const BY = CY - Math.cos(a12) * (R2 + param.S2min);
 		let outlineMode = 1; // 1, 2 or 3
 		let W72 = W72a;
-		if (W72b < W72a) {
-			if (W72b < W72c) {
+		let BY = param.T3;
+		if (a12 > a12b1) {
+			if (a12 < a12b2) {
+				outlineMode = 2;
+				W72 = R2;
+				BY = CY - R2 / Math.tan(a12);
+			} else {
 				outlineMode = 3;
 				W72 = W72c;
-			} else {
-				outlineMode = 2;
-				W72 = W72b;
+				BY = CY - Math.cos(a12) * (R2 + param.S2min);
 			}
 		}
+		const BX = W72;
 		// step-5 : checks on the parameter values
 		if (R2 < R1 + param.T1 + param.T2) {
 			throw `err230: D2 ${ffix(2 * R2)} is too small compare to D1 ${ffix(2 * R1)}, T1 ${ffix(param.T1)} and T2 ${ffix(param.T2)}`;
 		}
+		const lB = Math.sqrt(BX ** 2 + (BY - CY) ** 2);
+		if (lB < R2 + param.S2min - epsilon) {
+			throw `err250: lB ${ffix(lB)} is too small compare to (D2)R2 ${ffix(R2)} and S2min ${ffix(param.S2min)}`;
+		}
+		if (BY < param.T3) {
+			throw `err270: S1 ${ffix(param.S1)} is too small compare to S2min ${ffix(param.S2min)}`;
+		}
 		// step-6 : any logs
-		rGeome.logstr += `W7 ${ffix(2 * W72)}  outline-mode ${ffix(outlineMode)}\n`;
+		rGeome.logstr += `W7 ${ffix(2 * W72)} mm  outline-mode ${outlineMode}\n`;
+		rGeome.logstr += `A1 bounds  b1 ${ffix(radToDeg(2 * a12b1))}  b2 ${ffix(radToDeg(2 * a12b2))} degree\n`;
 		// step-7 : drawing of the figures
 		// figTopPlate
 		const ctrTopPlate = contour(-W72, 0)
 			//.addCornerRounded(param.R2)
 			.addSegStrokeA(W72, 0)
 			//.addCornerRounded(param.R2)
-			.addSegStrokeA(W72, param.T3)
 			.addSegStrokeA(BX, BY)
+			.addCornerRounded(param.R2)
 			.addSegStrokeA(AX, AY)
+			.addCornerRounded(param.R2)
 			.addPointA(0, CY + R2)
 			.addPointA(-AX, AY)
 			.addSegArc2()
+			.addCornerRounded(param.R2)
 			.addSegStrokeA(-BX, BY)
-			.addSegStrokeA(-W72, param.T3)
+			.addCornerRounded(param.R2)
 			.closeSegStroke();
 		figTopPlate.addMainOI([ctrTopPlate, contourCircle(0, CY, R1)]);
 		figTopPlate.addSecond(contourCircle(0, CY, R2));
 		figTopPlate.addSecond(contourCircle(0, CY, R2 + param.S2min));
+		figTopPlate.addSecond(ctrRectangle(-W72, 0, 2 * W72, param.T3));
 		// final figure list
 		rGeome.fig = {
 			faceTopPlate: figTopPlate,
