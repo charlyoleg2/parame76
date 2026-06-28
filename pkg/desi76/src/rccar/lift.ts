@@ -119,6 +119,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-4 : some preparation calculation
 		const R1 = param.D1 / 2;
 		const R2 = param.D2 / 2;
+		//const LR1 = param.LD1 / 2;
+		const LR2 = param.LD2 / 2;
+		//const MR1 = param.MD1 / 2;
+		const MR2 = param.MD2 / 2;
 		const pi2 = Math.PI / 2;
 		const epsilon = 0.01;
 		const a12 = degToRad(param.A1) / 2;
@@ -144,6 +148,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			}
 		}
 		const BX = W72;
+		const LY = param.LX1 + LR2;
+		const MY = param.MX1 + MR2;
+		const T45 = param.T4 + param.T5;
+		const T445 = 2 * param.T4 + param.T5;
+		const T6672 = param.T6 + param.T7 / 2;
 		// step-5 : checks on the parameter values
 		if (R2 < R1 + param.T1 + param.T2) {
 			throw `err230: D2 ${ffix(2 * R2)} is too small compare to D1 ${ffix(2 * R1)}, T1 ${ffix(param.T1)} and T2 ${ffix(param.T2)}`;
@@ -154,6 +163,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		if (BY < param.T3) {
 			throw `err270: S1 ${ffix(param.S1)} is too small compare to S2min ${ffix(param.S2min)}`;
+		}
+		if (param.LX2 > LY) {
+			throw `err168: LX2 ${ffix(param.LX2)} is too large compare to LX1 ${ffix(param.LX1)} and LD2 ${ffix(2 * LR2)}`;
+		}
+		if (2 * W72 < 2 * T445 + 2 * T6672) {
+			throw `err171: W7 ${ffix(2 * W72)} is too small compare to T4 ${ffix(param.T4)}, T5, T6, T7`;
 		}
 		// step-6 : any logs
 		rGeome.logstr += `W7 ${ffix(2 * W72)} mm  outline-mode ${outlineMode}\n`;
@@ -179,6 +194,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figTopPlate.addSecond(contourCircle(0, CY, R2));
 		figTopPlate.addSecond(contourCircle(0, CY, R2 + param.S2min));
 		figTopPlate.addSecond(ctrRectangle(-W72, 0, 2 * W72, param.T3));
+		figTopPlate.addSecond(ctrRectangle(-W72, -LY, param.T4, LY));
+		figTopPlate.addSecond(ctrRectangle(-W72 + T45, -LY, param.T4, LY));
+		figTopPlate.addSecond(ctrRectangle(W72 - T445, -LY, param.T4, LY));
+		figTopPlate.addSecond(ctrRectangle(W72 - param.T4, -LY, param.T4, LY));
+		figTopPlate.addSecond(ctrRectangle(-T6672, -MY, param.T6, MY));
+		figTopPlate.addSecond(ctrRectangle(T6672 - param.T6, -MY, param.T6, MY));
 		// final figure list
 		rGeome.fig = {
 			faceTopPlate: figTopPlate,
