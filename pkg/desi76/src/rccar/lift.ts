@@ -120,9 +120,19 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const R2 = param.D2 / 2;
 		const a12 = degToRad(param.A1) / 2;
 		const W72a = Math.sin(a12) * (R2 + param.S2min);
-		const W72c = Math.tan(a12) * (R1 + param.S1);
-		const W72 = Math.max(W72a, W72c);
-		const outlineMode = W72a > W72c ? 1 : 2;
+		const W72b = R2;
+		const W72c = Math.tan(a12) * (R2 + param.S1);
+		let outlineMode = 1; // 1, 2 or 3
+		let W72 = W72a;
+		if (W72b < W72a) {
+			if (W72b < W72c) {
+				outlineMode = 3;
+				W72 = W72c;
+			} else {
+				outlineMode = 2;
+				W72 = W72b;
+			}
+		}
 		const CY = param.T3 + param.S1 + R2;
 		// step-5 : checks on the parameter values
 		if (R2 < R1 + param.T1 + param.T2) {
@@ -137,9 +147,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeA(W72, 0)
 			//.addCornerRounded(param.R2)
 			.addSegStrokeA(W72, param.T3)
-			.addCornerRounded(param.R2)
+			.addSegStrokeA(R2, CY)
+			.addPointA(0, CY + R2)
+			.addPointA(-R2, CY)
+			.addSegArc2()
 			.addSegStrokeA(-W72, param.T3)
-			.addCornerRounded(param.R2)
 			.closeSegStroke();
 		figTopPlate.addMainOI([ctrTopPlate, contourCircle(0, CY, R1)]);
 		figTopPlate.addSecond(contourCircle(0, CY, R2));
