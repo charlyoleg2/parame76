@@ -199,9 +199,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figTopPlate.addSecond(ctrRectangle(T6672 - param.T6, -MY, param.T6, MY));
 		// figTopEnd
 		// figTopBack
+		const ctrTopBack = contour(-W72, 0)
+			.addSegStrokeA(W72, 0)
+			.addSegStrokeA(W72, param.T3)
+			.addCornerRounded(param.R2)
+			.addSegStrokeA(-W72, param.T3)
+			.addCornerRounded(param.R2)
+			.closeSegStroke();
+		figTopPlate.addMainO(ctrTopPlate);
 		figTopBack.mergeFigure(figTopPlate, true);
 		// figTopPlate again
-		figTopPlate.addSecond(ctrRectangle(-W72, 0, 2 * W72, param.T3));
+		//figTopPlate.addSecond(ctrRectangle(-W72, 0, 2 * W72, param.T3));
+		figTopPlate.addSecond(ctrTopBack);
 		figTopPlate.addSecond(contourCircle(0, CY, R2));
 		figTopPlate.addSecond(contourCircle(0, CY, R2 + param.S2min));
 		// final figure list
