@@ -111,6 +111,7 @@ const pDef: tParamDef = {
 // step-3 : definition of the function that creates from the parameter-values the figures and construct the 3D
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
+	const figTopTmp = figure(); // helper figure, not directly exported
 	const figTopPlate = figure();
 	const figTopEnd = figure();
 	const figTopBack = figure();
@@ -136,7 +137,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		let outlineMode = 1; // 1, 2 or 3
 		let W72 = W72a;
 		let BY = param.T3;
+		let dEX = param.T2 / Math.cos(a12);
 		if (a12 > a12b1) {
+			dEX = param.T2;
 			if (a12 < a12b2) {
 				outlineMode = 2;
 				W72 = R2;
@@ -148,6 +151,19 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			}
 		}
 		const BX = W72;
+		const EX = BX - dEX;
+		const EY = param.T3;
+		const a12F = pi2 - a12 / 2;
+		const FX = BX - param.T2;
+		const FY = BY - param.T2 / Math.tan(a12F);
+		const RG = R2 - param.T2;
+		const aG = Math.asin(param.T2 / RG);
+		const GX = Math.sin(a12 - aG) * RG;
+		const GY = CY - Math.cos(a12 - aG) * RG;
+		const T12 = param.T1 / 2;
+		const RJ = R1 + param.T1;
+		const aJ = Math.asin(T12 / RJ);
+		const JY = CY - Math.cos(aJ) * RJ;
 		const LY = param.LX1 + LR2;
 		const MY = param.MX1 + MR2;
 		const T45 = param.T4 + param.T5;
@@ -191,13 +207,44 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addCornerRounded(param.R2)
 			.closeSegStroke();
 		figTopPlate.addMainOI([ctrTopPlate, contourCircle(0, CY, R1)]);
-		figTopPlate.addSecond(ctrRectangle(-W72, -LY, param.T4, LY));
-		figTopPlate.addSecond(ctrRectangle(-W72 + T45, -LY, param.T4, LY));
-		figTopPlate.addSecond(ctrRectangle(W72 - T445, -LY, param.T4, LY));
-		figTopPlate.addSecond(ctrRectangle(W72 - param.T4, -LY, param.T4, LY));
-		figTopPlate.addSecond(ctrRectangle(-T6672, -MY, param.T6, MY));
-		figTopPlate.addSecond(ctrRectangle(T6672 - param.T6, -MY, param.T6, MY));
+		figTopTmp.addSecond(ctrRectangle(-W72, -LY, param.T4, LY));
+		figTopTmp.addSecond(ctrRectangle(-W72 + T45, -LY, param.T4, LY));
+		figTopTmp.addSecond(ctrRectangle(W72 - T445, -LY, param.T4, LY));
+		figTopTmp.addSecond(ctrRectangle(W72 - param.T4, -LY, param.T4, LY));
+		figTopTmp.addSecond(ctrRectangle(-T6672, -MY, param.T6, MY));
+		figTopTmp.addSecond(ctrRectangle(T6672 - param.T6, -MY, param.T6, MY));
+		figTopPlate.mergeFigure(figTopTmp, true);
 		// figTopEnd
+		const ctrTopHollow = contour(-EX, EY)
+			.addCornerRounded(param.R2)
+			.addSegStrokeA(-T12, EY)
+			.addCornerRounded(param.R1)
+			.addSegStrokeA(-T12, JY)
+			.addCornerRounded(param.R1)
+			.addPointA(0, CY + RJ)
+			.addPointA(T12, JY)
+			.addSegArc2()
+			.addCornerRounded(param.R1)
+			.addSegStrokeA(T12, EY)
+			.addCornerRounded(param.R1)
+			.addSegStrokeA(EX, EY)
+			.addCornerRounded(param.R2);
+		if (outlineMode > 1) {
+			ctrTopHollow.addSegStrokeA(FX, FY).addCornerRounded(param.R2);
+		}
+		ctrTopHollow
+			.addSegStrokeA(GX, GY)
+			.addCornerRounded(param.R2)
+			.addPointA(0, CY + RG)
+			.addPointA(-GX, GY)
+			.addSegArc2()
+			.addCornerRounded(param.R2);
+		if (outlineMode > 1) {
+			ctrTopHollow.addSegStrokeA(-FX, FY).addCornerRounded(param.R2);
+		}
+		ctrTopHollow.closeSegStroke();
+		figTopEnd.addMainOI([ctrTopPlate, ctrTopHollow, contourCircle(0, CY, R1)]);
+		figTopEnd.mergeFigure(figTopTmp, true);
 		// figTopBack
 		const ctrTopBack = contour(-W72, 0)
 			.addSegStrokeA(W72, 0)
@@ -206,7 +253,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeA(-W72, param.T3)
 			.addCornerRounded(param.R2)
 			.closeSegStroke();
-		figTopPlate.addMainO(ctrTopPlate);
+		figTopBack.addMainO(ctrTopBack);
 		figTopBack.mergeFigure(figTopPlate, true);
 		// figTopPlate again
 		//figTopPlate.addSecond(ctrRectangle(-W72, 0, 2 * W72, param.T3));
