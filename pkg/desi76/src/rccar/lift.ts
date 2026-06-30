@@ -127,7 +127,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-4 : some preparation calculation
 		const R1 = param.D1 / 2;
 		const R2 = param.D2 / 2;
-		//const LR1 = param.LD1 / 2;
+		const LR1 = param.LD1 / 2;
 		const LR2 = param.LD2 / 2;
 		//const MR1 = param.MD1 / 2;
 		const MR2 = param.MD2 / 2;
@@ -182,6 +182,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const H32124 = H3212 + param.H4;
 		const H325 = H32 + param.H5;
 		const H425 = param.H4 + param.H2 + param.H5;
+		const LXY1 = Math.sqrt(param.LX1 ** 2 + param.LY1 ** 2);
+		const aXY1 = Math.atan2(param.LY1, param.LX1) + Math.acos(LR2 / LXY1);
+		const dLX1 = Math.cos(aXY1) * LR2;
+		const dLY1 = Math.sin(aXY1) * LR2;
+		const aXY1b = pi2 + aXY1 / 2;
+		const dLX1b = Math.cos(aXY1b) * LR2;
+		const dLY1b = Math.sin(aXY1b) * LR2;
 		// step-5 : checks on the parameter values
 		if (R2 < R1 + param.T1 + param.T2) {
 			throw `err230: D2 ${ffix(2 * R2)} is too small compare to D1 ${ffix(2 * R1)}, T1 ${ffix(param.T1)} and T2 ${ffix(param.T2)}`;
@@ -332,6 +339,22 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figSideL.addSecond(ctrSideLw);
 		figSideL.addSecond(ctrSideLse);
 		figSideL.addSecond(ctrSideLne);
+		const ctrSideL = contour(0, 0)
+			.addSegStrokeA(0, H32124)
+			.addSegStrokeA(-param.LX1 + dLX1, H32124 - param.LY1 + dLY1)
+			.addPointA(-param.LX1 + dLX1b, H32124 - param.LY1 + dLY1b)
+			.addPointA(-param.LX1 - LR2, H32124 - param.LY1)
+			.addSegArc2()
+			.addSegStrokeR(0, -H32124 + 2 * param.LY1)
+			.addPointA(-param.LX1 + dLX1b, param.LY1 - dLY1b)
+			.addPointA(-param.LX1 + dLX1, param.LY1 - dLY1)
+			.addSegArc2()
+			.closeSegStroke();
+		figSideL.addMainOI([
+			ctrSideL,
+			contourCircle(-param.LX1, H32124 - param.LY1, LR1),
+			contourCircle(-param.LX1, param.LY1, LR1)
+		]);
 		// figSideM
 		// final figure list
 		rGeome.fig = {
