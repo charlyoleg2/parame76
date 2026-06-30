@@ -43,8 +43,9 @@ const pDef: tParamDef = {
 		pNumber('S1', 'mm', 0, 0, 500, 1),
 		pNumber('T3', 'mm', 6, 1, 100, 1),
 		pNumber('S2min', 'mm', 20, 1, 500, 1),
-		pNumber('R1', 'mm', 2, 0, 100, 1),
-		pNumber('R2', 'mm', 2, 0, 100, 1),
+		pNumber('RR1', 'mm', 2, 0, 100, 1),
+		pNumber('RR2', 'mm', 2, 0, 100, 1),
+		pNumber('RR3', 'mm', 2, 0, 100, 1),
 		pNumber('T4', 'mm', 3, 1, 100, 1),
 		pNumber('T5', 'mm', 10, 1, 100, 1),
 		pNumber('T6', 'mm', 3, 1, 100, 1),
@@ -77,8 +78,9 @@ const pDef: tParamDef = {
 		S1: 'lift_top1.svg',
 		T3: 'lift_top1.svg',
 		S2min: 'lift_top2.svg',
-		R1: 'lift_top1.svg',
-		R2: 'lift_top1.svg',
+		RR1: 'lift_top1.svg',
+		RR2: 'lift_top1.svg',
+		RR3: 'lift_top1.svg',
 		T4: 'lift_top1.svg',
 		T5: 'lift_top1.svg',
 		T6: 'lift_back.svg',
@@ -192,19 +194,19 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-7 : drawing of the figures
 		// figTopPlate
 		const ctrTopPlate = contour(-W72, 0)
-			//.addCornerRounded(param.R2)
+			//.addCornerRounded(param.RR2)
 			.addSegStrokeA(W72, 0)
-			//.addCornerRounded(param.R2)
+			//.addCornerRounded(param.RR2)
 			.addSegStrokeA(BX, BY)
-			.addCornerRounded(param.R2)
+			.addCornerRounded(param.RR2)
 			.addSegStrokeA(AX, AY)
-			.addCornerRounded(param.R2)
+			.addCornerRounded(param.RR2)
 			.addPointA(0, CY + R2)
 			.addPointA(-AX, AY)
 			.addSegArc2()
-			.addCornerRounded(param.R2)
+			.addCornerRounded(param.RR2)
 			.addSegStrokeA(-BX, BY)
-			.addCornerRounded(param.R2)
+			.addCornerRounded(param.RR2)
 			.closeSegStroke();
 		figTopPlate.addMainOI([ctrTopPlate, contourCircle(0, CY, R1)]);
 		figTopTmp.addSecond(ctrRectangle(-W72, -LY, param.T4, LY));
@@ -216,31 +218,31 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figTopPlate.mergeFigure(figTopTmp, true);
 		// figTopEnd
 		const ctrTopHollow = contour(-EX, EY)
-			.addCornerRounded(param.R2)
+			.addCornerRounded(param.RR2)
 			.addSegStrokeA(-T12, EY)
-			.addCornerRounded(param.R1)
+			.addCornerRounded(param.RR1)
 			.addSegStrokeA(-T12, JY)
-			.addCornerRounded(param.R1)
+			.addCornerRounded(param.RR1)
 			.addPointA(0, CY + RJ)
 			.addPointA(T12, JY)
 			.addSegArc2()
-			.addCornerRounded(param.R1)
+			.addCornerRounded(param.RR1)
 			.addSegStrokeA(T12, EY)
-			.addCornerRounded(param.R1)
+			.addCornerRounded(param.RR1)
 			.addSegStrokeA(EX, EY)
-			.addCornerRounded(param.R2);
+			.addCornerRounded(param.RR2);
 		if (outlineMode > 1) {
-			ctrTopHollow.addSegStrokeA(FX, FY).addCornerRounded(param.R2);
+			ctrTopHollow.addSegStrokeA(FX, FY).addCornerRounded(param.RR2);
 		}
 		ctrTopHollow
 			.addSegStrokeA(GX, GY)
-			.addCornerRounded(param.R2)
+			.addCornerRounded(param.RR2)
 			.addPointA(0, CY + RG)
 			.addPointA(-GX, GY)
 			.addSegArc2()
-			.addCornerRounded(param.R2);
+			.addCornerRounded(param.RR2);
 		if (outlineMode > 1) {
-			ctrTopHollow.addSegStrokeA(-FX, FY).addCornerRounded(param.R2);
+			ctrTopHollow.addSegStrokeA(-FX, FY).addCornerRounded(param.RR2);
 		}
 		ctrTopHollow.closeSegStroke();
 		figTopEnd.addMainOI([ctrTopPlate, ctrTopHollow, contourCircle(0, CY, R1)]);
@@ -249,9 +251,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const ctrTopBack = contour(-W72, 0)
 			.addSegStrokeA(W72, 0)
 			.addSegStrokeA(W72, param.T3)
-			.addCornerRounded(param.R2)
+			.addCornerRounded(param.RR3)
 			.addSegStrokeA(-W72, param.T3)
-			.addCornerRounded(param.R2)
+			.addCornerRounded(param.RR3)
 			.closeSegStroke();
 		figTopBack.addMainO(ctrTopBack);
 		figTopBack.mergeFigure(figTopPlate, true);
