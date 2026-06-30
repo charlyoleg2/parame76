@@ -40,7 +40,7 @@ const pDef: tParamDef = {
 		pNumber('T2', 'mm', 2, 1, 100, 1),
 		pNumber('A1', 'degree', 120, 1, 200, 1),
 		pSectionSeparator('top details'),
-		pNumber('S1', 'mm', 0, 0, 500, 1),
+		pNumber('S1', 'mm', 1, 0, 500, 1),
 		pNumber('T3', 'mm', 6, 1, 100, 1),
 		pNumber('S2min', 'mm', 20, 1, 500, 1),
 		pNumber('RR1', 'mm', 2, 0, 100, 1),
@@ -55,7 +55,7 @@ const pDef: tParamDef = {
 		pNumber('H2', 'mm', 3, 1, 100, 1),
 		pNumber('H3', 'mm', 25, 1, 100, 1),
 		pNumber('H4', 'mm', 15, 1, 100, 1),
-		pNumber('H5', 'mm', 1, 0, 100, 0.1),
+		pNumber('H5', 'mm', 0.5, 0, 100, 0.1),
 		pNumber('LD1', 'mm', 20, 1, 500, 1),
 		pNumber('LD2', 'mm', 50, 1, 500, 1),
 		pNumber('LX1', 'mm', 26, 1, 500, 1),
@@ -282,9 +282,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const ctrSideLw = contour(0, 0)
 			.addSegStrokeR(param.T3, 0)
 			.addSegStrokeR(0, param.H3)
-			.addSegStrokeR(param.S1 + R2 - R1 - param.T2, 0)
+			.addSegStrokeR(param.S1 + R2 - R1 - param.T1, 0)
 			.addSegStrokeR(0, -param.H3)
-			.addSegStrokeR(param.T2, 0)
+			.addSegStrokeR(param.T1, 0)
 			.addSegStrokeR(0, H325);
 		if (param.H5 > 0 && param.S1 > 0) {
 			ctrSideLw
@@ -305,13 +305,33 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		ctrSideLw
 			.addSegStrokeR(0, H425)
-			.addSegStrokeR(-param.T2, 0)
+			.addSegStrokeR(-param.T1, 0)
 			.addSegStrokeR(0, -param.H4)
-			.addSegStrokeR(-param.S1 - R2 + R1 + param.T2, 0)
+			.addSegStrokeR(-param.S1 - R2 + R1 + param.T1, 0)
 			.addSegStrokeR(0, param.H4)
 			.addSegStrokeR(-param.T3, 0)
 			.closeSegStroke();
+		const ctrSideLse = contour(param.T3 + R2 + R1, 0)
+			.addSegStrokeR(param.T1, 0)
+			.addSegStrokeR(0, param.H3)
+			.addSegStrokeR(R2 - R1 - param.T1 - param.T2, 0)
+			.addSegStrokeR(0, -param.H3)
+			.addSegStrokeR(param.T2, 0)
+			.addSegStrokeR(0, H325)
+			.addSegStrokeR(-R2 + R1, 0)
+			.closeSegStroke();
+		const ctrSideLne = contour(param.T3 + R2 + R1, H321)
+			.addSegStrokeR(R2 - R1, 0)
+			.addSegStrokeR(0, H425)
+			.addSegStrokeR(-param.T2, 0)
+			.addSegStrokeR(0, -param.H4)
+			.addSegStrokeR(-R2 + R1 + param.T1 + param.T2, 0)
+			.addSegStrokeR(0, param.H4)
+			.addSegStrokeR(-param.T1, 0)
+			.closeSegStroke();
 		figSideL.addSecond(ctrSideLw);
+		figSideL.addSecond(ctrSideLse);
+		figSideL.addSecond(ctrSideLne);
 		// figSideM
 		// final figure list
 		rGeome.fig = {
