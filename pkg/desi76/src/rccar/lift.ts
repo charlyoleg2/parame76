@@ -53,8 +53,9 @@ const pDef: tParamDef = {
 		pSectionSeparator('side'),
 		pNumber('H1', 'mm', 100, 1, 1000, 1),
 		pNumber('H2', 'mm', 3, 1, 100, 1),
-		pNumber('H3', 'mm', 20, 1, 100, 1),
-		pNumber('H4', 'mm', 20, 1, 100, 1),
+		pNumber('H3', 'mm', 25, 1, 100, 1),
+		pNumber('H4', 'mm', 15, 1, 100, 1),
+		pNumber('H5', 'mm', 1, 0, 100, 0.1),
 		pNumber('LD1', 'mm', 20, 1, 500, 1),
 		pNumber('LD2', 'mm', 50, 1, 500, 1),
 		pNumber('LX1', 'mm', 26, 1, 500, 1),
@@ -89,6 +90,7 @@ const pDef: tParamDef = {
 		H2: 'lift_side1.svg',
 		H3: 'lift_side1.svg',
 		H4: 'lift_side1.svg',
+		H5: 'lift_side1.svg',
 		LD1: 'lift_side1.svg',
 		LD2: 'lift_side1.svg',
 		LX1: 'lift_side1.svg',
@@ -117,6 +119,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const figTopPlate = figure();
 	const figTopEnd = figure();
 	const figTopBack = figure();
+	const figTopDisc = figure();
+	const figSideL = figure();
+	const figSideM = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -171,6 +176,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const T45 = param.T4 + param.T5;
 		const T445 = 2 * param.T4 + param.T5;
 		const T6672 = param.T6 + param.T7 / 2;
+		const H32 = param.H3 + param.H2;
+		const H321 = H32 + param.H1;
+		const H3212 = H321 + param.H2;
+		const H32124 = H3212 + param.H4;
+		const H325 = H32 + param.H5;
+		const H425 = param.H4 + param.H2 + param.H5;
 		// step-5 : checks on the parameter values
 		if (R2 < R1 + param.T1 + param.T2) {
 			throw `err230: D2 ${ffix(2 * R2)} is too small compare to D1 ${ffix(2 * R1)}, T1 ${ffix(param.T1)} and T2 ${ffix(param.T2)}`;
@@ -191,6 +202,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-6 : any logs
 		rGeome.logstr += `W7 ${ffix(2 * W72)} mm  outline-mode ${outlineMode}\n`;
 		rGeome.logstr += `A1 bounds  b1 ${ffix(radToDeg(2 * a12b1))}  b2 ${ffix(radToDeg(2 * a12b2))} degree\n`;
+		rGeome.logstr += `H32124 ${ffix(H32124)} mm\n`;
 		// step-7 : drawing of the figures
 		// figTopPlate
 		const ctrTopPlate = contour(-W72, 0)
@@ -209,6 +221,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addCornerRounded(param.RR2)
 			.closeSegStroke();
 		figTopPlate.addMainOI([ctrTopPlate, contourCircle(0, CY, R1)]);
+		// figTopTmp
 		figTopTmp.addSecond(ctrRectangle(-W72, -LY, param.T4, LY));
 		figTopTmp.addSecond(ctrRectangle(-W72 + T45, -LY, param.T4, LY));
 		figTopTmp.addSecond(ctrRectangle(W72 - T445, -LY, param.T4, LY));
@@ -257,16 +270,57 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.closeSegStroke();
 		figTopBack.addMainO(ctrTopBack);
 		figTopBack.mergeFigure(figTopPlate, true);
+		// figTopDisc
+		figTopDisc.mergeFigure(figTopEnd, true);
+		figTopDisc.addMainOI([contourCircle(0, CY, R2), contourCircle(0, CY, R1)]);
 		// figTopPlate again
 		//figTopPlate.addSecond(ctrRectangle(-W72, 0, 2 * W72, param.T3));
 		figTopPlate.addSecond(ctrTopBack);
 		figTopPlate.addSecond(contourCircle(0, CY, R2));
 		figTopPlate.addSecond(contourCircle(0, CY, R2 + param.S2min));
+		// figSideL
+		const ctrSideLw = contour(0, 0)
+			.addSegStrokeR(param.T3, 0)
+			.addSegStrokeR(0, param.H3)
+			.addSegStrokeR(param.S1 + R2 - R1 - param.T2, 0)
+			.addSegStrokeR(0, -param.H3)
+			.addSegStrokeR(param.T2, 0)
+			.addSegStrokeR(0, H325);
+		if (param.H5 > 0 && param.S1 > 0) {
+			ctrSideLw
+				.addSegStrokeR(-R2 + R1, 0)
+				.addSegStrokeR(0, -param.H5)
+				.addSegStrokeR(-param.S1, 0);
+		} else {
+			ctrSideLw.addSegStrokeR(-param.S1 - R2 + R1, 0);
+		}
+		ctrSideLw.addSegStrokeR(0, param.H1);
+		if (param.H5 > 0 && param.S1 > 0) {
+			ctrSideLw
+				.addSegStrokeR(param.S1, 0)
+				.addSegStrokeR(0, -param.H5)
+				.addSegStrokeR(R2 - R1, 0);
+		} else {
+			ctrSideLw.addSegStrokeR(param.S1 + R2 - R1, 0);
+		}
+		ctrSideLw
+			.addSegStrokeR(0, H425)
+			.addSegStrokeR(-param.T2, 0)
+			.addSegStrokeR(0, -param.H4)
+			.addSegStrokeR(-param.S1 - R2 + R1 + param.T2, 0)
+			.addSegStrokeR(0, param.H4)
+			.addSegStrokeR(-param.T3, 0)
+			.closeSegStroke();
+		figSideL.addSecond(ctrSideLw);
+		// figSideM
 		// final figure list
 		rGeome.fig = {
 			faceTopPlate: figTopPlate,
 			faceTopEnd: figTopEnd,
-			faceTopBack: figTopBack
+			faceTopBack: figTopBack,
+			faceTopDisc: figTopDisc,
+			faceSideL: figSideL,
+			faceSideM: figSideM
 		};
 		// step-8 : recipes of the 3D construction
 		// volume
