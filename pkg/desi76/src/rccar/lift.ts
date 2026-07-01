@@ -66,9 +66,9 @@ const pDef: tParamDef = {
 		pNumber('MD1', 'mm', 20, 1, 500, 1),
 		pNumber('MD2', 'mm', 50, 1, 500, 1),
 		pNumber('MX1', 'mm', 26, 1, 500, 1),
-		pNumber('MY1', 'mm', 5, 0, 500, 1),
-		pNumber('MY2', 'mm', 50, 0, 500, 1),
-		pNumber('MY3', 'mm', 5, 0, 500, 1)
+		pNumber('MY1', 'mm', 50, 0, 500, 1),
+		pNumber('MY2', 'mm', 25, 0, 500, 1),
+		pNumber('MY3', 'mm', 50, 0, 500, 1)
 	],
 	paramSvg: {
 		D1: 'lift_top1.svg',
@@ -129,7 +129,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const R2 = param.D2 / 2;
 		const LR1 = param.LD1 / 2;
 		const LR2 = param.LD2 / 2;
-		//const MR1 = param.MD1 / 2;
+		const MR1 = param.MD1 / 2;
 		const MR2 = param.MD2 / 2;
 		const pi2 = Math.PI / 2;
 		const epsilon = 0.01;
@@ -182,13 +182,25 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const H32124 = H3212 + param.H4;
 		const H325 = H32 + param.H5;
 		const H425 = param.H4 + param.H2 + param.H5;
-		const LXY1 = Math.sqrt(param.LX1 ** 2 + param.LY1 ** 2);
-		const aXY1 = Math.atan2(param.LY1, param.LX1) + Math.acos(LR2 / LXY1);
-		const dLX1 = Math.cos(aXY1) * LR2;
-		const dLY1 = Math.sin(aXY1) * LR2;
+		function calcTang(ax: number, ay: number, ar: number): [number, number, number] {
+			const lxy = Math.sqrt(ax ** 2 + ay ** 2);
+			if (lxy < ar) {
+				throw `err188: lxy ${ffix(lxy)} is smaller than ar ${ffix(ar)}`;
+			}
+			const ra = Math.atan2(ay, ax) + Math.acos(ar / lxy);
+			const rdx = Math.cos(ra) * ar;
+			const rdy = Math.sin(ra) * ar;
+			return [rdx, rdy, ra];
+		}
+		const [dLX1, dLY1, aXY1] = calcTang(param.LX1, param.LY1, LR2);
 		const aXY1b = pi2 + aXY1 / 2;
 		const dLX1b = Math.cos(aXY1b) * LR2;
 		const dLY1b = Math.sin(aXY1b) * LR2;
+		const [dMX1, dMY1, aM1] = calcTang(param.MX1, param.MY2, MR2);
+		const [dMX3, dMY3, aM3] = calcTang(param.MX1, param.MY3, MR2);
+		const aM2 = Math.PI + (aM1 - aM3) / 2;
+		const dMX2 = Math.cos(aM2) * MR2;
+		const dMY2 = Math.sin(aM2) * MR2;
 		// step-5 : checks on the parameter values
 		if (R2 < R1 + param.T1 + param.T2) {
 			throw `err230: D2 ${ffix(2 * R2)} is too small compare to D1 ${ffix(2 * R1)}, T1 ${ffix(param.T1)} and T2 ${ffix(param.T2)}`;
@@ -356,6 +368,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			contourCircle(-param.LX1, param.LY1, LR1)
 		]);
 		// figSideM
+		figSideM.mergeFigure(figSideL, true);
+		const ctrSideM = contour(0, param.MY1 - param.MY3)
+			.addSegStrokeA(0, param.MY1 + param.MY2)
+			.addSegStrokeA(-param.MX1 + dMX1, param.MY1 + dMY1)
+			.addPointA(-param.MX1 + dMX2, param.MY1 + dMY2)
+			.addPointA(-param.MX1 + dMX3, param.MY1 - dMY3)
+			.addSegArc2()
+			.closeSegStroke();
+		figSideM.addMainOI([ctrSideM, contourCircle(-param.MX1, param.MY1, MR1)]);
+		figSideL.addSecond(ctrSideM);
+		figSideL.addSecond(contourCircle(-param.MX1, param.MY1, MR1));
 		// final figure list
 		rGeome.fig = {
 			faceTopPlate: figTopPlate,
