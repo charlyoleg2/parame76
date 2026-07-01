@@ -192,10 +192,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const rdy = Math.sin(ra) * ar;
 			return [rdx, rdy, ra];
 		}
-		const [dLX1, dLY1, aXY1] = calcTang(param.LX1, param.LY1, LR2);
-		const aXY1b = pi2 + aXY1 / 2;
-		const dLX1b = Math.cos(aXY1b) * LR2;
-		const dLY1b = Math.sin(aXY1b) * LR2;
+		const [dLX1, dLY1, aL1] = calcTang(param.LX1, param.LY1, LR2);
+		const dLY4 = (H32124 - 2 * param.LY1 - param.LY2) / 2;
+		const [dLX3, dLY3, aL3] = calcTang(param.LX1 - param.LX2, dLY4, LR2);
+		const aL2 = pi2 + (aL1 - aL3) / 2;
+		const dLX2 = Math.cos(aL2) * LR2;
+		const dLY2 = Math.sin(aL2) * LR2;
 		const [dMX1, dMY1, aM1] = calcTang(param.MX1, param.MY2, MR2);
 		const [dMX3, dMY3, aM3] = calcTang(param.MX1, param.MY3, MR2);
 		const aM2 = Math.PI + (aM1 - aM3) / 2;
@@ -354,11 +356,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const ctrSideL = contour(0, 0)
 			.addSegStrokeA(0, H32124)
 			.addSegStrokeA(-param.LX1 + dLX1, H32124 - param.LY1 + dLY1)
-			.addPointA(-param.LX1 + dLX1b, H32124 - param.LY1 + dLY1b)
-			.addPointA(-param.LX1 - LR2, H32124 - param.LY1)
+			.addPointA(-param.LX1 + dLX2, H32124 - param.LY1 + dLY2)
+			.addPointA(-param.LX1 + dLX3, H32124 - param.LY1 - dLY3)
 			.addSegArc2()
-			.addSegStrokeR(0, -H32124 + 2 * param.LY1)
-			.addPointA(-param.LX1 + dLX1b, param.LY1 - dLY1b)
+			.addSegStrokeA(-param.LX2, param.LY1 + dLY4 + param.LY2)
+			.addCornerRounded(param.LR2);
+		if (param.LY2 > 0) {
+			ctrSideL.addSegStrokeR(0, -param.LY2).addCornerRounded(param.LR2);
+		}
+		ctrSideL
+			.addSegStrokeA(-param.LX1 + dLX3, param.LY1 + dLY3)
+			.addPointA(-param.LX1 + dLX2, param.LY1 - dLY2)
 			.addPointA(-param.LX1 + dLX1, param.LY1 - dLY1)
 			.addSegArc2()
 			.closeSegStroke();
