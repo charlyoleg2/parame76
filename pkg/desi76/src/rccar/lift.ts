@@ -13,6 +13,12 @@ import type {
 	//tSubDesign
 } from 'geometrix';
 import {
+	//designParam,
+	//checkGeom,
+	//prefixLog,
+	point,
+	//Point,
+	ShapePoint,
 	contour,
 	contourCircle,
 	ctrRectangle,
@@ -195,7 +201,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const [dLX1, dLY1, aL1] = calcTang(param.LX1, param.LY1, LR2);
 		const dLY4 = (H32124 - 2 * param.LY1 - param.LY2) / 2;
 		const [dLX3, dLY3, aL3] = calcTang(param.LX1 - param.LX2, dLY4, LR2);
-		const aL2 = pi2 + (aL1 - aL3) / 2;
+		const aL2 = Math.PI + (aL1 - aL3) / 2;
 		const dLX2 = Math.cos(aL2) * LR2;
 		const dLY2 = Math.sin(aL2) * LR2;
 		const [dMX1, dMY1, aM1] = calcTang(param.MX1, param.MY2, MR2);
@@ -219,6 +225,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		if (2 * W72 < 2 * T445 + 2 * T6672) {
 			throw `err171: W7 ${ffix(2 * W72)} is too small compare to T4 ${ffix(param.T4)}, T5, T6, T7`;
+		}
+		if (param.LX1 < LR1) {
+			throw `err231: LX1 ${ffix(param.LX1)} is too small compare to LD1 ${ffix(2 * LR1)}`;
+		}
+		if (param.MX1 < MR1) {
+			throw `err233: MX1 ${ffix(param.MX1)} is too small compare to MD1 ${ffix(2 * MR1)}`;
+		}
+		if (param.MY1 - param.MY3 < 0) {
+			throw `err236: MY3 ${ffix(param.MY3)} is too large compare to MY1 ${ffix(param.MY1)}`;
+		}
+		if (param.MY1 + param.MY2 > H32124) {
+			throw `err239: MY2 ${ffix(param.MY2)} is too large compare to MY1 ${ffix(param.MY1)}`;
 		}
 		// step-6 : any logs
 		rGeome.logstr += `W7 ${ffix(2 * W72)} mm  outline-mode ${outlineMode}\n`;
@@ -353,6 +371,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figSideL.addSecond(ctrSideLw);
 		figSideL.addSecond(ctrSideLse);
 		figSideL.addSecond(ctrSideLne);
+		const pt1 = point(-param.LX1 + dLX2, H32124 - param.LY1 + dLY2, ShapePoint.eBigSquare);
+		figSideL.addPoint(pt1);
 		const ctrSideL = contour(0, 0)
 			.addSegStrokeA(0, H32124)
 			.addSegStrokeA(-param.LX1 + dLX1, H32124 - param.LY1 + dLY1)
