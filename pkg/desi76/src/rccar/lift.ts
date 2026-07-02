@@ -151,9 +151,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		let outlineMode = 1; // 1, 2 or 3
 		let W72 = W72a;
 		let BY = param.T3;
-		let dEX = param.T2 / Math.cos(a12);
 		if (a12 > a12b1) {
-			dEX = param.T2;
 			if (a12 < a12b2) {
 				outlineMode = 2;
 				W72 = R2;
@@ -165,11 +163,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			}
 		}
 		const BX = W72;
-		const EX = BX - dEX;
-		const EY = param.T3;
 		const a12F = pi2 - a12 / 2;
 		const FX = BX - param.T2;
 		const FY = BY - param.T2 / Math.tan(a12F);
+		const hollowOutlineMode = FY < param.T3 ? 1 : outlineMode;
+		const dEX = hollowOutlineMode > 1 ? param.T2 : param.T2 / Math.cos(a12);
+		const EX = BX - dEX;
+		const EY = param.T3;
 		const RG = R2 - param.T2;
 		const aG = Math.asin(param.T2 / RG);
 		const GX = Math.sin(a12 - aG) * RG;
@@ -290,7 +290,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addCornerRounded(param.RR1)
 			.addSegStrokeA(EX, EY)
 			.addCornerRounded(param.RR2);
-		if (outlineMode > 1) {
+		if (hollowOutlineMode > 1) {
 			ctrTopHollow.addSegStrokeA(FX, FY).addCornerRounded(param.RR2);
 		}
 		ctrTopHollow
@@ -300,7 +300,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addPointA(-GX, GY)
 			.addSegArc2()
 			.addCornerRounded(param.RR2);
-		if (outlineMode > 1) {
+		if (hollowOutlineMode > 1) {
 			ctrTopHollow.addSegStrokeA(-FX, FY).addCornerRounded(param.RR2);
 		}
 		ctrTopHollow.closeSegStroke();
