@@ -3,7 +3,7 @@
 
 // step-1 : import from geometrix
 import type {
-	//tContour,
+	tContour,
 	//tOuterInner,
 	tParamDef,
 	tParamVal,
@@ -128,6 +128,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const figTopDisc = figure();
 	const figSideL = figure();
 	const figSideM = figure();
+	const figBack = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -267,6 +268,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figTopTmp.addSecond(ctrRectangle(W72 - param.T4, -LY, param.T4, LY));
 		figTopTmp.addSecond(ctrRectangle(-T6672, -MY, param.T6, MY));
 		figTopTmp.addSecond(ctrRectangle(T6672 - param.T6, -MY, param.T6, MY));
+		figTopTmp.addSecond(ctrRectangle(-W72, -param.LX1 - LR1, param.T4, 2 * LR1));
+		figTopTmp.addSecond(ctrRectangle(-W72 + T45, -param.LX1 - LR1, param.T4, 2 * LR1));
+		figTopTmp.addSecond(ctrRectangle(W72 - T445, -param.LX1 - LR1, param.T4, 2 * LR1));
+		figTopTmp.addSecond(ctrRectangle(W72 - param.T4, -param.LX1 - LR1, param.T4, 2 * LR1));
+		figTopTmp.addSecond(ctrRectangle(-T6672, -param.MX1 - MR1, param.T6, 2 * MR1));
+		figTopTmp.addSecond(ctrRectangle(T6672 - param.T6, -param.MX1 - MR1, param.T6, 2 * MR1));
 		figTopPlate.mergeFigure(figTopTmp, true);
 		// figTopEnd
 		const ctrTopHollow = contour(-EX, EY)
@@ -407,6 +414,41 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figSideM.addMainOI([ctrSideM, contourCircle(-param.MX1, param.MY1, MR1)]);
 		figSideL.addSecond(ctrSideM);
 		figSideL.addSecond(contourCircle(-param.MX1, param.MY1, MR1));
+		// figBack
+		figBack.addMainO(ctrRectangle(-W72, 0, 2 * W72, H32124));
+		figBack.addMainO(ctrRectangle(-W72, 0, param.T4, H32124));
+		figBack.addMainO(ctrRectangle(-W72 + T45, 0, param.T4, H32124));
+		const MY23 = param.MY2 + param.MY3;
+		figBack.addMainO(ctrRectangle(-T6672, param.MY1 - param.MY3, param.T6, MY23));
+		figBack.addMainO(ctrRectangle(T6672 - param.T6, param.MY1 - param.MY3, param.T6, MY23));
+		figBack.addMainO(ctrRectangle(W72 - T445, 0, param.T4, H32124));
+		figBack.addMainO(ctrRectangle(W72 - param.T4, 0, param.T4, H32124));
+		for (const ix of [-W72, -W72 + T45, W72 - T445, W72 - param.T4]) {
+			figBack.addSecond(ctrRectangle(ix, param.LY1 - LR1, param.T4, 2 * LR1));
+			figBack.addSecond(ctrRectangle(ix, H32124 - param.LY1 - LR1, param.T4, 2 * LR1));
+			figBack.addSecond(ctrRectangle(ix, param.LY1 - LR2, param.T4, 2 * LR2));
+			figBack.addSecond(ctrRectangle(ix, H32124 - param.LY1 - LR2, param.T4, 2 * LR2));
+		}
+		for (const ix of [-T6672, T6672 - param.T6]) {
+			figBack.addSecond(ctrRectangle(ix, param.MY1 - MR1, param.T6, 2 * MR1));
+			figBack.addSecond(ctrRectangle(ix, param.MY1 - MR2, param.T6, 2 * MR2));
+		}
+		function ctrU(iYinit: number, iYd: number, iXs: number, iYs: number): tContour {
+			const rCtr = contour(-iXs * R2, iYinit)
+				.addSegStrokeR(iXs * param.T2, 0)
+				.addSegStrokeR(0, iYs * iYd)
+				.addSegStrokeR(iXs * (R2 - R1 - param.T2 - param.T1), 0)
+				.addSegStrokeR(0, -iYs * iYd)
+				.addSegStrokeR(iXs * param.T1, 0)
+				.addSegStrokeR(0, iYs * H325)
+				.addSegStrokeR(iXs * (-R2 + R1), 0)
+				.closeSegStroke();
+			return rCtr;
+		}
+		figBack.addSecond(ctrU(0, param.H3, 1, 1));
+		figBack.addSecond(ctrU(0, param.H3, -1, 1));
+		figBack.addSecond(ctrU(H32124, param.H4, 1, -1));
+		figBack.addSecond(ctrU(H32124, param.H4, -1, -1));
 		// final figure list
 		rGeome.fig = {
 			faceTopPlate: figTopPlate,
@@ -414,7 +456,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			faceTopBack: figTopBack,
 			faceTopDisc: figTopDisc,
 			faceSideL: figSideL,
-			faceSideM: figSideM
+			faceSideM: figSideM,
+			faceBack: figBack
 		};
 		// step-8 : recipes of the 3D construction
 		// volume
