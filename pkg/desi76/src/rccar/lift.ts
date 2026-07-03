@@ -8,9 +8,14 @@ import type {
 	tParamDef,
 	tParamVal,
 	tGeom,
-	tPageDef
-	//tSubInst
+	//DesignParam,
+	//tInherit,
+	tExtrude,
+	//tSubInst,
 	//tSubDesign
+	//Transform2d,
+	//Transform3d,
+	tPageDef
 } from 'geometrix';
 import {
 	//designParam,
@@ -462,22 +467,173 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-8 : recipes of the 3D construction
 		// volume
 		const designName = rGeome.partName;
+		//const partInherit: tInherit[] = [];
+		const partExtrude: tExtrude[] = [];
+		const partList: string[] = [];
+		if (param.H3 > 0) {
+			const eName = `subpax_${designName}_end1`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceTopEnd`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.H3,
+				rotate: [0, 0, 0],
+				translate: [0, 0, 0]
+			});
+			partList.push(eName);
+		}
+		if (param.H2 > 0) {
+			const eName = `subpax_${designName}_plate1`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceTopPlate`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.H2,
+				rotate: [0, 0, 0],
+				translate: [0, 0, param.H3]
+			});
+			partList.push(eName);
+		}
+		if (param.H1 > 0) {
+			const eName = `subpax_${designName}_wall`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceTopBack`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.H1,
+				rotate: [0, 0, 0],
+				translate: [0, 0, H32]
+			});
+			partList.push(eName);
+		}
+		if (param.H2 > 0) {
+			const eName = `subpax_${designName}_plate2`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceTopPlate`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.H2,
+				rotate: [0, 0, 0],
+				translate: [0, 0, H321]
+			});
+			partList.push(eName);
+		}
+		if (param.H4 > 0) {
+			const eName = `subpax_${designName}_end2`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceTopEnd`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.H4,
+				rotate: [0, 0, 0],
+				translate: [0, 0, H3212]
+			});
+			partList.push(eName);
+		}
+		if (param.H5 > 0) {
+			const eName = `subpax_${designName}_disc1`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceTopDisc`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.H5,
+				rotate: [0, 0, 0],
+				translate: [0, 0, H32]
+			});
+			partList.push(eName);
+		}
+		if (param.H5 > 0) {
+			const eName = `subpax_${designName}_disc2`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceTopDisc`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.H5,
+				rotate: [0, 0, 0],
+				translate: [0, 0, H3212 - param.H5]
+			});
+			partList.push(eName);
+		}
+		if (param.T4 > 0) {
+			const eName = `subpax_${designName}_L1`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceSideL`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.T4,
+				rotate: [pi2, 0, pi2],
+				translate: [-W72, 0, 0]
+			});
+			partList.push(eName);
+		}
+		if (param.T4 > 0) {
+			const eName = `subpax_${designName}_L2`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceSideL`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.T4,
+				rotate: [pi2, 0, pi2],
+				translate: [-W72 + T45, 0, 0]
+			});
+			partList.push(eName);
+		}
+		if (param.T4 > 0) {
+			const eName = `subpax_${designName}_L3`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceSideL`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.T4,
+				rotate: [pi2, 0, pi2],
+				translate: [W72 - T445, 0, 0]
+			});
+			partList.push(eName);
+		}
+		if (param.T4 > 0) {
+			const eName = `subpax_${designName}_L4`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceSideL`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.T4,
+				rotate: [pi2, 0, pi2],
+				translate: [W72 - param.T4, 0, 0]
+			});
+			partList.push(eName);
+		}
+		if (param.T6 > 0) {
+			const eName = `subpax_${designName}_M1`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceSideM`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.T6,
+				rotate: [pi2, 0, pi2],
+				translate: [-T6672, 0, 0]
+			});
+			partList.push(eName);
+		}
+		if (param.T6 > 0) {
+			const eName = `subpax_${designName}_M2`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceSideM`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.T6,
+				rotate: [pi2, 0, pi2],
+				translate: [T6672 - param.T6, 0, 0]
+			});
+			partList.push(eName);
+		}
 		rGeome.vol = {
-			extrudes: [
-				{
-					outName: `subpax_${designName}_top`,
-					face: `${designName}_faceTopPlate`,
-					extrudeMethod: EExtrude.eLinearOrtho,
-					length: 10,
-					rotate: [0, 0, 0],
-					translate: [0, 0, 0]
-				}
-			],
+			//inherits: partInherit,
+			extrudes: partExtrude,
 			volumes: [
 				{
 					outName: `pax_${designName}`,
-					boolMethod: EBVolume.eIdentity,
-					inList: [`subpax_${designName}_top`]
+					boolMethod: EBVolume.eUnion,
+					inList: partList
 				}
 			]
 		};
