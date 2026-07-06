@@ -33,7 +33,7 @@
 		"clean": "rimraf .svelte-kit build node_modules static/pgdsvg"
 	},
 	"dependencies": {
-		"desi76": "^0.1.17",
+		"desi76": "^0.1.18",
 		"geometrix": "^1.0.37",
 		"geomui": "^1.0.37"
 	},
@@ -42,7 +42,7 @@
 		"@sveltejs/adapter-auto": "^7.0.1",
 		"@sveltejs/adapter-static": "^3.0.10",
 		"@sveltejs/kit": "^2.69.1",
-		"@sveltejs/vite-plugin-svelte": "^7.1.2",
+		"@sveltejs/vite-plugin-svelte": "^7.1.4",
 		"@types/eslint": "^9.6.1",
 		"eslint": "^10.6.0",
 		"eslint-config-prettier": "^10.1.8",
@@ -56,8 +56,8 @@
 		"svelte": "^5.56.4",
 		"svelte-check": "^4.7.1",
 		"typescript": "^6.0.3",
-		"typescript-eslint": "^8.62.1",
+		"typescript-eslint": "^8.63.0",
 		"vite": "^8.1.3",
-		"vitest": "^4.1.9"
+		"vitest": "^4.1.10"
 	}
 }
