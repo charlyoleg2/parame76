@@ -106,7 +106,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `Lextra ${ffix(Lextra)} mm\n`;
 		// step-7 : drawing of the figures
 		// figTopPlate1
-		figTopPlate1.addMainOI([contourCircle(0, 0, R2), contourCircle(0, 0, R2)]);
+		figTopPlate1.addMainOI([contourCircle(0, 0, R2), contourCircle(0, 0, R1)]);
 		// figTopPlate2
 		// final figure list
 		rGeome.fig = {
