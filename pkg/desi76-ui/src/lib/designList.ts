@@ -11,7 +11,8 @@ import {
 	scarabaseDef,
 	long2dDef,
 	losangeDef,
-	liftDef
+	liftDef,
+	pivotDef
 } from 'desi76';
 
 const designList: tAllPageDef = {
@@ -23,6 +24,7 @@ const designList: tAllPageDef = {
 	'desi76/long2d': long2dDef,
 	'desi76/losange': losangeDef,
 	'desi76/lift': liftDef,
+	'desi76/pivot': pivotDef,
 	'desi76/cuisine': cuisineDef,
 	'desi76/voila': voilaDef
 };
