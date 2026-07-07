@@ -24,12 +24,12 @@ import {
 	//point,
 	//Point,
 	//ShapePoint,
-	//contour,
+	contour,
 	contourCircle,
 	//ctrRectangle,
 	figure,
 	//degToRad,
-	//radToDeg,
+	radToDeg,
 	ffix,
 	pNumber,
 	pCheckbox,
@@ -51,7 +51,7 @@ const pDef: tParamDef = {
 		pNumber('T2', 'mm', 2, 1, 100, 1),
 		pNumber('W4', 'mm', 100, 1, 1000, 1),
 		pSectionSeparator('top details'),
-		pNumber('S1', 'mm', 1, 0, 500, 1),
+		pNumber('S1', 'mm', 2, 0, 500, 1),
 		pNumber('S2min', 'mm', 20, 1, 500, 1),
 		pNumber('S3', 'mm', 40, 1, 1000, 1),
 		pNumber('T3a', 'mm', 2, 1, 100, 1),
@@ -98,15 +98,57 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		//const pi2 = Math.PI / 2;
 		//const epsilon = 0.01;
 		const Lextra = param.S1 + param.T3a + param.T3b + param.S3 + param.T4a + param.T4b;
+		const X9 = R2 + Lextra;
+		const Y9 = param.W4 / 2;
+		const R9 = Math.sqrt(X9 ** 2 + Y9 ** 2);
+		const R8 = R2 + param.S2min;
+		const outline1Mode = R9 < R8 ? 1 : 2;
+		if (R8 < Y9) {
+			throw `err107: param.W4 ${ffix(param.W4)} is too large compare to S2min ${ffix(param.S2min)} and D2 ${ffix(param.D2)}`;
+		}
+		const X8 = Math.sqrt(R8 ** 2 - Y9 ** 2);
+		const X8b = outline1Mode === 2 ? X8 : X9;
+		const a12 = Math.atan2(Y9, X8b);
+		const X7 = R2 * Math.cos(a12);
+		const Y7 = R2 * Math.sin(a12);
+		//const T2min = param.T4b * Math.tan(Math.atan(Y9 / X9));
+		const T2min = (param.T4b * Y9) / X9;
 		// step-5 : checks on the parameter values
 		if (R2 < R1 + param.T1 + param.T2) {
 			throw `err230: D2 ${ffix(2 * R2)} is too small compare to D1 ${ffix(2 * R1)}, T1 ${ffix(param.T1)} and T2 ${ffix(param.T2)}`;
 		}
+		if (param.T2 < T2min) {
+			throw `err233: T2 ${ffix(param.T2)} is too small compare to T2min ${ffix(T2min)}, T4b ${ffix(param.T4b)}, A1 ${ffix(radToDeg(2 * a12))}`;
+		}
 		// step-6 : any logs
-		rGeome.logstr += `Lextra ${ffix(Lextra)} mm\n`;
+		rGeome.logstr += `Lextra ${ffix(Lextra)}  Rmax ${ffix(R9)}  Dmax ${ffix(2 * R9)} mm\n`;
+		rGeome.logstr += `A1 ${ffix(radToDeg(2 * a12))} degree, T2min ${ffix(T2min)}\n`;
+		rGeome.logstr += `outline1Mode ${outline1Mode}\n`;
 		// step-7 : drawing of the figures
 		// figTopPlate1
-		figTopPlate1.addMainOI([contourCircle(0, 0, R2), contourCircle(0, 0, R1)]);
+		const ctrPlate = contour(X9, Y9);
+		if (outline1Mode === 2) {
+			ctrPlate.addSegStrokeA(X8, Y9).addCornerRounded(param.RR2);
+		}
+		ctrPlate
+			.addSegStrokeA(X7, Y7)
+			.addCornerRounded(param.RR2)
+			.addPointA(-R2, 0)
+			.addPointA(X7, -Y7)
+			.addSegArc2()
+			.addCornerRounded(param.RR2);
+		if (outline1Mode === 2) {
+			ctrPlate.addSegStrokeA(X8, -Y9).addCornerRounded(param.RR2);
+		}
+		ctrPlate
+			.addSegStrokeA(X9, -Y9)
+			.addSegStrokeR(0, param.T2)
+			.addSegStrokeR(-param.T4b, 0)
+			.addSegStrokeR(0, 2 * (Y9 - param.T2))
+			.addSegStrokeR(param.T4b, 0)
+			.closeSegStroke();
+		figTopPlate1.addMainOI([ctrPlate, contourCircle(0, 0, R1)]);
+		figTopPlate1.addSecond(contourCircle(0, 0, R9));
 		// figTopPlate2
 		// final figure list
 		rGeome.fig = {
