@@ -25,7 +25,7 @@
      inkscape:document-units="px"
      inkscape:zoom="0.915924"
      inkscape:cx="390.31623"
-     inkscape:cy="2277.4815"
+     inkscape:cy="1636.5987"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="0"
@@ -425,7 +425,10 @@
        width="134.90248"
        height="161.76743"
        x="8.6661119"
-       y="541.92084" />
+       y="541.92084"
+       inkscape:export-filename="pivot_side_x.svg"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
     <rect
        style="fill:#d4aa00;stroke:#d4aa00;stroke-width:0.264583;stroke-linejoin:round"
        id="rect14"
@@ -606,10 +609,6 @@
        style="fill:#ffd5d5;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide);marker-end:url(#ArrowWide)"
        d="m 99.06706,608.23964 h 12.17085"
        id="path54" />
-    <path
-       style="fill:#ffd5d5;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide);marker-end:url(#ArrowWide-6)"
-       d="m 87.096895,598.71458 -0.198422,25.22675"
-       id="path55" />
     <path
        style="fill:#ffd5d5;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide);marker-end:url(#ArrowWide)"
        d="M 72.187862,633.65497 H 86.291234"
@@ -945,5 +944,9 @@
        style="fill:#999999;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide)"
        d="M 96.627147,637.39254 94.46062,642.1589"
        id="path90" />
+    <path
+       style="fill:#ffd5d5;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide);marker-end:url(#ArrowWide-6)"
+       d="m 87.096895,598.71458 -0.198422,25.22675"
+       id="path55" />
   </g>
 </svg>
