@@ -127,12 +127,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
 	const figTopPlate1 = figure();
 	const figTopPlate2 = figure();
+	const figTopWall1 = figure();
+	const figTopWall2 = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
 		const R1 = param.D1 / 2;
 		const R2 = param.D2 / 2;
-		//const pi2 = Math.PI / 2;
+		const pi2 = Math.PI / 2;
 		//const epsilon = 0.01;
 		const Lextra = param.S1 + param.T3a + param.T3b + param.S3 + param.T4a + param.T4b;
 		const X9 = R2 + Lextra;
@@ -141,7 +143,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const R8 = R2 + param.S2min;
 		const outline1Mode = R9 < R8 ? 1 : 2;
 		if (R8 < Y9) {
-			throw `err107: param.W4 ${ffix(param.W4)} is too large compare to S2min ${ffix(param.S2min)} and D2 ${ffix(param.D2)}`;
+			throw `err107: W4 ${ffix(param.W4)} is too large compare to S2min ${ffix(param.S2min)} and D2 ${ffix(param.D2)}`;
 		}
 		const X8 = Math.sqrt(R8 ** 2 - Y9 ** 2);
 		const X8b = outline1Mode === 2 ? X8 : X9;
@@ -150,6 +152,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const Y7 = R2 * Math.sin(a12);
 		//const T2min = param.T4b * Math.tan(Math.atan(Y9 / X9));
 		const T2min = (param.T4b * Y9) / X9;
+		const a8i = pi2 - a12 / 2;
+		const X8i = X8 + param.T2 * Math.tan(pi2 - a8i);
+		const Y8i = Y9 - param.T2;
+		const outline2Mode = X8i < X9 ? 2 : 1;
+		const Y9i = outline2Mode === 2 ? Y9 - param.T2 : Y9 - param.T2 / Math.cos(a12);
+		const a7i = a12 - Math.atan2(param.T2, R2);
+		if (a7i < 0) {
+			throw `err157: T2 ${ffix(param.T2)} is too large compare to A1 ${ffix(radToDeg(2 * a12))}`;
+		}
+		const R2i = R2 - param.T2;
+		const X7i = R2i * Math.cos(a7i);
+		const Y7i = R2i * Math.sin(a7i);
 		const H1tot = param.H11 + param.H12 + param.H13 + param.H14 + param.H15;
 		const H3tot = param.H31 + param.H32 + param.H33 + param.H34 + param.H35 + param.H36;
 		const Htot = H1tot + param.H2 + H3tot;
@@ -199,10 +213,46 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figTopPlate2
 		figTopPlate2.addMainOI([ctrPlate(2), contourCircle(0, 0, R1)]);
 		figTopPlate2.addSecond(contourCircle(0, 0, R9));
+		// figTopWall1
+		const ctrWall1 = contour(X9, Y9);
+		if (outline1Mode === 2) {
+			ctrWall1.addSegStrokeA(X8, Y9).addCornerRounded(param.RR2);
+		}
+		ctrWall1
+			.addSegStrokeA(X7, Y7)
+			.addCornerRounded(param.RR2)
+			.addPointA(-R2, 0)
+			.addPointA(X7, -Y7)
+			.addSegArc2()
+			.addCornerRounded(param.RR2);
+		if (outline1Mode === 2) {
+			ctrWall1.addSegStrokeA(X8, -Y9).addCornerRounded(param.RR2);
+		}
+		ctrWall1.addSegStrokeA(X9, -Y9).addSegStrokeA(X9, -Y9i);
+		if (outline2Mode === 2) {
+			ctrWall1.addSegStrokeA(X8i, -Y8i).addCornerRounded(param.RR2);
+		}
+		ctrWall1
+			.addSegStrokeA(X7i, -Y7i)
+			.addCornerRounded(param.RR2)
+			.addPointA(-R2i, 0)
+			.addPointA(X7i, Y7i)
+			.addSegArc2()
+			.addCornerRounded(param.RR2);
+		if (outline2Mode === 2) {
+			ctrWall1.addSegStrokeA(X8i, Y8i).addCornerRounded(param.RR2);
+		}
+		ctrWall1.addSegStrokeA(X9, Y9i).closeSegStroke();
+		figTopWall1.addMainO(ctrWall1);
+		figTopWall1.addSecond(contourCircle(0, 0, R9));
+		// figTopWall2
+		figTopWall2.addSecond(contourCircle(0, 0, R9));
 		// final figure list
 		rGeome.fig = {
 			faceTopPlate1: figTopPlate1,
-			faceTopPlate2: figTopPlate2
+			faceTopPlate2: figTopPlate2,
+			faceTopWall1: figTopWall1,
+			faceTopWall2: figTopWall2
 		};
 		// step-8 : recipes of the 3D construction
 		// volume
