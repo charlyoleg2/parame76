@@ -3,7 +3,7 @@
 
 // step-1 : import from geometrix
 import type {
-	//tContour,
+	tContour,
 	//tOuterInner,
 	tParamDef,
 	tParamVal,
@@ -150,6 +150,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const Y7 = R2 * Math.sin(a12);
 		//const T2min = param.T4b * Math.tan(Math.atan(Y9 / X9));
 		const T2min = (param.T4b * Y9) / X9;
+		const H1tot = param.H11 + param.H12 + param.H13 + param.H14 + param.H15;
+		const H3tot = param.H31 + param.H32 + param.H33 + param.H34 + param.H35 + param.H36;
+		const Htot = H1tot + param.H2 + H3tot;
+		const Lreturn = param.T5a + param.T5b + 2 * param.S5a + param.S5b + param.T4a + param.T4b;
+		const Lend = R2 + Lextra - Lreturn;
 		// step-5 : checks on the parameter values
 		if (R2 < R1 + param.T1 + param.T2) {
 			throw `err230: D2 ${ffix(2 * R2)} is too small compare to D1 ${ffix(2 * R1)}, T1 ${ffix(param.T1)} and T2 ${ffix(param.T2)}`;
@@ -159,34 +164,41 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// step-6 : any logs
 		rGeome.logstr += `Lextra ${ffix(Lextra)}  Rmax ${ffix(R9)}  Dmax ${ffix(2 * R9)} mm\n`;
+		rGeome.logstr += `Lreturn ${ffix(Lreturn)}  Lend ${ffix(Lend)} mm\n`;
+		rGeome.logstr += `H1tot ${ffix(H1tot)}  H3tot ${ffix(H3tot)}  Htot ${ffix(Htot)} mm\n`;
 		rGeome.logstr += `A1 ${ffix(radToDeg(2 * a12))} degree, T2min ${ffix(T2min)}\n`;
 		rGeome.logstr += `outline1Mode ${outline1Mode}\n`;
 		// step-7 : drawing of the figures
 		// figTopPlate1
-		const ctrPlate = contour(X9, Y9);
-		if (outline1Mode === 2) {
-			ctrPlate.addSegStrokeA(X8, Y9).addCornerRounded(param.RR2);
+		function ctrPlate(plateId: number): tContour {
+			const rCtr = contour(X9, Y9);
+			if (outline1Mode === 2) {
+				rCtr.addSegStrokeA(X8, Y9).addCornerRounded(param.RR2);
+			}
+			rCtr.addSegStrokeA(X7, Y7)
+				.addCornerRounded(param.RR2)
+				.addPointA(-R2, 0)
+				.addPointA(X7, -Y7)
+				.addSegArc2()
+				.addCornerRounded(param.RR2);
+			if (outline1Mode === 2) {
+				rCtr.addSegStrokeA(X8, -Y9).addCornerRounded(param.RR2);
+			}
+			rCtr.addSegStrokeA(X9, -Y9);
+			if (plateId === 2) {
+				rCtr.addSegStrokeR(0, param.T2)
+					.addSegStrokeR(-param.T4b, 0)
+					.addSegStrokeR(0, 2 * (Y9 - param.T2))
+					.addSegStrokeR(param.T4b, 0);
+			}
+			rCtr.closeSegStroke();
+			return rCtr;
 		}
-		ctrPlate
-			.addSegStrokeA(X7, Y7)
-			.addCornerRounded(param.RR2)
-			.addPointA(-R2, 0)
-			.addPointA(X7, -Y7)
-			.addSegArc2()
-			.addCornerRounded(param.RR2);
-		if (outline1Mode === 2) {
-			ctrPlate.addSegStrokeA(X8, -Y9).addCornerRounded(param.RR2);
-		}
-		ctrPlate
-			.addSegStrokeA(X9, -Y9)
-			.addSegStrokeR(0, param.T2)
-			.addSegStrokeR(-param.T4b, 0)
-			.addSegStrokeR(0, 2 * (Y9 - param.T2))
-			.addSegStrokeR(param.T4b, 0)
-			.closeSegStroke();
-		figTopPlate1.addMainOI([ctrPlate, contourCircle(0, 0, R1)]);
+		figTopPlate1.addMainOI([ctrPlate(1), contourCircle(0, 0, R1)]);
 		figTopPlate1.addSecond(contourCircle(0, 0, R9));
 		// figTopPlate2
+		figTopPlate2.addMainOI([ctrPlate(2), contourCircle(0, 0, R1)]);
+		figTopPlate2.addSecond(contourCircle(0, 0, R9));
 		// final figure list
 		rGeome.fig = {
 			faceTopPlate1: figTopPlate1,
