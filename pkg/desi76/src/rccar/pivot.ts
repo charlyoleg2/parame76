@@ -28,7 +28,7 @@ import {
 	contourCircle,
 	//ctrRectangle,
 	figure,
-	//degToRad,
+	degToRad,
 	radToDeg,
 	ffix,
 	pNumber,
@@ -134,6 +134,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-4 : some preparation calculation
 		const R1 = param.D1 / 2;
 		const R2 = param.D2 / 2;
+		const a22 = degToRad(param.A2) / 2;
 		const pi2 = Math.PI / 2;
 		//const epsilon = 0.01;
 		const Lextra = param.S1 + param.T3a + param.T3b + param.S3 + param.T4a + param.T4b;
@@ -164,6 +165,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const R2i = R2 - param.T2;
 		const X7i = R2i * Math.cos(a7i);
 		const Y7i = R2i * Math.sin(a7i);
+		const a6 = Math.PI - a22;
+		const a6b = (a6 + a12) / 2;
 		const H1tot = param.H11 + param.H12 + param.H13 + param.H14 + param.H15;
 		const H3tot = param.H31 + param.H32 + param.H33 + param.H34 + param.H35 + param.H36;
 		const Htot = H1tot + param.H2 + H3tot;
@@ -209,9 +212,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			return rCtr;
 		}
 		figTopPlate1.addMainOI([ctrPlate(1), contourCircle(0, 0, R1)]);
+		figTopPlate1.addSecond(contourCircle(0, 0, R8));
 		figTopPlate1.addSecond(contourCircle(0, 0, R9));
 		// figTopPlate2
 		figTopPlate2.addMainOI([ctrPlate(2), contourCircle(0, 0, R1)]);
+		figTopPlate2.addSecond(contourCircle(0, 0, R8));
 		figTopPlate2.addSecond(contourCircle(0, 0, R9));
 		// figTopWall1
 		const ctrWall1 = contour(X9, Y9);
@@ -244,8 +249,35 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		ctrWall1.addSegStrokeA(X9, Y9i).closeSegStroke();
 		figTopWall1.addMainO(ctrWall1);
+		figTopWall1.addSecond(contourCircle(0, 0, R8));
 		figTopWall1.addSecond(contourCircle(0, 0, R9));
 		// figTopWall2
+		function ctrWall2(ay: number): tContour {
+			const rCtr = contour(X9, ay * Y9);
+			if (outline1Mode === 2) {
+				rCtr.addSegStrokeA(X8, ay * Y9).addCornerRounded(param.RR2);
+			}
+			rCtr.addSegStrokeA(X7, ay * Y7)
+				.addCornerRounded(param.RR2)
+				.addPointAP(ay * a6b, R2)
+				.addPointAP(ay * a6, R2)
+				.addSegArc2()
+				//.addCornerRounded(param.RR2)
+				.addSegStrokeAP(ay * a6, R2i)
+				//.addCornerRounded(param.RR2)
+				.addPointAP(ay * a6b, R2i)
+				.addPointA(X7i, ay * Y7i)
+				.addSegArc2()
+				.addCornerRounded(param.RR2);
+			if (outline2Mode === 2) {
+				rCtr.addSegStrokeA(X8i, ay * Y8i).addCornerRounded(param.RR2);
+			}
+			rCtr.addSegStrokeA(X9, ay * Y9i).closeSegStroke();
+			return rCtr;
+		}
+		figTopWall2.addMainO(ctrWall2(1));
+		figTopWall2.addMainO(ctrWall2(-1));
+		figTopWall2.addSecond(contourCircle(0, 0, R9));
 		figTopWall2.addSecond(contourCircle(0, 0, R9));
 		// final figure list
 		rGeome.fig = {
