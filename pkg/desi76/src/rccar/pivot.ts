@@ -249,6 +249,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		ctrWall1.addSegStrokeA(X9, Y9i).closeSegStroke();
 		figTopWall1.addMainO(ctrWall1);
+		figTopWall1.addMainOI([contourCircle(0, 0, R1 + param.T1), contourCircle(0, 0, R1)]);
 		figTopWall1.addSecond(contourCircle(0, 0, R8));
 		figTopWall1.addSecond(contourCircle(0, 0, R9));
 		// figTopWall2
@@ -277,6 +278,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		figTopWall2.addMainO(ctrWall2(1));
 		figTopWall2.addMainO(ctrWall2(-1));
+		figTopWall2.addMainOI([contourCircle(0, 0, R1 + param.T1), contourCircle(0, 0, R1)]);
 		figTopWall2.addSecond(contourCircle(0, 0, R9));
 		figTopWall2.addSecond(contourCircle(0, 0, R9));
 		// final figure list
