@@ -56,6 +56,7 @@ const pDef: tParamDef = {
 		pNumber('S3', 'mm', 40, 1, 1000, 1),
 		pCheckbox('hollowTop', true),
 		pNumber('RR2', 'mm', 2, 0, 100, 1),
+		pNumber('RR3', 'mm', 5, 0, 100, 1),
 		pNumber('A2', 'degree', 100, 0, 200, 1),
 		pSectionSeparator('side'),
 		pNumber('T3a', 'mm', 2, 1, 100, 1),
@@ -92,6 +93,7 @@ const pDef: tParamDef = {
 		S3: 'pivot_plate.svg',
 		hollowTop: 'pivot_plate.svg',
 		RR2: 'pivot_plate.svg',
+		RR3: 'pivot_plate.svg',
 		A2: 'pivot_wall.svg',
 		T3a: 'pivot_plate.svg',
 		T3b: 'pivot_plate.svg',
@@ -154,6 +156,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		//const T2min = param.T4b * Math.tan(Math.atan(Y9 / X9));
 		const T2min = (param.T4b * Y9) / X9;
 		const a8i = pi2 - a12 / 2;
+		//const X8i = X8 + param.T2 * Math.cotan(a8i);
 		const X8i = X8 + param.T2 * Math.tan(pi2 - a8i);
 		const Y8i = Y9 - param.T2;
 		const outline2Mode = X8i < X9 ? 2 : 1;
@@ -167,6 +170,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const Y7i = R2i * Math.sin(a7i);
 		const a6 = Math.PI - a22;
 		const a6b = (a6 + a12) / 2;
+		const holX1 = R2 + param.S1;
+		//const outline3Mode = X8 < holX1 ? 3 : outline1Mode;
+		const holX1i = holX1 + param.T3b + param.T3a;
+		const holX2i = holX1 + param.S3;
+		const outline4Mode = X8i < holX1i ? 3 : X8i < holX2i ? 2 : 1;
+		function calcHolYi(ix: number): number {
+			const yy = ix * Math.tan(a12) - param.T2 / Math.cos(a12);
+			const ry = Math.min(yy, Y9i);
+			return ry;
+		}
+		const holY1i = calcHolYi(holX1i);
+		const holY2i = calcHolYi(holX2i);
 		const H1tot = param.H11 + param.H12 + param.H13 + param.H14 + param.H15;
 		const H3tot = param.H31 + param.H32 + param.H33 + param.H34 + param.H35 + param.H36;
 		const Htot = H1tot + param.H2 + H3tot;
@@ -211,11 +226,28 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			rCtr.closeSegStroke();
 			return rCtr;
 		}
-		figTopPlate1.addMainOI([ctrPlate(1), contourCircle(0, 0, R1)]);
+		const ctrHollow = contour(holX2i, holY2i).addCornerRounded(param.RR3);
+		if (outline4Mode === 2) {
+			ctrHollow.addSegStrokeA(X8i, Y8i).addCornerRounded(param.RR2);
+		}
+		ctrHollow
+			.addSegStrokeA(holX1i, holY1i)
+			.addCornerRounded(param.RR3)
+			.addSegStrokeA(holX1i, -holY1i)
+			.addCornerRounded(param.RR3);
+		if (outline4Mode === 2) {
+			ctrHollow.addSegStrokeA(X8i, -Y8i).addCornerRounded(param.RR2);
+		}
+		ctrHollow.addSegStrokeA(holX2i, -holY2i).addCornerRounded(param.RR3).closeSegStroke();
+		const ctrsTopPlate1: tContour[] = [ctrPlate(1), contourCircle(0, 0, R1)];
+		if (param.hollowTop === 1) {
+			ctrsTopPlate1.push(ctrHollow);
+		}
+		figTopPlate1.addMainOI(ctrsTopPlate1);
 		figTopPlate1.addSecond(contourCircle(0, 0, R8));
 		figTopPlate1.addSecond(contourCircle(0, 0, R9));
 		// figTopPlate2
-		figTopPlate2.addMainOI([ctrPlate(2), contourCircle(0, 0, R1)]);
+		figTopPlate2.addMainOI([ctrPlate(2), contourCircle(0, 0, R1), ctrHollow]);
 		figTopPlate2.addSecond(contourCircle(0, 0, R8));
 		figTopPlate2.addSecond(contourCircle(0, 0, R9));
 		// figTopWall1
