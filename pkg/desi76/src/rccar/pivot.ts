@@ -49,10 +49,10 @@ const pDef: tParamDef = {
 		pNumber('D2', 'mm', 100, 1, 1000, 1),
 		pNumber('T1', 'mm', 5, 1, 100, 1),
 		pNumber('T2', 'mm', 2, 1, 100, 1),
-		pNumber('W4', 'mm', 100, 1, 1000, 1),
+		pNumber('W4', 'mm', 80, 1, 1000, 1),
 		pSectionSeparator('top details'),
 		pNumber('S1', 'mm', 2, 0, 500, 1),
-		pNumber('S2min', 'mm', 20, 1, 500, 1),
+		pNumber('S2min', 'mm', 30, 1, 500, 1),
 		pNumber('S3', 'mm', 40, 1, 1000, 1),
 		pCheckbox('hollowTop', true),
 		pNumber('RR2', 'mm', 2, 0, 100, 1),
@@ -70,9 +70,9 @@ const pDef: tParamDef = {
 		pNumber('RR5', 'mm', 5, 0, 100, 1),
 		pSectionSeparator('heigths'),
 		pNumber('H11', 'mm', 3, 1, 100, 1),
-		pNumber('H12', 'mm', 3, 1, 1000, 1),
-		pNumber('H13', 'mm', 80, 1, 1000, 1),
-		pNumber('H14', 'mm', 3, 1, 1000, 1),
+		pNumber('H12', 'mm', 10, 1, 1000, 1),
+		pNumber('H13', 'mm', 70, 1, 1000, 1),
+		pNumber('H14', 'mm', 10, 1, 1000, 1),
 		pNumber('H15', 'mm', 3, 1, 100, 1),
 		pNumber('H2', 'mm', 40, 1, 500, 1),
 		pNumber('H31', 'mm', 3, 1, 100, 1),
@@ -192,6 +192,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const Lreturn = param.T5a + param.T5b + 2 * param.S5a + param.S5b + param.T4a + param.T4b;
 		const Lend = R2 + Lextra - Lreturn;
 		const Lplate3 = Lreturn - param.T4b - param.T5b;
+		const H23 = param.H2 + H3tot;
 		// step-5 : checks on the parameter values
 		if (R2 < R1 + param.T1 + param.T2) {
 			throw `err230: D2 ${ffix(2 * R2)} is too small compare to D1 ${ffix(2 * R1)}, T1 ${ffix(param.T1)} and T2 ${ffix(param.T2)}`;
@@ -363,15 +364,91 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		//const partInherit: tInherit[] = [];
 		const partExtrude: tExtrude[] = [];
 		const partList: string[] = [];
-		if (param.H3 > 0) {
-			const eName = `subpax_${designName}_end1`;
+		if (param.H11 > 0) {
+			const eName = `subpax_${designName}_plate1`;
+			const HH = H23 + param.H15 + param.H14 + param.H13 + param.H12;
 			partExtrude.push({
 				outName: eName,
-				face: `${designName}_faceTopEnd`,
+				face: `${designName}_faceTopPlate1`,
 				extrudeMethod: EExtrude.eLinearOrtho,
-				length: param.H3,
+				length: param.H11,
 				rotate: [0, 0, 0],
-				translate: [0, 0, 0]
+				translate: [0, 0, HH]
+			});
+			partList.push(eName);
+		}
+		if (param.H12 > 0) {
+			const eName = `subpax_${designName}_wall11`;
+			const HH = H23 + param.H15 + param.H14 + param.H13;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceTopWall1`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.H12,
+				rotate: [0, 0, 0],
+				translate: [0, 0, HH]
+			});
+			partList.push(eName);
+		}
+		if (param.H13 > 0) {
+			const eName = `subpax_${designName}_wall2`;
+			const HH = H23 + param.H15 + param.H14;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceTopWall2`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.H13,
+				rotate: [0, 0, 0],
+				translate: [0, 0, HH]
+			});
+			partList.push(eName);
+		}
+		if (param.H14 > 0) {
+			const eName = `subpax_${designName}_wall12`;
+			const HH = H23 + param.H15;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceTopWall1`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.H14,
+				rotate: [0, 0, 0],
+				translate: [0, 0, HH]
+			});
+			partList.push(eName);
+		}
+		if (param.H15 > 0) {
+			const eName = `subpax_${designName}_plate2`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceTopPlate2`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.H15,
+				rotate: [0, 0, 0],
+				translate: [0, 0, H23]
+			});
+			partList.push(eName);
+		}
+		if (param.H2 > 0) {
+			const eName = `subpax_${designName}_tube`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceTopTube`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.H2,
+				rotate: [0, 0, 0],
+				translate: [0, 0, H3tot]
+			});
+			partList.push(eName);
+		}
+		if (param.H31 > 0) {
+			const eName = `subpax_${designName}_plate3`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceTopPlate3`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.H31,
+				rotate: [0, 0, 0],
+				translate: [0, 0, H3tot - param.H31]
 			});
 			partList.push(eName);
 		}
