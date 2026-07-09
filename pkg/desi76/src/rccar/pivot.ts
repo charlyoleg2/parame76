@@ -26,7 +26,7 @@ import {
 	//ShapePoint,
 	contour,
 	contourCircle,
-	//ctrRectangle,
+	ctrRectangle,
 	figure,
 	degToRad,
 	radToDeg,
@@ -131,6 +131,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const figTopPlate2 = figure();
 	const figTopWall1 = figure();
 	const figTopWall2 = figure();
+	const figTopTube = figure();
+	const figTopPlate3 = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -171,9 +173,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const a6 = Math.PI - a22;
 		const a6b = (a6 + a12) / 2;
 		const holX1 = R2 + param.S1;
-		//const outline3Mode = X8 < holX1 ? 3 : outline1Mode;
+		const outline3Mode = X8 < holX1 ? 3 : outline1Mode;
+		const holY1 = Math.min(Y9, holX1 * Math.tan(a12));
+		const T22 = param.T2 / 2;
 		const holX1i = holX1 + param.T3b + param.T3a;
-		const holX2i = holX1 + param.S3;
+		const holX2i = holX1i + param.S3;
 		const outline4Mode = X8i < holX1i ? 3 : X8i < holX2i ? 2 : 1;
 		function calcHolYi(ix: number): number {
 			const yy = ix * Math.tan(a12) - param.T2 / Math.cos(a12);
@@ -187,6 +191,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const Htot = H1tot + param.H2 + H3tot;
 		const Lreturn = param.T5a + param.T5b + 2 * param.S5a + param.S5b + param.T4a + param.T4b;
 		const Lend = R2 + Lextra - Lreturn;
+		const Lplate3 = Lreturn - param.T4b - param.T5b;
 		// step-5 : checks on the parameter values
 		if (R2 < R1 + param.T1 + param.T2) {
 			throw `err230: D2 ${ffix(2 * R2)} is too small compare to D1 ${ffix(2 * R1)}, T1 ${ffix(param.T1)} and T2 ${ffix(param.T2)}`;
@@ -311,14 +316,46 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figTopWall2.addMainO(ctrWall2(1));
 		figTopWall2.addMainO(ctrWall2(-1));
 		figTopWall2.addMainOI([contourCircle(0, 0, R1 + param.T1), contourCircle(0, 0, R1)]);
+		figTopWall2.addSecond(contourCircle(0, 0, R8));
 		figTopWall2.addSecond(contourCircle(0, 0, R9));
-		figTopWall2.addSecond(contourCircle(0, 0, R9));
+		// figTopTube
+		const ctrTopTube = contour(X9, Y9);
+		if (outline3Mode === 2) {
+			ctrTopTube.addSegStrokeA(X8, Y9).addCornerRounded(param.RR2);
+		}
+		ctrTopTube
+			.addSegStrokeA(holX1, holY1)
+			.addSegStrokeR(0, -T22)
+			.addSegStrokeR(param.T3b, 0)
+			.addSegStrokeR(0, -2 * (holY1 - T22))
+			.addSegStrokeR(-param.T3b, 0)
+			.addSegStrokeR(0, -T22);
+		if (outline3Mode === 2) {
+			ctrTopTube.addSegStrokeA(X8, -Y9).addCornerRounded(param.RR2);
+		}
+		ctrTopTube
+			.addSegStrokeA(X9, -Y9)
+			.addSegStrokeR(0, param.T2)
+			.addSegStrokeR(-param.T4b, 0)
+			.addSegStrokeR(0, 2 * (Y9 - param.T2))
+			.addSegStrokeR(param.T4b, 0)
+			.closeSegStroke();
+		figTopTube.addMainOI([ctrTopTube, ctrHollow]);
+		figTopTube.addSecond(contourCircle(0, 0, R8));
+		figTopTube.addSecond(contourCircle(0, 0, R9));
+		// figTopPlate3
+		const ctrTopPlate3 = ctrRectangle(Lend + param.T5b, -Y9, Lplate3, 2 * Y9);
+		figTopPlate3.addMainOI([ctrTopPlate3, ctrHollow]);
+		figTopPlate3.addSecond(contourCircle(0, 0, R8));
+		figTopPlate3.addSecond(contourCircle(0, 0, R9));
 		// final figure list
 		rGeome.fig = {
 			faceTopPlate1: figTopPlate1,
 			faceTopPlate2: figTopPlate2,
 			faceTopWall1: figTopWall1,
-			faceTopWall2: figTopWall2
+			faceTopWall2: figTopWall2,
+			faceTopTube: figTopTube,
+			faceTopPlate3: figTopPlate3
 		};
 		// step-8 : recipes of the 3D construction
 		// volume
