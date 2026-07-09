@@ -47,6 +47,7 @@ const pDef: tParamDef = {
 		//pNumber(name, unit, init, min, max, step)
 		pNumber('D1', 'mm', 60, 1, 1000, 1),
 		pNumber('D2', 'mm', 100, 1, 1000, 1),
+		pNumber('D3', 'mm', 20, 1, 500, 1),
 		pNumber('T1', 'mm', 5, 1, 100, 1),
 		pNumber('T2', 'mm', 2, 1, 100, 1),
 		pNumber('W4', 'mm', 80, 1, 1000, 1),
@@ -67,6 +68,7 @@ const pDef: tParamDef = {
 		pNumber('T5b', 'mm', 4, 0, 100, 1),
 		pNumber('S5a', 'mm', 10, 1, 500, 1),
 		pNumber('S5b', 'mm', 80, 1, 500, 1),
+		pNumber('RR4', 'mm', 5, 0, 100, 1),
 		pNumber('RR5', 'mm', 5, 0, 100, 1),
 		pSectionSeparator('heigths'),
 		pNumber('H11', 'mm', 3, 1, 100, 1),
@@ -85,6 +87,7 @@ const pDef: tParamDef = {
 	paramSvg: {
 		D1: 'pivot_plate.svg',
 		D2: 'pivot_plate.svg',
+		D3: 'pivot_side_y.svg',
 		T1: 'pivot_plate.svg',
 		T2: 'pivot_plate.svg',
 		W4: 'pivot_plate.svg',
@@ -103,6 +106,7 @@ const pDef: tParamDef = {
 		T5b: 'pivot_side_x.svg',
 		S5a: 'pivot_side_x.svg',
 		S5b: 'pivot_side_x.svg',
+		RR4: 'pivot_side_y.svg',
 		RR5: 'pivot_side_x.svg',
 		H11: 'pivot_side_x.svg',
 		H12: 'pivot_side_x.svg',
