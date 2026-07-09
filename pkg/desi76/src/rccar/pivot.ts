@@ -142,6 +142,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-4 : some preparation calculation
 		const R1 = param.D1 / 2;
 		const R2 = param.D2 / 2;
+		const R3 = param.D3 / 2;
 		const a22 = degToRad(param.A2) / 2;
 		const pi2 = Math.PI / 2;
 		//const epsilon = 0.01;
@@ -203,6 +204,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		if (param.T2 < T2min) {
 			throw `err233: T2 ${ffix(param.T2)} is too small compare to T2min ${ffix(T2min)}, T4b ${ffix(param.T4b)}, A1 ${ffix(radToDeg(2 * a12))}`;
+		}
+		if (param.H36 < R3) {
+			// TODO
+			throw `err236: D3 ${ffix(param.D3)} is too large compare to H36 ${ffix(param.H36)}`;
 		}
 		// step-6 : any logs
 		rGeome.logstr += `Lextra ${ffix(Lextra)}  Rmax ${ffix(R9)}  Dmax ${ffix(2 * R9)} mm\n`;
