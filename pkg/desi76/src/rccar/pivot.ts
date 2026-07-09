@@ -137,6 +137,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const figTopWall2 = figure();
 	const figTopTube = figure();
 	const figTopPlate3 = figure();
+	const figSidePlate = figure();
+	const figSideArc = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -191,13 +193,20 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		const holY1i = calcHolYi(holX1i);
 		const holY2i = calcHolYi(holX2i);
-		const H1tot = param.H11 + param.H12 + param.H13 + param.H14 + param.H15;
+		const H1432 = param.H12 + param.H13 + param.H14;
+		const H1tot = param.H11 + H1432 + param.H15;
 		const H3tot = param.H31 + param.H32 + param.H33 + param.H34 + param.H35 + param.H36;
 		const Htot = H1tot + param.H2 + H3tot;
 		const Lreturn = param.T5a + param.T5b + 2 * param.S5a + param.S5b + param.T4a + param.T4b;
 		const Lend = R2 + Lextra - Lreturn;
 		const Lplate3 = Lreturn - param.T4b - param.T5b;
 		const H23 = param.H2 + H3tot;
+		const a36a = Math.atan2(Y9, param.H35);
+		const l36 = Math.sqrt(Y9 ** 2 + param.H35 ** 2);
+		const a36b = Math.acos(param.H36 / l36);
+		const a36 = pi2 - (a36a + a36b);
+		const X36 = param.H36 * Math.cos(a36);
+		const Y36 = param.H36 * Math.sin(a36);
 		// step-5 : checks on the parameter values
 		if (R2 < R1 + param.T1 + param.T2) {
 			throw `err230: D2 ${ffix(2 * R2)} is too small compare to D1 ${ffix(2 * R1)}, T1 ${ffix(param.T1)} and T2 ${ffix(param.T2)}`;
@@ -358,6 +367,27 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figTopPlate3.addMainOI([ctrTopPlate3, ctrHollow]);
 		figTopPlate3.addSecond(contourCircle(0, 0, R8));
 		figTopPlate3.addSecond(contourCircle(0, 0, R9));
+		// figSidePlate
+		const ctrSidePlate = contour(-Y9, H3tot - param.H31)
+			.addSegStrokeA(-Y9, param.H36 + param.H35)
+			.addCornerRounded(param.RR4)
+			.addSegStrokeA(-X36, param.H36 + Y36)
+			.addPointA(0, 0)
+			.addPointA(X36, param.H36 + Y36)
+			.addSegArc2()
+			.addSegStrokeA(Y9, param.H36 + param.H35)
+			.addCornerRounded(param.RR4)
+			.addSegStrokeA(Y9, H3tot - param.H31)
+			.closeSegStroke();
+		figSidePlate.addMainOI([ctrSidePlate, contourCircle(0, param.H36, R3)]);
+		figSidePlate.addSecond(ctrRectangle(-Y9, H3tot - param.H31, param.W4, param.H31));
+		figSidePlate.addSecond(ctrRectangle(-Y9, H3tot, param.W4, param.H2));
+		figSidePlate.addSecond(ctrRectangle(-Y9, H23, param.W4, param.H15));
+		figSidePlate.addSecond(ctrRectangle(-R2, H23, 2 * R2, H1tot));
+		figSidePlate.addSecond(ctrRectangle(-Y9, H23 + param.H15, Y9 - Y9i, H1432));
+		figSidePlate.addSecond(ctrRectangle(Y9i, H23 + param.H15, Y9 - Y9i, H1432));
+		figSidePlate.addSecond(ctrRectangle(-Y9, H23 + param.H15 + H1432, param.W4, param.H11));
+		// figSideArc
 		// final figure list
 		rGeome.fig = {
 			faceTopPlate1: figTopPlate1,
@@ -365,7 +395,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			faceTopWall1: figTopWall1,
 			faceTopWall2: figTopWall2,
 			faceTopTube: figTopTube,
-			faceTopPlate3: figTopPlate3
+			faceTopPlate3: figTopPlate3,
+			faceSidePlate: figSidePlate,
+			faceSideArc: figSideArc
 		};
 		// step-8 : recipes of the 3D construction
 		// volume
