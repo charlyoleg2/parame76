@@ -49,7 +49,7 @@
 		"eslint-plugin-svelte": "^3.20.0",
 		"globals": "^17.7.0",
 		"npm-run-all2": "^9.0.2",
-		"prettier": "^3.9.4",
+		"prettier": "^3.9.5",
 		"prettier-plugin-svelte": "^4.1.1",
 		"rimraf": "^6.1.3",
 		"sass": "^1.101.0",
