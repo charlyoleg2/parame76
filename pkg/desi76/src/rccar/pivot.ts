@@ -387,7 +387,36 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figSidePlate.addSecond(ctrRectangle(-Y9, H23 + param.H15, Y9 - Y9i, H1432));
 		figSidePlate.addSecond(ctrRectangle(Y9i, H23 + param.H15, Y9 - Y9i, H1432));
 		figSidePlate.addSecond(ctrRectangle(-Y9, H23 + param.H15 + H1432, param.W4, param.H11));
+		const H3c = param.H36 + param.H35 + param.H34;
+		figSidePlate.addSecond(ctrRectangle(-Y9, H3c, param.T2, param.H33));
+		figSidePlate.addSecond(ctrRectangle(Y9 - param.T2, H3c, param.T2, param.H33));
+		figSidePlate.addSecond(ctrRectangle(-Y9, H3c + param.H33, param.T2, param.H32));
+		figSidePlate.addSecond(ctrRectangle(Y9 - param.T2, H3c + param.H33, param.T2, param.H32));
 		// figSideArc
+		const Xtube = R2 + param.S1 + param.T3b + param.T3a;
+		const Htube = param.H31 + param.H2 + H1tot;
+		const T4ab = param.T4a + param.T4b;
+		const T5ab = param.T5a + param.T5b;
+		const H3b = H3tot - param.H31;
+		const ctrSideArc = contour(Lend + T5ab, H3c)
+			.addSegStrokeR(param.S5a, param.H33)
+			.addCornerRounded(param.RR5)
+			.addSegStrokeR(param.S5b, 0)
+			.addCornerRounded(param.RR5)
+			.addSegStrokeR(param.S5a, -param.H33)
+			.addSegStrokeR(0, param.H33 + param.H32)
+			.addSegStrokeR(-2 * param.S5a - param.S5b, 0)
+			.closeSegStroke();
+		figSideArc.addMainO(ctrSideArc);
+		figSideArc.addSecond(ctrRectangle(-R2, H23, 2 * R2 + Lextra, H1tot));
+		figSideArc.addSecond(ctrRectangle(-R1, H23, 2 * R1, H1tot));
+		figSideArc.addSecond(ctrRectangle(R2 + param.S1, H3tot, Lextra - param.S1, param.H2));
+		figSideArc.addSecond(ctrRectangle(Lend, H3tot - param.H31, Lreturn, param.H31));
+		figSideArc.addSecond(ctrRectangle(Xtube, H3tot - param.H31, param.S3, Htube));
+		figSideArc.addSecond(ctrRectangle(Lend, 0, T5ab, H3b));
+		figSideArc.addSecond(ctrRectangle(Xtube + param.S3, 0, T4ab, H3b));
+		figSideArc.addSecond(ctrRectangle(Lend, param.H36 - R3, T5ab, 2 * R3));
+		figSideArc.addSecond(ctrRectangle(Xtube + param.S3, param.H36 - R3, T4ab, 2 * R3));
 		// final figure list
 		rGeome.fig = {
 			faceTopPlate1: figTopPlate1,
