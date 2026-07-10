@@ -82,7 +82,18 @@ const pDef: tParamDef = {
 		pNumber('H33', 'mm', 30, 1, 500, 1),
 		pNumber('H34', 'mm', 0, 0, 500, 1),
 		pNumber('H35', 'mm', 60, 1, 1000, 1),
-		pNumber('H36', 'mm', 30, 1, 1000, 1)
+		pNumber('H36', 'mm', 30, 1, 1000, 1),
+		pSectionSeparator('relief'),
+		pNumber('U31', 'mm', 2, 1, 100, 1),
+		pNumber('U32', 'mm', 2, 1, 100, 1),
+		pNumber('U33', 'mm', 2, 0, 100, 1),
+		pNumber('RR31', 'mm', 2, 0, 100, 1),
+		pNumber('U41', 'mm', 2, 1, 100, 1),
+		pNumber('U42', 'mm', 2, 1, 100, 1),
+		pNumber('U43', 'mm', 4, 1, 100, 1),
+		pNumber('U51', 'mm', 2, 1, 100, 1),
+		pNumber('U52', 'mm', 2, 1, 100, 1),
+		pNumber('U53', 'mm', 4, 1, 100, 1)
 	],
 	paramSvg: {
 		D1: 'pivot_plate.svg',
@@ -119,7 +130,17 @@ const pDef: tParamDef = {
 		H33: 'pivot_side_x.svg',
 		H34: 'pivot_side_x.svg',
 		H35: 'pivot_side_x.svg',
-		H36: 'pivot_side_x.svg'
+		H36: 'pivot_side_x.svg',
+		U31: 'pivot_side_x.svg',
+		U32: 'pivot_side_x.svg',
+		U33: 'pivot_side_x.svg',
+		RR31: 'pivot_side_x.svg',
+		U41: 'pivot_side_x.svg',
+		U42: 'pivot_side_x.svg',
+		U43: 'pivot_side_x.svg',
+		U51: 'pivot_side_x.svg',
+		U52: 'pivot_side_x.svg',
+		U53: 'pivot_side_x.svg'
 	},
 	sim: {
 		tMax: 180,
@@ -139,6 +160,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const figTopPlate3 = figure();
 	const figSidePlate = figure();
 	const figSideArc = figure();
+	const figRelief3 = figure();
+	const figRelief4 = figure();
+	const figRelief5 = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -207,6 +231,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const a36 = pi2 - (a36a + a36b);
 		const X36 = param.H36 * Math.cos(a36);
 		const Y36 = param.H36 * Math.sin(a36);
+		const U33p = Math.min(param.H15, param.H31) / 2;
+		const U3h = param.H2 + 2 * U33p;
+		const U3w = 2 * holY1;
+		const U33 = param.U33 + U33p;
 		// step-5 : checks on the parameter values
 		if (R2 < R1 + param.T1 + param.T2) {
 			throw `err230: D2 ${ffix(2 * R2)} is too small compare to D1 ${ffix(2 * R1)}, T1 ${ffix(param.T1)} and T2 ${ffix(param.T2)}`;
@@ -214,9 +242,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (param.T2 < T2min) {
 			throw `err233: T2 ${ffix(param.T2)} is too small compare to T2min ${ffix(T2min)}, T4b ${ffix(param.T4b)}, A1 ${ffix(radToDeg(2 * a12))}`;
 		}
-		if (param.H36 < R3) {
-			// TODO
+		if (param.H36 < R3 + param.U51 + param.U52) {
 			throw `err236: D3 ${ffix(param.D3)} is too large compare to H36 ${ffix(param.H36)}`;
+		}
+		if (param.H36 < R3 + param.U41 + param.U42) {
+			throw `err243: D3 ${ffix(param.D3)} is too large compare to H36 ${ffix(param.H36)}`;
+		}
+		if (param.U31 < T22) {
+			throw `err248: U31 ${ffix(param.U31)} is too large compare to T2 ${ffix(param.T2)}`;
 		}
 		// step-6 : any logs
 		rGeome.logstr += `Lextra ${ffix(Lextra)}  Rmax ${ffix(R9)}  Dmax ${ffix(2 * R9)} mm\n`;
@@ -417,6 +450,15 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figSideArc.addSecond(ctrRectangle(Xtube + param.S3, 0, T4ab, H3b));
 		figSideArc.addSecond(ctrRectangle(Lend, param.H36 - R3, T5ab, 2 * R3));
 		figSideArc.addSecond(ctrRectangle(Xtube + param.S3, param.H36 - R3, T4ab, 2 * R3));
+		// figRelief3
+		figRelief3.mergeFigure(figSidePlate, true);
+		const ctrU3e = ctrRectangle(-holY1, H3tot - U33p, U3w, U3h);
+		const xU3i = -holY1 + param.U32;
+		const yU3i = H3tot - U33p + U33;
+		const ctrU3i = ctrRectangle(xU3i, yU3i, U3w - 2 * param.U32, U3h - 2 * U33);
+		figRelief3.addMainOI([ctrU3e, ctrU3i]);
+		// figRelief4
+		// figRelief5
 		// final figure list
 		rGeome.fig = {
 			faceTopPlate1: figTopPlate1,
@@ -426,7 +468,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			faceTopTube: figTopTube,
 			faceTopPlate3: figTopPlate3,
 			faceSidePlate: figSidePlate,
-			faceSideArc: figSideArc
+			faceSideArc: figSideArc,
+			faceRelief3: figRelief3,
+			faceRelief4: figRelief4,
+			faceRelief5: figRelief5
 		};
 		// step-8 : recipes of the 3D construction
 		// volume
