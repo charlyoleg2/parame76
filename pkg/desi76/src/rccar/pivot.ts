@@ -235,6 +235,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const U3h = param.H2 + 2 * U33p;
 		const U3w = 2 * holY1;
 		const U33 = param.U33 + U33p;
+		const aU3 = Math.atan2(U3h, U3w);
+		const U3Sx = param.U31 / (2 * Math.sin(aU3)) + U33 * Math.tan(pi2 - aU3);
+		const U3Sy = param.U31 / (2 * Math.sin(pi2 - aU3));
+		const U3Ex = param.U31 / (2 * Math.sin(aU3));
+		const U3Ey = param.U31 / (2 * Math.sin(pi2 - aU3)) + param.U32 * Math.tan(aU3);
 		// step-5 : checks on the parameter values
 		if (R2 < R1 + param.T1 + param.T2) {
 			throw `err230: D2 ${ffix(2 * R2)} is too small compare to D1 ${ffix(2 * R1)}, T1 ${ffix(param.T1)} and T2 ${ffix(param.T2)}`;
@@ -248,8 +253,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (param.H36 < R3 + param.U41 + param.U42) {
 			throw `err243: D3 ${ffix(param.D3)} is too large compare to H36 ${ffix(param.H36)}`;
 		}
-		if (param.U31 < T22) {
-			throw `err248: U31 ${ffix(param.U31)} is too large compare to T2 ${ffix(param.T2)}`;
+		if (param.U32 < T22) {
+			throw `err248: U32 ${ffix(param.U32)} is too large compare to T2 ${ffix(param.T2)}`;
 		}
 		// step-6 : any logs
 		rGeome.logstr += `Lextra ${ffix(Lextra)}  Rmax ${ffix(R9)}  Dmax ${ffix(2 * R9)} mm\n`;
@@ -453,10 +458,33 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figRelief3
 		figRelief3.mergeFigure(figSidePlate, true);
 		const ctrU3e = ctrRectangle(-holY1, H3tot - U33p, U3w, U3h);
-		const xU3i = -holY1 + param.U32;
-		const yU3i = H3tot - U33p + U33;
-		const ctrU3i = ctrRectangle(xU3i, yU3i, U3w - 2 * param.U32, U3h - 2 * U33);
-		figRelief3.addMainOI([ctrU3e, ctrU3i]);
+		//const xU3i = -holY1 + param.U32;
+		//const yU3i = H3tot - U33p + U33;
+		//const ctrU3i = ctrRectangle(xU3i, yU3i, U3w - 2 * param.U32, U3h - 2 * U33);
+		function ctrU3iSN(iy: number): tContour {
+			const H0 = H3tot + param.H2 / 2;
+			const H1 = H0 - iy * (param.H2 / 2 - param.U33);
+			const rCtr = contour(-holY1 + U3Sx, H1)
+				.addCornerRounded(param.RR31)
+				.addSegStrokeA(holY1 - U3Sx, H1)
+				.addCornerRounded(param.RR31)
+				.addSegStrokeA(0, H0 - iy * U3Sy)
+				.addCornerRounded(param.RR31)
+				.closeSegStroke();
+			return rCtr;
+		}
+		function ctrU3iEW(ix: number): tContour {
+			const X1 = ix * (-holY1 + param.U32);
+			const rCtr = contour(X1, H3tot - U33p + U3Ey)
+				.addCornerRounded(param.RR31)
+				.addSegStrokeA(-ix * U3Ex, H3tot + param.H2 / 2)
+				.addCornerRounded(param.RR31)
+				.addSegStrokeA(X1, H23 + U33p - U3Ey)
+				.addCornerRounded(param.RR31)
+				.closeSegStroke();
+			return rCtr;
+		}
+		figRelief3.addMainOI([ctrU3e, ctrU3iSN(1), ctrU3iSN(-1), ctrU3iEW(1), ctrU3iEW(-1)]);
 		// figRelief4
 		figRelief4.mergeFigure(figSidePlate, true);
 		// figRelief5
