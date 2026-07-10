@@ -458,7 +458,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const ctrU3i = ctrRectangle(xU3i, yU3i, U3w - 2 * param.U32, U3h - 2 * U33);
 		figRelief3.addMainOI([ctrU3e, ctrU3i]);
 		// figRelief4
+		figRelief4.mergeFigure(figSidePlate, true);
 		// figRelief5
+		figRelief5.mergeFigure(figSidePlate, true);
 		// final figure list
 		rGeome.fig = {
 			faceTopPlate1: figTopPlate1,
@@ -612,6 +614,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				length: param.T2,
 				rotate: [pi2, 0, 0],
 				translate: [0, Y9, 0]
+			});
+			partList.push(eName);
+		}
+		if (param.T3b > 0) {
+			const eName = `subpax_${designName}_siderelief3`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceRelief3`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.T3b,
+				rotate: [pi2, 0, -pi2],
+				translate: [param.T3b + R2 + param.S1, 0, 0]
 			});
 			partList.push(eName);
 		}
