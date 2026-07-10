@@ -522,6 +522,54 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			});
 			partList.push(eName);
 		}
+		if (param.T5a > 0) {
+			const eName = `subpax_${designName}_sideplate5`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceSidePlate`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.T5a,
+				rotate: [pi2, 0, -pi2],
+				translate: [param.T5a + Lend + param.T5b, 0, 0]
+			});
+			partList.push(eName);
+		}
+		if (param.T4a > 0) {
+			const eName = `subpax_${designName}_sideplate4`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceSidePlate`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.T4a,
+				rotate: [pi2, 0, -pi2],
+				translate: [param.T4a + Xtube + param.S3, 0, 0]
+			});
+			partList.push(eName);
+		}
+		if (param.T2 > 0) {
+			const eName = `subpax_${designName}_sidearc1`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceSideArc`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.T2,
+				rotate: [pi2, 0, 0],
+				translate: [0, param.T2 - Y9, 0]
+			});
+			partList.push(eName);
+		}
+		if (param.T2 > 0) {
+			const eName = `subpax_${designName}_sidearc2`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceSideArc`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.T2,
+				rotate: [pi2, 0, 0],
+				translate: [0, Y9, 0]
+			});
+			partList.push(eName);
+		}
 		rGeome.vol = {
 			//inherits: partInherit,
 			extrudes: partExtrude,
