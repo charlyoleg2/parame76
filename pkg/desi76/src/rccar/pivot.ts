@@ -406,18 +406,21 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figTopPlate3.addSecond(contourCircle(0, 0, R8));
 		figTopPlate3.addSecond(contourCircle(0, 0, R9));
 		// figSidePlate
-		const ctrSidePlate = contour(-Y9, H3tot - param.H31)
-			.addSegStrokeA(-Y9, param.H36 + param.H35)
-			.addCornerRounded(param.RR4)
-			.addSegStrokeA(-X36, param.H36 + Y36)
-			.addPointA(0, 0)
-			.addPointA(X36, param.H36 + Y36)
-			.addSegArc2()
-			.addSegStrokeA(Y9, param.H36 + param.H35)
-			.addCornerRounded(param.RR4)
-			.addSegStrokeA(Y9, H3tot - param.H31)
-			.closeSegStroke();
-		figSidePlate.addMainOI([ctrSidePlate, contourCircle(0, param.H36, R3)]);
+		function ctrSidePlate(ih: number): tContour {
+			const rCtr = contour(-Y9, H3tot - ih * param.H31)
+				.addSegStrokeA(-Y9, param.H36 + param.H35)
+				.addCornerRounded(param.RR4)
+				.addSegStrokeA(-X36, param.H36 + Y36)
+				.addPointA(0, 0)
+				.addPointA(X36, param.H36 + Y36)
+				.addSegArc2()
+				.addSegStrokeA(Y9, param.H36 + param.H35)
+				.addCornerRounded(param.RR4)
+				.addSegStrokeA(Y9, H3tot - ih * param.H31)
+				.closeSegStroke();
+			return rCtr;
+		}
+		figSidePlate.addMainOI([ctrSidePlate(1), contourCircle(0, param.H36, R3)]);
 		figSidePlate.addSecond(ctrRectangle(-Y9, H3tot - param.H31, param.W4, param.H31));
 		figSidePlate.addSecond(ctrRectangle(-Y9, H3tot, param.W4, param.H2));
 		figSidePlate.addSecond(ctrRectangle(-Y9, H23, param.W4, param.H15));
@@ -487,8 +490,38 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figRelief3.addMainOI([ctrU3e, ctrU3iSN(1), ctrU3iSN(-1), ctrU3iEW(1), ctrU3iEW(-1)]);
 		// figRelief4
 		figRelief4.mergeFigure(figSidePlate, true);
+		function ctrRelief45i(ih: number, iU1: number, iU2: number, iU3: number): tContour {
+			const _X35 = Y9 - iU2;
+			const _Y35 = param.H35 - iU2 * Math.tan(a36 / 2);
+			const _a36a = Math.atan2(_X35, _Y35);
+			const _l36 = Math.sqrt(_X35 ** 2 + _Y35 ** 2);
+			const _R36 = param.H36 - iU2;
+			const _a36b = Math.acos(_R36 / _l36);
+			const _a36 = pi2 - (_a36a + _a36b);
+			const _X36 = _R36 * Math.cos(_a36);
+			const _Y36 = _R36 * Math.sin(_a36);
+			const rCtr = contour(-_X35, ih - iU3)
+				.addCornerRounded(param.RR4)
+				.addSegStrokeA(-_X35, param.H36 + _Y35)
+				.addCornerRounded(param.RR4)
+				.addSegStrokeA(-_X36, param.H36 + _Y36)
+				.addPointA(0, iU2)
+				.addPointA(_X36, param.H36 + _Y36)
+				.addSegArc2()
+				.addSegStrokeA(_X35, param.H36 + _Y35)
+				.addCornerRounded(param.RR4)
+				.addSegStrokeA(_X35, ih - iU3)
+				.addCornerRounded(param.RR4)
+				.closeSegStroke();
+			return rCtr;
+		}
 		// figRelief5
 		figRelief5.mergeFigure(figRelief3, true);
+		figRelief5.addMainOI([
+			ctrSidePlate(0),
+			ctrRelief45i(H3tot, param.U51, param.U52, param.U53),
+			contourCircle(0, param.H36, R3)
+		]);
 		// final figure list
 		rGeome.fig = {
 			faceTopPlate1: figTopPlate1,
