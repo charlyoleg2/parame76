@@ -89,10 +89,10 @@ const pDef: tParamDef = {
 		pNumber('U33', 'mm', 2, 0, 100, 1),
 		pNumber('RR31', 'mm', 2, 0, 100, 1),
 		pNumber('U41', 'mm', 2, 1, 100, 1),
-		pNumber('U42', 'mm', 2, 1, 100, 1),
+		pNumber('U42', 'mm', 3, 1, 100, 1),
 		pNumber('U43', 'mm', 4, 1, 100, 1),
 		pNumber('U51', 'mm', 2, 1, 100, 1),
-		pNumber('U52', 'mm', 2, 1, 100, 1),
+		pNumber('U52', 'mm', 3, 1, 100, 1),
 		pNumber('U53', 'mm', 4, 1, 100, 1)
 	],
 	paramSvg: {
@@ -258,6 +258,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		if (param.U32 < T22) {
 			throw `err248: U32 ${ffix(param.U32)} is too large compare to T2 ${ffix(param.T2)}`;
+		}
+		if (param.U42 <= param.T2) {
+			throw `err263: U42 ${ffix(param.U42)} is too large compare to T2 ${ffix(param.T2)}`;
 		}
 		// step-6 : any logs
 		rGeome.logstr += `Lextra ${ffix(Lextra)}  Rmax ${ffix(R9)}  Dmax ${ffix(2 * R9)} mm\n`;
@@ -534,6 +537,26 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.closeSegStroke();
 			return rCtr;
 		}
+		const ctrRelief4e = contour(-Y9 + param.T2, H23 + param.H15)
+			.addSegStrokeA(-Y9 + param.T2, H3tot)
+			.addSegStrokeA(-Y9, H3tot)
+			.addSegStrokeA(-Y9, param.H36 + param.H35)
+			.addCornerRounded(param.RR4)
+			.addSegStrokeA(-X36, param.H36 + Y36)
+			.addPointA(0, 0)
+			.addPointA(X36, param.H36 + Y36)
+			.addSegArc2()
+			.addSegStrokeA(Y9, param.H36 + param.H35)
+			.addCornerRounded(param.RR4)
+			.addSegStrokeA(Y9, H3tot)
+			.addSegStrokeA(Y9 - param.T2, H3tot)
+			.addSegStrokeA(Y9 - param.T2, H23 + param.H15)
+			.closeSegStroke();
+		figRelief4.addMainOI([
+			ctrRelief4e,
+			ctrRelief45i(H23 + param.H15, param.U41, param.U42, param.U43),
+			contourCircle(0, param.H36, R3)
+		]);
 		// figRelief5
 		figRelief5.mergeFigure(figRelief3, true);
 		figRelief5.addMainOI([
@@ -718,6 +741,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				length: param.T5b,
 				rotate: [pi2, 0, -pi2],
 				translate: [param.T5b + Lend, 0, 0]
+			});
+			partList.push(eName);
+		}
+		if (param.T4b > 0) {
+			const eName = `subpax_${designName}_siderelief4`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceRelief4`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.T4b,
+				rotate: [pi2, 0, -pi2],
+				translate: [R2 + Lextra, 0, 0]
 			});
 			partList.push(eName);
 		}
