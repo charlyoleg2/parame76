@@ -506,6 +506,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const _a36 = pi2 - (_a36a + _a36b);
 			const _X36 = _R36 * Math.cos(_a36);
 			const _Y36 = _R36 * Math.sin(_a36);
+			const _R3 = R3 + iU1;
+			const _a3 = Math.asin(iU1 / (2 * _R3));
+			const _Y3 = _R3 * Math.cos(_a3);
 			const rCtr = contour(-_X35, ih - iU3)
 				.addCornerRounded(param.RR4)
 				.addSegStrokeA(-_X35, param.H36 + _Y35)
@@ -517,6 +520,16 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.addSegStrokeA(_X35, param.H36 + _Y35)
 				.addCornerRounded(param.RR4)
 				.addSegStrokeA(_X35, ih - iU3)
+				.addCornerRounded(param.RR4)
+				.addSegStrokeA(iU1 / 2, ih - iU3)
+				.addCornerRounded(param.RR4)
+				.addSegStrokeA(iU1 / 2, param.H36 + _Y3)
+				.addCornerRounded(param.RR4)
+				.addPointA(0, param.H36 - R3 - iU1)
+				.addPointA(-iU1 / 2, param.H36 + _Y3)
+				.addSegArc2()
+				.addCornerRounded(param.RR4)
+				.addSegStrokeA(-iU1 / 2, ih - iU3)
 				.addCornerRounded(param.RR4)
 				.closeSegStroke();
 			return rCtr;
@@ -693,6 +706,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				length: param.T3b,
 				rotate: [pi2, 0, -pi2],
 				translate: [param.T3b + R2 + param.S1, 0, 0]
+			});
+			partList.push(eName);
+		}
+		if (param.T5b > 0) {
+			const eName = `subpax_${designName}_siderelief5`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceRelief5`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.T5b,
+				rotate: [pi2, 0, -pi2],
+				translate: [param.T5b + Lend, 0, 0]
 			});
 			partList.push(eName);
 		}
