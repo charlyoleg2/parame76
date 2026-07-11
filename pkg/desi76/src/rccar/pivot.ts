@@ -131,16 +131,16 @@ const pDef: tParamDef = {
 		H34: 'pivot_side_x.svg',
 		H35: 'pivot_side_x.svg',
 		H36: 'pivot_side_x.svg',
-		U31: 'pivot_side_x.svg',
-		U32: 'pivot_side_x.svg',
-		U33: 'pivot_side_x.svg',
-		RR31: 'pivot_side_x.svg',
-		U41: 'pivot_side_x.svg',
-		U42: 'pivot_side_x.svg',
-		U43: 'pivot_side_x.svg',
-		U51: 'pivot_side_x.svg',
-		U52: 'pivot_side_x.svg',
-		U53: 'pivot_side_x.svg'
+		U31: 'pivot_relief35.svg',
+		U32: 'pivot_relief35.svg',
+		U33: 'pivot_relief35.svg',
+		RR31: 'pivot_relief35.svg',
+		U41: 'pivot_relief4.svg',
+		U42: 'pivot_relief4.svg',
+		U43: 'pivot_relief4.svg',
+		U51: 'pivot_relief35.svg',
+		U52: 'pivot_relief35.svg',
+		U53: 'pivot_relief35.svg'
 	},
 	sim: {
 		tMax: 180,
@@ -488,7 +488,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figRelief4
 		figRelief4.mergeFigure(figSidePlate, true);
 		// figRelief5
-		figRelief5.mergeFigure(figSidePlate, true);
+		figRelief5.mergeFigure(figRelief3, true);
 		// final figure list
 		rGeome.fig = {
 			faceTopPlate1: figTopPlate1,
