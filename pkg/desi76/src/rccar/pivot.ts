@@ -227,6 +227,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const H23 = param.H2 + H3tot;
 		const a36a = Math.atan2(Y9, param.H35);
 		const l36 = Math.sqrt(Y9 ** 2 + param.H35 ** 2);
+		if (l36 < param.H36) {
+			throw `err229: H36 ${ffix(param.H36)} is too big compare to l36 ${ffix(l36)}`;
+		}
 		const a36b = Math.acos(param.H36 / l36);
 		const a36 = pi2 - (a36a + a36b);
 		const X36 = param.H36 * Math.cos(a36);
@@ -496,6 +499,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const _a36a = Math.atan2(_X35, _Y35);
 			const _l36 = Math.sqrt(_X35 ** 2 + _Y35 ** 2);
 			const _R36 = param.H36 - iU2;
+			if (_l36 < _R36) {
+				throw `err503: _R36 ${ffix(_R36)} is too big compare to _l36 ${ffix(_l36)}`;
+			}
 			const _a36b = Math.acos(_R36 / _l36);
 			const _a36 = pi2 - (_a36a + _a36b);
 			const _X36 = _R36 * Math.cos(_a36);
