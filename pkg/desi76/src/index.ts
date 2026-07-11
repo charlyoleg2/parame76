@@ -11,3 +11,4 @@ export * from './bot/long2d.ts';
 export * from './bot/losange.ts';
 export * from './rccar/lift.ts';
 export * from './rccar/pivot.ts';
+export * from './rccar/wheel.ts';
