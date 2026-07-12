@@ -104,7 +104,6 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		//const epsilon = 0.01;
 		const a62 = Math.PI / param.N6; // 2*Pi/(2*N6)
 		function calcR(ia: number, ir1: number, ir2: number): number {
-			// TODO : Fix this calculation to get the right tangents
 			const xx = Math.abs(ir2 * Math.cos(ia) - ir1);
 			const yy = ir2 * Math.sin(ia);
 			const aa = Math.atan2(yy, xx);
@@ -112,8 +111,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const rR = ll / Math.cos(aa);
 			return rR;
 		}
-		const RL = calcR(a62, R5, R56);
-		const RH = calcR(a62, R6, R56);
+		const RL = calcR(a62 / 2, R5, R56);
+		const RH = calcR(a62 / 2, R6, R56);
 		const Rpneu = R6;
 		const Rtrans = R1 + param.RD2 + param.RD3 + param.RD4;
 		const Xtrans1 = param.W1 + param.W2 + param.W3;
