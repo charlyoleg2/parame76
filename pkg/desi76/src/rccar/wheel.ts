@@ -105,7 +105,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const a62 = Math.PI / param.N6; // 2*Pi/(2*N6)
 		const Rpneu = R6;
 		const Rtrans = R1 + param.RD2 + param.RD3 + param.RD4;
-		const Wtot = param.W1 + param.W2 + param.W3 + 2 * param.W4 + param.W5 + param.W6;
+		const Xtrans1 = param.W1 + param.W2 + param.W3;
+		const Wtot = Xtrans1 + 2 * param.W4 + param.W5 + param.W6;
 		// step-5 : checks on the parameter values
 		if (Rpneu < Rtrans) {
 			throw `err230: Dpneu ${ffix(2 * Rpneu)} is too small compare to Dtrans ${ffix(2 * Rtrans)}`;
@@ -205,6 +206,42 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				length: param.W2,
 				rotate: [0, 0, 0],
 				translate: [0, 0, param.W1]
+			});
+			partList.push(eName);
+		}
+		if (param.W4 > 0) {
+			const eName = `subpax_${designName}_trans1`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceTrans1`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.W4,
+				rotate: [0, 0, 0],
+				translate: [0, 0, Xtrans1]
+			});
+			partList.push(eName);
+		}
+		if (param.W5 > 0) {
+			const eName = `subpax_${designName}_trans2`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceTrans2`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.W5,
+				rotate: [0, 0, 0],
+				translate: [0, 0, Xtrans1 + param.W4]
+			});
+			partList.push(eName);
+		}
+		if (param.W4 > 0) {
+			const eName = `subpax_${designName}_trans3`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceTrans1`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.W4,
+				rotate: [0, 0, 0],
+				translate: [0, 0, Xtrans1 + param.W4 + param.W5]
 			});
 			partList.push(eName);
 		}
