@@ -3,7 +3,7 @@
 
 // step-1 : import from geometrix
 import type {
-	//tContour,
+	tContour,
 	//tOuterInner,
 	tParamDef,
 	tParamVal,
@@ -24,7 +24,7 @@ import {
 	//point,
 	//Point,
 	//ShapePoint,
-	//contour,
+	contour,
 	contourCircle,
 	//ctrRectangle,
 	figure,
@@ -94,9 +94,16 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	try {
 		// step-4 : some preparation calculation
 		const R1 = param.D1 / 2;
+		const R2 = R1 + param.RD2;
+		const R3 = R2 + param.RD3;
+		const R4 = R3 + param.RD4;
+		const R5 = R1 + param.RD5;
+		const R6 = R5 + param.RD6;
+		const R56 = R5 + param.RD6 / 2;
 		//const pi2 = Math.PI / 2;
 		//const epsilon = 0.01;
-		const Rpneu = R1 + param.RD2 + param.RD5 + param.RD6;
+		const a62 = Math.PI / param.N6; // 2*Pi/(2*N6)
+		const Rpneu = R6;
 		const Rtrans = R1 + param.RD2 + param.RD3 + param.RD4;
 		const Wtot = param.W1 + param.W2 + param.W3 + 2 * param.W4 + param.W5 + param.W6;
 		// step-5 : checks on the parameter values
@@ -107,18 +114,69 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `Wtot ${ffix(Wtot)}  Dpneu ${ffix(2 * Rpneu)}  Dtrans ${ffix(2 * Rtrans)} mm\n`;
 		// step-7 : drawing of the figures
 		// figTube
-		figTube.addMainO(contourCircle(0, 0, R1));
+		figTube.addMainOI([contourCircle(0, 0, R2), contourCircle(0, 0, R1)]);
 		// figPneu
+		const ctrPneu = contour(R6, 0);
+		for (let ii = 0; ii < param.N6; ii++) {
+			const iaH1 = ii * 2 * a62;
+			const iaM1 = iaH1 + a62 / 2;
+			const iaL = iaH1 + a62;
+			const iaM2 = iaL + a62 / 2;
+			const iaH2 = iaL + a62;
+			const Rnotch = param.RD6;
+			ctrPneu
+				.addPointAP(iaM1, R56)
+				.addSegArc(Rnotch, false, true)
+				.addPointAP(iaL, R5)
+				.addSegArc(Rnotch, false, false)
+				.addPointAP(iaM2, R56)
+				.addSegArc(Rnotch, false, false)
+				.addPointAP(iaH2, R6)
+				.addSegArc(Rnotch, false, true);
+		}
+		//ctrPneu.closeSegStroke();
+		figPneu.addMainOI([ctrPneu, contourCircle(0, 0, R1)]);
+		figPneu.addSecond(contourCircle(0, 0, R2));
 		// figTrans1
+		figTrans1.mergeFigure(figPneu, true);
+		figTrans1.addMainOI([contourCircle(0, 0, R4), contourCircle(0, 0, R1)]);
 		// figTrans2
+		figTrans2.mergeFigure(figTrans1, true);
+		figTrans2.addMainOI([contourCircle(0, 0, R3), contourCircle(0, 0, R1)]);
 		// figCut
+		function ctrCut(iy: number): tContour {
+			const rCtr = contour(0, iy * R1)
+				.addSegStrokeR(0, iy * param.RD2)
+				.addSegStrokeR(param.W1, 0)
+				.addSegStrokeR(0, iy * param.RD5)
+				.addSegStrokeR(param.W2, 0);
+			if (param.W3 > 0) {
+				rCtr.addSegStrokeR(0, -iy * param.RD5)
+					.addSegStrokeR(param.W3, 0)
+					.addSegStrokeR(0, iy * (param.RD3 + param.RD4));
+			} else {
+				rCtr.addSegStrokeR(0, iy * (param.RD3 + param.RD4 - param.RD5));
+			}
+			rCtr.addSegStrokeR(param.W4, 0)
+				.addSegStrokeR(0, -iy * param.RD4)
+				.addSegStrokeR(param.W5, 0)
+				.addSegStrokeR(0, iy * param.RD4)
+				.addSegStrokeR(param.W4, 0)
+				.addSegStrokeR(0, -iy * (param.RD3 + param.RD4))
+				.addSegStrokeR(param.W6, 0)
+				.addSegStrokeR(0, -iy * param.RD2)
+				.closeSegStroke();
+			return rCtr;
+		}
+		figCut.addMainO(ctrCut(1));
+		figCut.addMainO(ctrCut(-1));
 		// final figure list
 		rGeome.fig = {
-			faceTube: figTube,
 			facePneu: figPneu,
+			faceCut: figCut,
 			faceTrans1: figTrans1,
 			faceTrans2: figTrans2,
-			faceCut: figCut
+			faceTube: figTube
 		};
 		// step-8 : recipes of the 3D construction
 		// volume
@@ -126,6 +184,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		//const partInherit: tInherit[] = [];
 		const partExtrude: tExtrude[] = [];
 		const partList: string[] = [];
+		if (Wtot > 0) {
+			const eName = `subpax_${designName}_tube`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceTube`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: Wtot,
+				rotate: [0, 0, 0],
+				translate: [0, 0, 0]
+			});
+			partList.push(eName);
+		}
 		if (param.W2 > 0) {
 			const eName = `subpax_${designName}_pneu`;
 			partExtrude.push({
