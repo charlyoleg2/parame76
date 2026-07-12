@@ -49,9 +49,9 @@ const pDef: tParamDef = {
 		pNumber('RD2', 'mm', 1, 1, 500, 1),
 		pNumber('RD3', 'mm', 5, 1, 500, 1),
 		pNumber('RD4', 'mm', 2, 1, 500, 1),
-		pNumber('RD5', 'mm', 20, 1, 500, 1),
+		pNumber('RD5', 'mm', 40, 1, 500, 1),
 		pNumber('RD6', 'mm', 4, 1, 500, 1),
-		pNumber('N6', 'teeth', 20, 5, 1000, 1),
+		pNumber('N6', 'teeth', 50, 5, 500, 1),
 		pSectionSeparator('widths'),
 		pNumber('W1', 'mm', 1, 0, 500, 1),
 		pNumber('W2', 'mm', 20, 1, 500, 1),
@@ -103,6 +103,16 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		//const pi2 = Math.PI / 2;
 		//const epsilon = 0.01;
 		const a62 = Math.PI / param.N6; // 2*Pi/(2*N6)
+		function calcR(ia: number, ir1: number, ir2: number): number {
+			const xx = Math.abs(ir2 * Math.cos(ia) - ir1);
+			const yy = ir2 * Math.sin(ia);
+			const aa = Math.atan2(yy, xx);
+			const ll = Math.sqrt(xx ** 2 + yy ** 2) / 2;
+			const rR = ll / Math.cos(aa);
+			return rR;
+		}
+		const RL = calcR(a62, R5, R56);
+		const RH = calcR(a62, R6, R56);
 		const Rpneu = R6;
 		const Rtrans = R1 + param.RD2 + param.RD3 + param.RD4;
 		const Xtrans1 = param.W1 + param.W2 + param.W3;
@@ -113,6 +123,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// step-6 : any logs
 		rGeome.logstr += `Wtot ${ffix(Wtot)}  Dpneu ${ffix(2 * Rpneu)}  Dtrans ${ffix(2 * Rtrans)} mm\n`;
+		rGeome.logstr += `RL ${ffix(RL)}  RH ${ffix(RH)} mm\n`;
 		// step-7 : drawing of the figures
 		// figTube
 		figTube.addMainOI([contourCircle(0, 0, R2), contourCircle(0, 0, R1)]);
@@ -124,16 +135,15 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const iaL = iaH1 + a62;
 			const iaM2 = iaL + a62 / 2;
 			const iaH2 = iaL + a62;
-			const Rnotch = param.RD6;
 			ctrPneu
 				.addPointAP(iaM1, R56)
-				.addSegArc(Rnotch, false, true)
+				.addSegArc(RH, false, true)
 				.addPointAP(iaL, R5)
-				.addSegArc(Rnotch, false, false)
+				.addSegArc(RL, false, false)
 				.addPointAP(iaM2, R56)
-				.addSegArc(Rnotch, false, false)
+				.addSegArc(RL, false, false)
 				.addPointAP(iaH2, R6)
-				.addSegArc(Rnotch, false, true);
+				.addSegArc(RH, false, true);
 		}
 		//ctrPneu.closeSegStroke();
 		figPneu.addMainOI([ctrPneu, contourCircle(0, 0, R1)]);
