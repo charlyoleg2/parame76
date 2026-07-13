@@ -156,6 +156,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
 	const figTopPlate1 = figure();
 	const figTopPlate2 = figure();
+	const figTopH5 = figure();
 	const figTopWall1 = figure();
 	const figTopWall2 = figure();
 	const figTopTube = figure();
@@ -220,9 +221,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const holY1i = calcHolYi(holX1i);
 		const holY2i = calcHolYi(holX2i);
 		const H1432 = param.H12 + param.H13 + param.H14;
-		const H1tot = param.H11 + H1432 + param.H15;
+		const H1tot15 = param.H11 + H1432 + param.H15;
+		const H1tot = H1tot15 + 2 * param.H5;
 		const H3tot = param.H31 + param.H32 + param.H33 + param.H34 + param.H35 + param.H36;
-		const Htot = H1tot + param.H2 + H3tot;
+		const Htot = H1tot15 + param.H2 + H3tot + param.H5;
 		const Lreturn = param.T5a + param.T5b + 2 * param.S5a + param.S5b + param.T4a + param.T4b;
 		const Lend = R2 + Lextra - Lreturn;
 		const Lplate3 = Lreturn - param.T4b - param.T5b;
@@ -320,6 +322,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figTopPlate2.addMainOI([ctrPlate(2), contourCircle(0, 0, R1), ctrHollow]);
 		figTopPlate2.addSecond(contourCircle(0, 0, R8));
 		figTopPlate2.addSecond(contourCircle(0, 0, R9));
+		// figTopH5
+		figTopH5.addMainOI([contourCircle(0, 0, R2), contourCircle(0, 0, R1)]);
+		figTopH5.mergeFigure(figTopPlate2, true);
 		// figTopWall1
 		const ctrWall1 = contour(X9, Y9);
 		if (outline1Mode === 2) {
@@ -432,7 +437,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figSidePlate.addSecond(ctrRectangle(-Y9, H3tot - param.H31, param.W4, param.H31));
 		figSidePlate.addSecond(ctrRectangle(-Y9, H3tot, param.W4, param.H2));
 		figSidePlate.addSecond(ctrRectangle(-Y9, H23, param.W4, param.H15));
-		figSidePlate.addSecond(ctrRectangle(-R2, H23, 2 * R2, H1tot));
+		figSidePlate.addSecond(ctrRectangle(-R2, H23 - param.H5, 2 * R2, H1tot));
 		figSidePlate.addSecond(ctrRectangle(-Y9, H23 + param.H15, Y9 - Y9i, H1432));
 		figSidePlate.addSecond(ctrRectangle(Y9i, H23 + param.H15, Y9 - Y9i, H1432));
 		figSidePlate.addSecond(ctrRectangle(-Y9, H23 + param.H15 + H1432, param.W4, param.H11));
@@ -443,7 +448,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figSidePlate.addSecond(ctrRectangle(Y9 - param.T2, H3c + param.H33, param.T2, param.H32));
 		// figSideArc
 		const Xtube = R2 + param.S1 + param.T3b + param.T3a;
-		const Htube = param.H31 + param.H2 + H1tot;
+		const Htube = param.H31 + param.H2 + H1tot15;
 		const T4ab = param.T4a + param.T4b;
 		const T5ab = param.T5a + param.T5b;
 		const H3b = H3tot - param.H31;
@@ -457,8 +462,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeR(-2 * param.S5a - param.S5b, 0)
 			.closeSegStroke();
 		figSideArc.addMainO(ctrSideArc);
-		figSideArc.addSecond(ctrRectangle(-R2, H23, 2 * R2 + Lextra, H1tot));
-		figSideArc.addSecond(ctrRectangle(-R1, H23, 2 * R1, H1tot));
+		figSideArc.addSecond(ctrRectangle(-R2, H23, 2 * R2 + Lextra, H1tot15));
+		figSideArc.addSecond(ctrRectangle(-R1, H23 - param.H5, 2 * R1, H1tot));
 		figSideArc.addSecond(ctrRectangle(R2 + param.S1, H3tot, Lextra - param.S1, param.H2));
 		figSideArc.addSecond(ctrRectangle(Lend, H3tot - param.H31, Lreturn, param.H31));
 		figSideArc.addSecond(ctrRectangle(Xtube, H3tot - param.H31, param.S3, Htube));
@@ -570,6 +575,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.fig = {
 			faceTopPlate1: figTopPlate1,
 			faceTopPlate2: figTopPlate2,
+			faceTopH5: figTopH5,
 			faceTopWall1: figTopWall1,
 			faceTopWall2: figTopWall2,
 			faceTopTube: figTopTube,
@@ -647,6 +653,30 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				length: param.H15,
 				rotate: [0, 0, 0],
 				translate: [0, 0, H23]
+			});
+			partList.push(eName);
+		}
+		if (param.H5 > 0) {
+			const eName = `subpax_${designName}_h51`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceTopH5`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.H5,
+				rotate: [0, 0, 0],
+				translate: [0, 0, Htot - param.H5]
+			});
+			partList.push(eName);
+		}
+		if (param.H5 > 0) {
+			const eName = `subpax_${designName}_h52`;
+			partExtrude.push({
+				outName: eName,
+				face: `${designName}_faceTopH5`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.H5,
+				rotate: [0, 0, 0],
+				translate: [0, 0, H23 - param.H5]
 			});
 			partList.push(eName);
 		}
