@@ -13,7 +13,8 @@ import {
 	losangeDef,
 	liftDef,
 	pivotDef,
-	wheelDef
+	wheelDef,
+	footDef
 } from 'desi76';
 
 const designList: tAllPageDef = {
@@ -27,6 +28,7 @@ const designList: tAllPageDef = {
 	'desi76/lift': liftDef,
 	'desi76/pivot': pivotDef,
 	'desi76/wheel': wheelDef,
+	'desi76/foot': footDef,
 	'desi76/cuisine': cuisineDef,
 	'desi76/voila': voilaDef
 };

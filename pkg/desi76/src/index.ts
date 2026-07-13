@@ -12,3 +12,4 @@ export * from './bot/losange.ts';
 export * from './rccar/lift.ts';
 export * from './rccar/pivot.ts';
 export * from './rccar/wheel.ts';
+export * from './rccar/foot.ts';
