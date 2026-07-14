@@ -556,7 +556,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// step-10 : final log message
 		// finalize
-		rGeome.logstr += 'Long2D drawn successfully!\n';
+		rGeome.logstr += 'Losange drawn successfully!\n';
 		rGeome.calcErr = false;
 	} catch (emsg) {
 		rGeome.logstr += emsg as string;

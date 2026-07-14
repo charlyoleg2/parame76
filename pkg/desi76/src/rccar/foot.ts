@@ -4,41 +4,41 @@
 // step-1 : import from geometrix
 import type {
 	//Contour,
-	Figure,
+	//Figure,
 	//tContour,
 	//tOuterInner,
 	tParamDef,
 	tParamVal,
 	tGeom,
-	DesignParam,
+	//DesignParam,
 	tInherit,
 	tExtrude,
 	tSubInst,
 	//tSubDesign
 	//Transform2d,
-	Transform3d,
+	//Transform3d,
 	tPageDef
 } from 'geometrix';
 import {
 	designParam,
 	checkGeom,
 	prefixLog,
-	point,
-	Point,
+	//point,
+	//Point,
 	//ShapePoint,
 	//line,
 	//vector,
 	//contour,
-	contourCircle,
-	ctrRectangle,
+	//contourCircle,
+	//ctrRectangle,
 	figure,
-	degToRad,
-	radToDeg,
+	//degToRad,
+	//radToDeg,
 	//pointCoord,
 	ffix,
 	pNumber,
-	//pCheckbox,
-	pDropdown,
+	pCheckbox,
+	//pDropdown,
 	pSectionSeparator,
 	initGeom,
 	//transform2d,
@@ -47,9 +47,9 @@ import {
 	EBVolume
 } from 'geometrix';
 //import { triAPiPi, triAArA, triALArLL, triLALrL, triALLrL, triALLrLAA, triLLLrA, triLLLrAAA } from 'triangule';
-import { triLLLrAAA, triLLLrA } from 'triangule';
-import { scaraDef } from '../bot/scara.ts';
-import { scarabaseDef } from '../bot/scarabase.ts';
+//import { liftDef } from './lift.ts';
+//import { pivotDef } from './pivot.ts';
+import { wheelDef } from './wheel.ts';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
@@ -57,101 +57,157 @@ const pDef: tParamDef = {
 	partName: 'foot',
 	params: [
 		//pNumber(name, unit, init, min, max, step)
-		//pNumber('L0', 'mm', 100, 1, 1000, 1),
-		pNumber('LA1', 'mm', 200, 1, 1000, 1),
-		pNumber('LA2', 'mm', 200, 1, 1000, 1),
-		pNumber('LB1', 'mm', 200, 1, 1000, 1),
-		pNumber('LB2', 'mm', 200, 1, 1000, 1),
-		pSectionSeparator('Joint diameters'),
-		pNumber('D0i', 'mm', 50, 1, 1000, 1),
-		pNumber('D0e', 'mm', 90, 1, 1000, 1),
-		pNumber('DAi', 'mm', 30, 1, 1000, 1),
-		pNumber('DAe', 'mm', 70, 1, 1000, 1),
-		pNumber('DBi', 'mm', 30, 1, 1000, 1),
-		pNumber('DBe', 'mm', 70, 1, 1000, 1),
-		pNumber('DEi', 'mm', 10, 1, 1000, 1),
-		pNumber('DEe', 'mm', 30, 1, 1000, 1),
-		pSectionSeparator('Wall thickness'),
-		pNumber('T1', 'mm', 4, 1, 100, 1),
-		pNumber('T3', 'mm', 3, 1, 100, 1),
-		pNumber('S12', 'mm', 1, 0, 100, 1),
-		pNumber('Ri', 'mm', 1, 0, 10, 0.1),
-		pNumber('Re', 'mm', 0.4, 0, 10, 0.1),
-		pNumber('E2', 'mm', 0.4, -10, 10, 0.1),
-		pNumber('E3', 'mm', 0.7, -10, 10, 0.1),
-		pSectionSeparator('Heights'),
-		pNumber('EH1', 'mm', 50, 1, 1000, 1),
-		pNumber('EH2', 'mm', 8, 1, 1000, 1),
-		pNumber('EH3', 'mm', 15, 0, 1000, 1),
-		pNumber('E1', 'mm', 0.5, -10, 10, 0.1),
-		pSectionSeparator('Base'),
-		pNumber('L3', 'mm', 30, 0, 1000, 1),
-		pNumber('L4', 'mm', 20, 1, 100, 1),
-		pNumber('A5', 'degree', 90, 0, 180, 1),
-		pNumber('W5', 'mm', 40, 1, 1000, 1),
-		pNumber('W6', 'mm', 10, 0, 1000, 1),
-		pNumber('R34', 'mm', 2, 0, 10, 0.1),
-		pNumber('T4', 'mm', 10, 1, 100, 1),
-		pNumber('W8', 'mm', 20, 1, 1000, 1),
-		pNumber('H8', 'mm', 30, 1, 1000, 1),
-		pNumber('D8', 'mm', 5, 1, 1000, 1),
-		pSectionSeparator('Assembly'),
-		pDropdown('positionDriver', ['angle0', 'endXY']),
-		pNumber('A0A', 'degree', 0, -120, 120, 1),
-		pNumber('A0B', 'degree', 0, -120, 120, 1),
-		pNumber('Ex', 'mm', 0, -1000, 1000, 1),
-		pNumber('Ey', 'mm', 0, -1000, 1000, 1),
-		pDropdown('output3D', [
-			'assembly',
-			'allParts',
-			'allAxis',
-			'base',
-			'legA1',
-			'legA2',
-			'legB1',
-			'legB2'
-		])
+		pNumber('aD1', 'mm', 100, 1, 1000, 1),
+		pNumber('pED1', 'mm', 0.4, -5, 10, 0.1),
+		pNumber('lED1', 'mm', 0.7, -5, 10, 0.1),
+		pNumber('pD2', 'mm', 200, 1, 1000, 1),
+		pNumber('lED2', 'mm', 2, -20, 20, 1),
+		pNumber('lS1', 'mm', 0, 0, 100, 1),
+		pNumber('pS1', 'mm', 3, 0, 100, 1),
+		pNumber('lpE', 'mm', 0.7, -5, 10, 0.1),
+		pNumber('lH5', 'mm', 0, 0, 5, 0.1),
+		pNumber('pH5', 'mm', 1, 0, 5, 0.1),
+		pSectionSeparator('Wheel axis'),
+		pNumber('aD3', 'mm', 20, 1, 500, 1),
+		pNumber('wED3', 'mm', 0.4, -5, 10, 0.1),
+		pNumber('pED3', 'mm', 0.7, -5, 10, 0.1),
+		pNumber('wRD2', 'mm', 2, 1, 100, 1),
+		pNumber('wRD5', 'mm', 100, 1, 1000, 1),
+		pNumber('pwE', 'mm', 0.7, -5, 10, 0.1),
+		pSectionSeparator('Wheel main'),
+		pNumber('wD1', 'mm', 20, 1, 1000, 0.1),
+		//pNumber('wRD2', 'mm', 1, 1, 500, 1),
+		pNumber('wRD3', 'mm', 5, 1, 500, 1),
+		pNumber('wRD4', 'mm', 2, 1, 500, 1),
+		//pNumber('wRD5', 'mm', 40, 1, 500, 1),
+		pNumber('wRD6', 'mm', 4, 1, 500, 1),
+		pNumber('wN6', 'teeth', 50, 5, 500, 1),
+		pSectionSeparator('Wheel widths'),
+		pNumber('wW1', 'mm', 1, 0, 500, 1),
+		pNumber('wW2', 'mm', 20, 1, 500, 1),
+		pNumber('wW3', 'mm', 0, 0, 500, 1),
+		pNumber('wW4', 'mm', 2, 1, 500, 1),
+		pNumber('wW5', 'mm', 2, 1, 500, 1),
+		pNumber('wW6', 'mm', 1, 0, 500, 1),
+		pSectionSeparator('Pivot main'),
+		pNumber('pD1', 'mm', 60, 1, 1000, 1),
+		pNumber('pD2', 'mm', 100, 1, 1000, 1),
+		pNumber('pD3', 'mm', 20, 1, 500, 1),
+		pNumber('pT1', 'mm', 5, 1, 100, 1),
+		pNumber('pT2', 'mm', 2, 1, 100, 1),
+		pNumber('pW4', 'mm', 80, 1, 1000, 1),
+		pSectionSeparator('Pivot top details'),
+		pNumber('pS1', 'mm', 2, 0, 500, 1),
+		pNumber('pS2min', 'mm', 30, 1, 500, 1),
+		pNumber('pS3', 'mm', 40, 1, 1000, 1),
+		pCheckbox('pHollowTop', true),
+		pNumber('pRR2', 'mm', 2, 0, 100, 1),
+		pNumber('pRR3', 'mm', 5, 0, 100, 1),
+		pNumber('pA2', 'degree', 100, 0, 200, 1),
+		pSectionSeparator('Pivot side'),
+		pNumber('pT3a', 'mm', 2, 1, 100, 1),
+		pNumber('pT3b', 'mm', 4, 0, 100, 1),
+		pNumber('pT4a', 'mm', 2, 1, 100, 1),
+		pNumber('pT4b', 'mm', 4, 0, 100, 1),
+		pNumber('pT5a', 'mm', 2, 1, 100, 1),
+		pNumber('pT5b', 'mm', 4, 0, 100, 1),
+		pNumber('pS5a', 'mm', 10, 1, 500, 1),
+		pNumber('pS5b', 'mm', 80, 1, 500, 1),
+		pNumber('pRR4', 'mm', 5, 0, 100, 1),
+		pNumber('pRR5', 'mm', 5, 0, 100, 1),
+		pSectionSeparator('Pivot heigths'),
+		pNumber('pH11', 'mm', 3, 1, 100, 1),
+		pNumber('pH12', 'mm', 10, 1, 1000, 1),
+		pNumber('pH13', 'mm', 70, 1, 1000, 1),
+		pNumber('pH14', 'mm', 10, 1, 1000, 1),
+		pNumber('pH15', 'mm', 3, 1, 100, 1),
+		pNumber('pH5', 'mm', 1, 0, 20, 1),
+		pNumber('pH2', 'mm', 40, 1, 500, 1),
+		pNumber('pH31', 'mm', 3, 1, 100, 1),
+		pNumber('pH32', 'mm', 30, 1, 500, 1),
+		pNumber('pH33', 'mm', 30, 1, 500, 1),
+		pNumber('pH34', 'mm', 0, 0, 500, 1),
+		pNumber('pH35', 'mm', 60, 1, 1000, 1),
+		pNumber('pH36', 'mm', 30, 1, 1000, 1),
+		pSectionSeparator('Pivot relief'),
+		pNumber('pU31', 'mm', 2, 1, 100, 1),
+		pNumber('pU32', 'mm', 2, 1, 100, 1),
+		pNumber('pU33', 'mm', 2, 0, 100, 1),
+		pNumber('pRR31', 'mm', 2, 0, 100, 1),
+		pNumber('pU41', 'mm', 2, 1, 100, 1),
+		pNumber('pU42', 'mm', 3, 1, 100, 1),
+		pNumber('pU43', 'mm', 4, 1, 100, 1),
+		pNumber('pU51', 'mm', 2, 1, 100, 1),
+		pNumber('pU52', 'mm', 3, 1, 100, 1),
+		pNumber('pU53', 'mm', 4, 1, 100, 1),
+		pSectionSeparator('Lift main'),
+		pNumber('lD1', 'mm', 60, 1, 1000, 1),
+		pNumber('lD2', 'mm', 100, 1, 1000, 1),
+		pNumber('lT1', 'mm', 5, 1, 100, 1),
+		pNumber('lT2', 'mm', 2, 1, 100, 1),
+		pNumber('lA1', 'degree', 120, 1, 200, 1),
+		pSectionSeparator('Lift top details'),
+		pNumber('lS1', 'mm', 1, 0, 500, 1),
+		pNumber('lT3', 'mm', 6, 1, 100, 1),
+		pNumber('lS2min', 'mm', 20, 1, 500, 1),
+		pNumber('lRR1', 'mm', 2, 0, 100, 1),
+		pNumber('lRR2', 'mm', 2, 0, 100, 1),
+		pNumber('lRR3', 'mm', 2, 0, 100, 1),
+		pNumber('lT4', 'mm', 3, 1, 100, 1),
+		pNumber('lT5', 'mm', 10, 1, 100, 1),
+		pNumber('lT6', 'mm', 3, 1, 100, 1),
+		pNumber('lT7', 'mm', 10, 1, 100, 1),
+		pSectionSeparator('Lift side'),
+		pNumber('lH1', 'mm', 100, 1, 1000, 1),
+		pNumber('lH2', 'mm', 3, 1, 100, 1),
+		pNumber('lH3', 'mm', 25, 0, 100, 1),
+		pNumber('lH4', 'mm', 15, 0, 100, 1),
+		pNumber('lH5', 'mm', 0.5, 0, 100, 0.1),
+		pNumber('lLD1', 'mm', 20, 1, 500, 1),
+		pNumber('lLD2', 'mm', 50, 1, 500, 1),
+		pNumber('lLX1', 'mm', 26, 1, 500, 1),
+		pNumber('lLY1', 'mm', 5, 0, 500, 1),
+		pNumber('lLX2', 'mm', 0, 0, 500, 1),
+		pNumber('lLY2', 'mm', 0, 0, 500, 1),
+		pNumber('lLR2', 'mm', 10, 0, 500, 1),
+		pNumber('lMD1', 'mm', 20, 1, 500, 1),
+		pNumber('lMD2', 'mm', 50, 1, 500, 1),
+		pNumber('lMX1', 'mm', 26, 1, 500, 1),
+		pNumber('lMY1', 'mm', 50, 0, 500, 1),
+		pNumber('lMY2', 'mm', 25, 0, 500, 1),
+		pNumber('lMY3', 'mm', 50, 0, 500, 1)
 	],
 	paramSvg: {
 		//L0: 'foot_joints.svg',
-		LA1: 'foot_joints.svg',
-		LA2: 'foot_joints.svg',
-		LB1: 'foot_joints.svg',
-		LB2: 'foot_joints.svg',
-		D0i: 'foot_joints.svg',
-		D0e: 'foot_joints.svg',
-		DAi: 'foot_joints.svg',
-		DAe: 'foot_joints.svg',
-		DBi: 'foot_joints.svg',
-		DBe: 'foot_joints.svg',
-		DEi: 'foot_joints.svg',
-		DEe: 'foot_joints.svg',
-		T1: 'foot_joints.svg',
-		T3: 'foot_joints.svg',
-		S12: 'foot_joints.svg',
-		Ri: 'foot_joints.svg',
-		Re: 'foot_joints.svg',
-		E2: 'foot_joints.svg',
-		E3: 'foot_joints.svg',
-		EH1: 'foot_joints.svg',
-		EH2: 'foot_joints.svg',
-		EH3: 'foot_joints.svg',
-		E1: 'foot_joints.svg',
-		L3: 'foot_joints.svg',
-		L4: 'foot_joints.svg',
-		A5: 'foot_joints.svg',
-		W5: 'foot_joints.svg',
-		W6: 'foot_joints.svg',
-		R34: 'foot_joints.svg',
-		T4: 'foot_joints.svg',
-		W8: 'foot_joints.svg',
-		H8: 'foot_joints.svg',
-		D8: 'foot_joints.svg',
-		positionDriver: 'foot_joints.svg',
-		A0A: 'foot_joints.svg',
-		A0B: 'foot_joints.svg',
-		Ex: 'foot_joints.svg',
-		Ey: 'foot_joints.svg',
+		aD1: 'foot_joints.svg',
+		pED1: 'foot_joints.svg',
+		lED1: 'foot_joints.svg',
+		pD2: 'foot_joints.svg',
+		lED2: 'foot_joints.svg',
+		lS1: 'foot_joints.svg',
+		pS1: 'foot_joints.svg',
+		lpE: 'foot_joints.svg',
+		lH5: 'foot_joints.svg',
+		pH5: 'foot_joints.svg',
+		aD3: 'foot_joints.svg',
+		wED3: 'foot_joints.svg',
+		pED3: 'foot_joints.svg',
+		wRD2: 'foot_joints.svg',
+		wRD5: 'foot_joints.svg',
+		pwE: 'foot_joints.svg',
+		wD1: 'foot_wheel_side.svg',
+		//wRD2: 'foot_wheel_side.svg',
+		wRD3: 'foot_wheel_cut.svg',
+		wRD4: 'foot_wheel_cut.svg',
+		//wRD5: 'foot_wheel_side.svg',
+		wRD6: 'foot_wheel_side.svg',
+		wN6: 'foot_wheel_side.svg',
+		wW1: 'foot_wheel_cut.svg',
+		wW2: 'foot_wheel_cut.svg',
+		wW3: 'foot_wheel_cut.svg',
+		wW4: 'foot_wheel_cut.svg',
+		wW5: 'foot_wheel_cut.svg',
+		wW6: 'foot_wheel_cut.svg',
 		output3D: 'foot_joints.svg'
 	},
 	sim: {
@@ -166,355 +222,84 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
 	const figTop = figure();
 	const figSide = figure();
-	const figBack = figure();
-	const figAxis0 = figure();
-	const figAxisA = figure();
-	const figAxisB = figure();
-	const figAxisE = figure();
-	const figTopWithAxis = figure();
+	const figAxis12 = figure();
+	const figAxis3 = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
-		const legNb = 4;
-		const axisNb = 5;
-		const H22 = 2 * param.EH2 + param.E1;
-		const H122 = param.EH1 + H22;
-		const H124 = H122 + H22;
-		// A1, A2, B1, B2
-		const LR1e: number[] = [param.D0e / 2, param.DAe / 2, param.D0e / 2, param.DBe / 2];
-		const LR1i: number[] = [param.D0i / 2, param.DAi / 2, param.D0i / 2, param.DBi / 2];
-		const LR2e: number[] = [param.DAe / 2, param.DEe / 2, param.DBe / 2, param.DEe / 2];
-		const LR2i: number[] = [param.DAi / 2, param.DEi / 2, param.DBi / 2, param.DEi / 2];
-		const LL: number[] = [param.LA1, param.LA2, param.LB1, param.LB2];
-		const LH: number[] = [H124, H122, H124, param.EH1];
-		// 0, A, B, E
-		const ARee: number[] = [param.D0e / 2, param.DAe / 2, param.DBe / 2, param.DEe / 2];
-		const ARe: number[] = [param.D0i / 2, param.DAi / 2, param.DBi / 2, param.DEi / 2];
-		const ARi: number[] = ARe.map((iR) => iR - param.T1);
-		const R8 = param.D8 / 2;
-		const pi2 = Math.PI / 2;
-		const Ltot = Math.min(LL[0] + LL[1], LL[2] + LL[3]);
-		// axis heights
-		const EH23 = 2 * (param.EH2 + param.EH3);
-		const CH1 = H124 + H22;
-		const cH41 = param.EH2 + param.E1 / 2;
-		// 0A, A, E and 0B, B, E
-		const Cidx: string[] = ['0', 'A', 'E', '0', 'B', 'E'];
-		const axisHa: number[] = [CH1, LH[0], LH[1]];
-		const axisHb: number[] = [CH1, LH[2], LH[3] + 2 * cH41]; // [CH1, LH[2], LH[1]]
-		const axisHc = axisHa.concat(axisHb);
-		const LR1eA: number[] = [LR1e[0], LR1e[1], LR2e[1]];
-		const LR1eB: number[] = [LR1e[2], LR1e[3], LR2e[3]];
-		const LR1iA: number[] = [LR1i[0], LR1i[1], LR2i[1]];
-		const LR1iB: number[] = [LR1i[2], LR1i[3], LR2i[3]];
-		const Htot = axisHa[0] + EH23; // or Math.max(...axisHa, ...axisHb) + EH23
-		// positions
-		const a5 = degToRad(param.A5) / 2;
-		const W7 = 2 * param.W5 * Math.cos(a5) + param.W6;
-		const X8 = (W7 - param.W8) / 2;
-		const Y8 = (CH1 - param.H8) / 2;
-		const pA0 = point(0, param.L4)
-			.translatePolar(a5, param.W5 / 2)
-			.translatePolar(a5 + pi2, param.L3 + LR1e[0]);
-		const pB0 = point(W7, param.L4)
-			.translatePolar(Math.PI - a5, param.W5 / 2)
-			.translatePolar(pi2 - a5, param.L3 + LR1e[0]);
-		let a0A = degToRad(param.A0A);
-		let a0B = degToRad(param.A0B);
-		if (param.positionDriver === 1) {
-			const ba0A = Math.atan2(param.Ey - pA0.cy, param.Ex - pA0.cx);
-			const ba0B = Math.atan2(param.Ey - pB0.cy, param.Ex - pB0.cx);
-			const lA02 = Math.sqrt((param.Ey - pA0.cy) ** 2 + (param.Ex - pA0.cx) ** 2);
-			const lB02 = Math.sqrt((param.Ey - pB0.cy) ** 2 + (param.Ex - pB0.cx) ** 2);
-			const [aA0p, tStr2] = triLLLrA(lA02, param.LA2, param.LA1);
-			const [aB0p, tStr3] = triLLLrA(param.LA1, param.LA2, lB02);
-			a0A = ba0A + aA0p - pi2;
-			a0B = ba0B - aB0p - pi2;
-			rGeome.logstr += tStr2 + tStr3;
-		}
-		const LA: number[] = [pi2 + a0A, 0, pi2 + a0B, 0];
-		const pA1 = pA0.translatePolar(LA[0], LL[0]);
-		const pB1 = pB0.translatePolar(LA[2], LL[2]);
-		const Lpt: Point[] = [pA0, pA1, pB0, pB1];
-		const L0 = pA0.distanceToPoint(pB0);
-		const lAB = pA1.distanceToPoint(pB1);
-		const aAB = pA1.angleToPoint(pB1);
-		const [ta31, ta12, ta23, tStr1] = triLLLrAAA(LL[1], lAB, LL[3]);
-		LA[1] = aAB + ta12;
-		LA[3] = Math.PI + aAB - ta23;
-		const pA2 = pA1.translatePolar(LA[1], LL[1]);
-		const pB2 = pB1.translatePolar(LA[3], LL[3]);
-		if (pA2.distanceToPoint(pB2) > 0.1) {
-			throw `err215: pA2 x ${ffix(pA2.cx)} y ${ffix(pA2.cy)} is too far from pB2 x ${ffix(pB2.cx)} y ${ffix(pB2.cy)}`;
-		}
-		//
-		const eX = pA2.cx;
-		const eY = pA2.cy;
-		const eA = pA2.angleOrig();
-		const eL = pA2.distanceOrig();
-		const aA2B2 = ta31;
-		// for allParts
-		const fabStepX = 2.4 * Math.max(...LR1e, ...LR2e);
-		const fabY1 = fabStepX / 2;
-		const fabY2 = fabY1 + fabStepX;
-		const fabY3 = fabY2 + Math.max(...LL) + fabStepX;
+		//const pi2 = Math.PI / 2;
+		//const epsilon = 0.01;
+		const Htot = 999;
+		const Ltot = 999;
 		// step-5 : checks on the parameter values
-		for (let ii = 0; ii < legNb; ii++) {
-			if (LR1e[ii] < LR1i[ii] + 2 * param.T3) {
-				throw `err197: idx ${ii} LR1e ${ffix(2 * LR1e[ii])} is too small compare to LR1i ${ffix(2 * LR1i[ii])} and T3 ${ffix(param.T3)}`;
-			}
-			if (LR2e[ii] < LR2i[ii] + 2 * param.T3) {
-				throw `err200: idx ${ii} LR2e[ii] ${ffix(2 * LR2e[ii])} is too small compare to LR2i ${ffix(2 * LR2i[ii])} and T3 ${ffix(param.T3)}`;
-			}
-			if (LL[ii] < LR1e[ii] + LR2e[ii]) {
-				throw `err203: idx ${ii} LL ${ffix(LL[ii])} is too small compare to LR1e ${ffix(LR1e[ii])} and LR2e ${ffix(LR2e[ii])}`;
-			}
-			if (ARi[ii] < 0) {
-				throw `err206: idx ${ii} ARe ${ffix(2 * ARe[ii])} is too small compare to T1 ${ffix(param.T1)}`;
-			}
-		}
-		if (X8 < R8) {
-			throw `err195: W5 ${ffix(param.W5)} is too small compare to D8 ${ffix(2 * R8)} and W8 ${ffix(param.W8)}`;
-		}
-		if (Y8 < R8) {
-			throw `err198: H1 ${ffix(CH1)} is too small compare to D8 ${ffix(2 * R8)} and H8 ${ffix(param.H8)}`;
+		if (param.wN6 < 2) {
+			throw `err195: W5 ${ffix(param.W5)} is too small compare to D8 ${ffix(2 * param.R8)} and W8 ${ffix(param.W8)}`;
 		}
 		// step-6 : any logs
-		rGeome.logstr += tStr1;
 		rGeome.logstr += `length ${ffix(Ltot)}  height ${ffix(Htot)}\n`;
-		rGeome.logstr += `Position: X ${ffix(eX)}  Y ${ffix(eY)} mm\n`;
-		rGeome.logstr += `Position: A ${ffix(radToDeg(eA))} degree  L ${ffix(eL)} mm\n`;
-		rGeome.logstr += `L0 ${ffix(L0)} mm  aA2B2 ${ffix(radToDeg(aA2B2))} degree\n`;
-		rGeome.logstr += `Angle0 A0A ${ffix(radToDeg(a0A))}  A0B ${ffix(radToDeg(a0B))} degree\n`;
 		// step-7 : drawing of the figures
 		// inherite
-		// sub-scarabase
-		const scarabaseParam = designParam(scarabaseDef.pDef, '');
-		scarabaseParam.setVal('D1', 2 * LR1i[0] + param.E3);
-		scarabaseParam.setVal('D2', 2 * LR1e[0]);
-		scarabaseParam.setVal('L3', param.L3);
-		scarabaseParam.setVal('L4', param.L4);
-		scarabaseParam.setVal('W5', param.W5);
-		scarabaseParam.setVal('Nac', 1); // double
-		scarabaseParam.setVal('R34', param.R34);
-		scarabaseParam.setVal('A5', param.A5);
-		scarabaseParam.setVal('W6', param.W6);
-		scarabaseParam.setVal('T3', param.T3);
-		scarabaseParam.setVal('T4', param.T4);
-		scarabaseParam.setVal('H1', CH1);
-		scarabaseParam.setVal('H2', param.EH2);
-		scarabaseParam.setVal('H3', param.EH3);
-		scarabaseParam.setVal('W8', param.W8);
-		scarabaseParam.setVal('H8', param.H8);
-		scarabaseParam.setVal('D8', param.D8);
-		const scarabaseGeom = scarabaseDef.pGeom(
-			0,
-			scarabaseParam.getParamVal(),
-			scarabaseParam.getSuffix()
-		);
-		checkGeom(scarabaseGeom);
-		rGeome.logstr += prefixLog(scarabaseGeom.logstr, scarabaseParam.getPartNameSuffix());
-		// sub-scara
-		const scaraLegParam: DesignParam[] = [];
-		const scaraLegGeom: tGeom[] = [];
-		for (let ii = 0; ii < legNb; ii++) {
-			const iiParam = designParam(scaraDef.pDef, (ii + 1).toString());
-			iiParam.setVal('L1', LL[ii]);
-			iiParam.setVal('D11', 2 * LR1i[ii] + param.E2);
-			iiParam.setVal('D12', 2 * LR1e[ii]);
-			iiParam.setVal('D21', 2 * LR2i[ii] + (ii < 3 ? param.E3 : param.E2));
-			iiParam.setVal('D22', 2 * LR2e[ii]);
-			iiParam.setVal('firstEnd', 0);
-			iiParam.setVal('secondEnd', ii < 3 ? 0 : 1);
-			iiParam.setVal('A1', 90);
-			iiParam.setVal('T1', param.T3);
-			iiParam.setVal('T2', param.T3);
-			iiParam.setVal('S2', LR2e[ii] + param.S12);
-			iiParam.setVal('R1i', param.Ri);
-			iiParam.setVal('R1e', param.Re);
-			iiParam.setVal('iiEn', 1);
-			iiParam.setVal('N2', 2);
-			iiParam.setVal('S1', LR1e[ii] + param.S12);
-			iiParam.setVal('T3', param.T3);
-			iiParam.setVal('R2i', param.Ri);
-			iiParam.setVal('R2e', param.Re);
-			iiParam.setVal('H1', LH[ii]);
-			iiParam.setVal('H2', param.EH2);
-			iiParam.setVal('H3', ii < 3 ? param.EH3 : 0);
-			iiParam.setVal('H41', ii < 3 ? 0 : cH41);
-			iiParam.setVal('H42', 0);
-			const iiGeom = scaraDef.pGeom(0, iiParam.getParamVal(), iiParam.getSuffix());
-			checkGeom(iiGeom);
-			rGeome.logstr += prefixLog(iiGeom.logstr, iiParam.getPartNameSuffix());
-			scaraLegParam.push(iiParam);
-			scaraLegGeom.push(iiGeom);
-		}
+		// sub-wheel
+		const wheelParam = designParam(wheelDef.pDef, '');
+		wheelParam.setVal('D1', param.aD3 + param.wED3);
+		wheelParam.setVal('RD2', param.wRD2);
+		wheelParam.setVal('RD3', param.wRD3);
+		wheelParam.setVal('RD4', param.wRD4);
+		wheelParam.setVal('RD5', param.wRD5);
+		wheelParam.setVal('RD6', param.wRD6);
+		wheelParam.setVal('N6', param.wN6);
+		wheelParam.setVal('W1', param.wW1);
+		wheelParam.setVal('W2', param.wW2);
+		wheelParam.setVal('W3', param.wW3);
+		wheelParam.setVal('W4', param.wW4);
+		wheelParam.setVal('W5', param.wW5);
+		wheelParam.setVal('W6', param.wW6);
+		const wheelGeom = wheelDef.pGeom(0, wheelParam.getParamVal(), wheelParam.getSuffix());
+		checkGeom(wheelGeom);
+		rGeome.logstr += prefixLog(wheelGeom.logstr, wheelParam.getPartNameSuffix());
 		// sub-functions
-		function figAxisCut(ix: number, iy: number, ire: number, ih: number): Figure {
-			//rGeome.logstr += `dbg335 ix ${ffix(ix)}  iy ${ffix(iy)}  ire ${ffix(ire)}  ih ${ffix(ih)}\n`;
-			const rFig = figure();
-			rFig.addMainO(ctrRectangle(ix, iy, param.T1, ih));
-			rFig.addMainO(ctrRectangle(ix + 2 * ire - param.T1, iy, param.T1, ih));
-			return rFig;
-		}
 		// figTop
-		figTop.mergeFigure(scarabaseGeom.fig.faceT3);
-		const legT3d: Transform3d[] = [];
-		const axisT3d4: Transform3d[] = [];
-		for (let ii = 0; ii < legNb; ii++) {
-			legT3d.push(
-				transform3d()
-					.addTranslation(-LR1e[ii], 0, 0)
-					.addRotation(0, 0, LA[ii])
-					.addTranslation(Lpt[ii].cx, Lpt[ii].cy, 0)
-			);
-			axisT3d4.push(
-				transform3d().addRotation(0, 0, LA[ii]).addTranslation(Lpt[ii].cx, Lpt[ii].cy, 0)
-			);
-			figTop.mergeFigure(
-				scaraLegGeom[ii].fig.faceExtern
-					.translate(-LR1e[ii], 0)
-					.rotate(0, 0, LA[ii])
-					.translate(Lpt[ii].cx, Lpt[ii].cy)
-			);
-		}
-		const axisT3dE = transform3d().addTranslation(pA2.cx, pA2.cy, 0);
-		const axisT3dE2 = transform3d().addTranslation(pA2.cx, pA2.cy, 0); // copy for getting 2 instances
-		const axisT3d6 = [axisT3d4[0], axisT3d4[1], axisT3dE, axisT3d4[2], axisT3d4[3], axisT3dE2];
 		// figSide
-		const Yoffset = Htot * 1.5;
-		const lineNb = 2;
-		const axisPerLine = axisHa.length; // 3 or axisNb/2
-		for (let jj = 0; jj < lineNb; jj++) {
-			figSide.mergeFigure(scarabaseGeom.fig.faceSide.translate(0, jj * Yoffset));
-			let posX = param.L4 + param.L3;
-			const posYb = jj * Yoffset;
-			let posY = 0;
-			const jjAxisH = jj === 0 ? axisHa : axisHb;
-			const jjLR1e = jj === 0 ? LR1eA : LR1eB;
-			const jjLR1i = jj === 0 ? LR1iA : LR1iB;
-			const jjLL = jj === 0 ? LL.slice(0, 2) : LL.slice(2, 4);
-			for (let ii = 0; ii < axisPerLine; ii++) {
-				if (ii > 0) {
-					posX += jjLR1e[ii - 1] + jjLL[ii - 1] - jjLR1e[ii];
-				}
-				figSide.mergeFigure(
-					figAxisCut(
-						posX + jjLR1e[ii] - jjLR1i[ii],
-						posY + posYb,
-						jjLR1i[ii],
-						jjAxisH[ii] + EH23
-					)
-				);
-				const jji6 = ii + jj * axisPerLine;
-				//rGeome.logstr += `dbg409: jji6 ${jji6}  posY ${ffix(posY)}\n`;
-				axisT3d6[jji6].addTranslation(0, 0, posY);
-				posY += param.EH2 + param.E1 / 2;
-				const posY2 = jji6 === 4 ? posY + param.EH3 : posY;
-				if (ii < axisPerLine - 1) {
-					const jji4 = ii + jj * (axisPerLine - 1); // 0..3
-					legT3d[jji4].addTranslation(0, 0, posY2);
-					figSide.mergeFigure(
-						scaraLegGeom[jji4].fig.faceSide.translate(posX, posY2 + posYb)
-					);
-				}
-			}
-		}
-		// additional check
-		const checkZ2 = axisT3d6[2].getTranslation()[2];
-		const checkZ5 = axisT3d6[5].getTranslation()[2];
-		if (Math.abs(checkZ2 - checkZ5) > 0.001) {
-			throw `err396: axisT3d6[2] ${ffix(checkZ2)} and axisT3d6[5] ${ffix(checkZ5)} differ`;
-		}
-		// figBack
-		figBack.mergeFigure(scarabaseGeom.fig.faceBack);
-		// figAxis0
-		figAxis0.addMainOI([contourCircle(0, 0, ARe[0]), contourCircle(0, 0, ARi[0])]);
-		figAxis0.addSecond(contourCircle(0, 0, ARe[0] + param.T3));
-		figAxis0.addSecond(contourCircle(0, 0, ARee[0] - param.T3));
-		figAxis0.addSecond(contourCircle(0, 0, ARee[0]));
-		figTopWithAxis.mergeFigure(figAxis0.translate(Lpt[0].cx, Lpt[0].cy));
-		figTopWithAxis.mergeFigure(figAxis0.translate(Lpt[2].cx, Lpt[2].cy));
-		// figAxisA
-		figAxisA.addMainOI([contourCircle(0, 0, ARe[1]), contourCircle(0, 0, ARi[1])]);
-		figAxisA.addSecond(contourCircle(0, 0, ARe[1] + param.T3));
-		figAxisA.addSecond(contourCircle(0, 0, ARee[1] - param.T3));
-		figAxisA.addSecond(contourCircle(0, 0, ARee[1]));
-		figTopWithAxis.mergeFigure(figAxisA.translate(Lpt[1].cx, Lpt[1].cy));
-		// figAxisB
-		figAxisB.addMainOI([contourCircle(0, 0, ARe[2]), contourCircle(0, 0, ARi[2])]);
-		figAxisB.addSecond(contourCircle(0, 0, ARe[2] + param.T3));
-		figAxisB.addSecond(contourCircle(0, 0, ARee[2] - param.T3));
-		figAxisB.addSecond(contourCircle(0, 0, ARee[2]));
-		figTopWithAxis.mergeFigure(figAxisB.translate(Lpt[3].cx, Lpt[3].cy));
-		// figAxisE
-		figAxisE.addMainOI([contourCircle(0, 0, ARe[3]), contourCircle(0, 0, ARi[3])]);
-		figAxisE.addSecond(contourCircle(0, 0, ARe[3] + param.T3));
-		figAxisE.addSecond(contourCircle(0, 0, ARee[3] - param.T3));
-		figAxisE.addSecond(contourCircle(0, 0, ARee[3]));
-		figTopWithAxis.mergeFigure(figAxisE.translate(pA2.cx, pA2.cy));
-		// figTopWithAxis
-		figTopWithAxis.mergeFigure(figTop);
+		// figAxis12
+		// figAxis3
 		// final figure list
 		rGeome.fig = {
 			faceTop: figTop,
 			faceSide: figSide,
-			faceBack: figBack,
-			faceAxis0: figAxis0,
-			faceAxisA: figAxisA,
-			faceAxisB: figAxisB,
-			faceAxisE: figAxisE,
-			faceTopWithAxis: figTopWithAxis
+			faceAxis12: figAxis12,
+			faceAxis3: figAxis3
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
 		const partInherit: tInherit[] = [];
 		const partExtrude: tExtrude[] = [];
 		const partList: string[] = [];
-		// part3D scarabase
-		if ([0, 1, 3].includes(param.output3D)) {
-			const baseY = param.output3D === 0 ? 0 : fabY3;
-			const partScarabase: tInherit = {
-				outName: `inpax_${designName}_base`,
-				subdesign: 'pax_scarabase',
-				subgeom: scarabaseGeom,
+		// part3D wheel
+		if ([0, 1].includes(param.output3D)) {
+			const partWheel: tInherit = {
+				outName: `inpax_${designName}_wheel`,
+				subdesign: 'pax_wheel',
+				subgeom: wheelGeom,
 				rotate: [0, 0, 0],
-				translate: [0, baseY, 0]
+				translate: [0, 0, 0]
 			};
-			partInherit.push(partScarabase);
-			partList.push(`inpax_${designName}_base`);
+			partInherit.push(partWheel);
+			partList.push(`inpax_${designName}_wheel`);
 		}
-		// part3D scaraLeg
-		for (let ii = 0; ii < legNb; ii++) {
-			if ([0, 1].includes(param.output3D) || ii - param.output3D === -4) {
-				const iiName = `inpax_${designName}_leg_${ii + 1}`;
-				const iiLegT3d2 = transform3d()
-					.addRotation(0, 0, pi2)
-					.addTranslation(ii * fabStepX, fabY2, 0);
-				const iiLegT3d = param.output3D === 0 ? legT3d[ii] : iiLegT3d2;
-				const iiPartScaraLeg: tInherit = {
-					outName: iiName,
-					subdesign: `pax_${scaraLegParam[ii].getPartNameSuffix()}`,
-					subgeom: scaraLegGeom[ii],
-					rotate: iiLegT3d.getRotation(),
-					translate: iiLegT3d.getTranslation()
-				};
-				partInherit.push(iiPartScaraLeg);
-				partList.push(iiName);
-			}
-		}
+		// part3D pivot
+		// part3D lift
 		// part3D axis
-		if ([0, 1, 2].includes(param.output3D)) {
-			for (let ii = 0; ii < axisNb; ii++) {
-				const iiName = `subpax_${designName}_axis_${ii + 1}`;
-				const iiAxisT3d2 = transform3d().addTranslation(ii * fabStepX, fabY1, 0);
-				const iiAxisT3d = param.output3D === 0 ? axisT3d6[ii] : iiAxisT3d2;
+		if ([0, 1].includes(param.output3D)) {
+			for (const ii of [1, 3]) {
+				const iiName = `subpax_${designName}_axis_${ii}`;
+				const iiAxisT3d2 = transform3d().addTranslation(0, 0, 0);
+				const iiAxisT3d = param.output3D === 0 ? transform3d() : iiAxisT3d2;
 				//rGeome.logstr += `dbg511: ii ${ii}  iiAxisT3d ${ffix(iiAxisT3d.getTranslation()[2])}\n`;
 				const iiPartAxis: tExtrude = {
 					outName: iiName,
-					face: `${designName}_faceAxis${Cidx[ii]}`,
+					face: `${designName}_faceAxis${ii}`,
 					extrudeMethod: EExtrude.eLinearOrtho,
-					length: axisHc[ii] + EH23,
+					length: 10,
 					rotate: iiAxisT3d.getRotation(),
 					translate: iiAxisT3d.getTranslation()
 				};
@@ -536,27 +321,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		};
 		// step-9 : optional sub-design parameter export
 		// sub-design
-		const subBase: tSubInst = {
-			partName: scarabaseParam.getPartName(),
-			dparam: scarabaseParam.getDesignParamList(),
+		const subWheel: tSubInst = {
+			partName: wheelParam.getPartName(),
+			dparam: wheelParam.getDesignParamList(),
 			orientation: [0, 0, 0],
 			position: [0, 0, 0]
 		};
 		rGeome.sub = {
-			scaraBase: subBase
+			wheel1: subWheel
 		};
-		for (let ii = 0; ii < legNb; ii++) {
-			const subLeg: tSubInst = {
-				partName: scaraLegParam[ii].getPartName(),
-				dparam: scaraLegParam[ii].getDesignParamList(),
-				orientation: legT3d[ii].getRotation(),
-				position: legT3d[ii].getTranslation()
-			};
-			rGeome.sub[`scaraLeg_${ii + 1}`] = subLeg;
-		}
 		// step-10 : final log message
 		// finalize
-		rGeome.logstr += 'Long2D drawn successfully!\n';
+		rGeome.logstr += 'rccar-foot drawn successfully!\n';
 		rGeome.calcErr = false;
 	} catch (emsg) {
 		rGeome.logstr += emsg as string;
