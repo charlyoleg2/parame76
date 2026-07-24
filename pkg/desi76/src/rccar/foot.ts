@@ -90,9 +90,9 @@ const pDef: tParamDef = {
 		pNumber('wW5', 'mm', 2, 1, 500, 1),
 		pNumber('wW6', 'mm', 1, 0, 500, 1),
 		pSectionSeparator('Pivot main'),
-		pNumber('pD1', 'mm', 60, 1, 1000, 1),
+		//pNumber('pD1', 'mm', 60, 1, 1000, 1),
 		//pNumber('pD2', 'mm', 100, 1, 1000, 1),
-		pNumber('pD3', 'mm', 20, 1, 500, 1),
+		//pNumber('pD3', 'mm', 20, 1, 500, 1),
 		pNumber('pT1', 'mm', 5, 1, 100, 1),
 		pNumber('pT2', 'mm', 2, 1, 100, 1),
 		pNumber('pW4', 'mm', 80, 1, 1000, 1),
@@ -111,8 +111,8 @@ const pDef: tParamDef = {
 		pNumber('pT4b', 'mm', 4, 0, 100, 1),
 		pNumber('pT5a', 'mm', 2, 1, 100, 1),
 		pNumber('pT5b', 'mm', 4, 0, 100, 1),
-		pNumber('pS5a', 'mm', 10, 1, 500, 1),
-		pNumber('pS5b', 'mm', 80, 1, 500, 1),
+		pNumber('pS5a', 'mm', 6, 1, 500, 1),
+		//pNumber('pS5b', 'mm', 80, 1, 500, 1),
 		pNumber('pRR4', 'mm', 5, 0, 100, 1),
 		pNumber('pRR5', 'mm', 5, 0, 100, 1),
 		pSectionSeparator('Pivot heigths'),
@@ -141,8 +141,8 @@ const pDef: tParamDef = {
 		pNumber('pU52', 'mm', 3, 1, 100, 1),
 		pNumber('pU53', 'mm', 4, 1, 100, 1),
 		pSectionSeparator('Lift main'),
-		pNumber('lD1', 'mm', 60, 1, 1000, 1),
-		pNumber('lD2', 'mm', 100, 1, 1000, 1),
+		//pNumber('lD1', 'mm', 60, 1, 1000, 1),
+		//pNumber('lD2', 'mm', 100, 1, 1000, 1),
 		pNumber('lT1', 'mm', 5, 1, 100, 1),
 		pNumber('lT2', 'mm', 2, 1, 100, 1),
 		pNumber('lA1', 'degree', 120, 1, 200, 1),
@@ -236,6 +236,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const R1i = R1 - param.aW1;
 		const R3 = param.aD3 / 3;
 		const R3i = R3 - param.aW3;
+		const wW16 = param.wW1 + param.wW2 + param.wW3 + param.wW3 * 2 + param.wW5 + param.wW6;
+		const pS5b = wW16 + param.pwE - 2 * param.pS5a;
 		//const pi2 = Math.PI / 2;
 		//const epsilon = 0.01;
 		const Htot = 999;
@@ -248,6 +250,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			throw `err248: aD3 ${ffix(param.aD3)} is too small compare to aW3 ${ffix(param.aW3)}`;
 		}
 		// step-6 : any logs
+		rGeome.logstr += `wheel-pivot wW16 ${ffix(wW16)} pS5b ${ffix(pS5b)} mm\n`;
 		rGeome.logstr += `length ${ffix(Ltot)}  height ${ffix(Htot)}\n`;
 		// step-7 : drawing of the figures
 		// inherite
@@ -271,9 +274,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += prefixLog(wheelGeom.logstr, wheelParam.getPartNameSuffix());
 		// sub-pivot
 		const pivotParam = designParam(pivotDef.pDef, '');
-		pivotParam.setVal('D1', param.pD1);
+		pivotParam.setVal('D1', param.aD1 + param.pED1);
 		pivotParam.setVal('D2', param.pD2);
-		pivotParam.setVal('D3', param.pD3);
+		pivotParam.setVal('D3', param.aD3 + param.pED3);
 		pivotParam.setVal('T1', param.pT1);
 		pivotParam.setVal('T2', param.pT2);
 		pivotParam.setVal('W4', param.pW4);
@@ -290,7 +293,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		pivotParam.setVal('T5a', param.pT5a);
 		pivotParam.setVal('T5b', param.pT5b);
 		pivotParam.setVal('S5a', param.pS5a);
-		pivotParam.setVal('S5b', param.pS5b);
+		pivotParam.setVal('S5b', pS5b);
 		pivotParam.setVal('RR4', param.pRR4);
 		pivotParam.setVal('RR5', param.pRR5);
 		pivotParam.setVal('H11', param.pH11);
@@ -321,8 +324,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += prefixLog(pivotGeom.logstr, pivotParam.getPartNameSuffix());
 		// sub-lift
 		const liftParam = designParam(liftDef.pDef, '');
-		liftParam.setVal('D1', param.lD1);
-		liftParam.setVal('D2', param.lD2);
+		liftParam.setVal('D1', param.aD1 + param.lED1);
+		liftParam.setVal('D2', param.pD2 + param.lED2);
 		liftParam.setVal('T1', param.lT1);
 		liftParam.setVal('T2', param.lT2);
 		liftParam.setVal('A1', param.lA1);
