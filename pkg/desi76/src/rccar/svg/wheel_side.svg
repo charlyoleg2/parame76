@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
-     inkscape:zoom="2.2198669"
-     inkscape:cx="302.94609"
-     inkscape:cy="261.27693"
+     inkscape:zoom="2.2198668"
+     inkscape:cx="181.31718"
+     inkscape:cy="3945.7322"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="0"
@@ -125,7 +125,10 @@
        width="83.773552"
        height="77.536888"
        x="45.342224"
-       y="140.40919" />
+       y="140.40919"
+       inkscape:export-filename="wheel_side.svg"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
     <circle
        style="fill:none;stroke:#cccccc;stroke-width:0.264582;stroke-linejoin:round"
        id="path14-0-1-7"
@@ -175,7 +178,7 @@
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,3.8768445,-10.113507)"
        id="text21"
-       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect21);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect21);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="171.37305"
          y="815.03527"
          id="tspan1">D1</tspan></text>
@@ -183,7 +186,7 @@
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,13.821793,-77.705448)"
        id="text22"
-       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect22);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect22);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="209.5957"
          y="927.16027"
          id="tspan2">RD2</tspan></text>
@@ -191,7 +194,7 @@
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,37.757094,-70.120318)"
        id="text23"
-       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect23);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect23);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="258.01367"
          y="941.17589"
          id="tspan3">RD5</tspan></text>
@@ -199,7 +202,7 @@
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,2.0227015,-13.821793)"
        id="text24"
-       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect24);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect24);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="392.43555"
          y="858.9923"
          id="tspan4">RD6</tspan></text>
@@ -215,7 +218,7 @@
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,5.899546,1.6855846)"
        id="text25"
-       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect25);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect25);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="194.30664"
          y="551.28722"
          id="tspan5">N6</tspan></text>
