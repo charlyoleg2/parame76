@@ -29,7 +29,7 @@ import {
 	//line,
 	//vector,
 	//contour,
-	//contourCircle,
+	contourCircle,
 	//ctrRectangle,
 	figure,
 	//degToRad,
@@ -38,7 +38,7 @@ import {
 	ffix,
 	pNumber,
 	pCheckbox,
-	//pDropdown,
+	pDropdown,
 	pSectionSeparator,
 	initGeom,
 	//transform2d,
@@ -175,7 +175,10 @@ const pDef: tParamDef = {
 		pNumber('lMX1', 'mm', 26, 1, 500, 1),
 		pNumber('lMY1', 'mm', 50, 0, 500, 1),
 		pNumber('lMY2', 'mm', 25, 0, 500, 1),
-		pNumber('lMY3', 'mm', 50, 0, 500, 1)
+		pNumber('lMY3', 'mm', 50, 0, 500, 1),
+		pSectionSeparator('Assembly'),
+		pNumber('orientation', 'degrew', -180, 180, 0, 1),
+		pDropdown('output3D', ['assembly', 'parts'])
 	],
 	paramSvg: {
 		//L0: 'foot_joints.svg',
@@ -222,11 +225,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
 	const figTop = figure();
 	const figSide = figure();
-	const figAxis12 = figure();
+	const figAxis1 = figure();
 	const figAxis3 = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
+		const R1 = param.aD1;
+		const R2 = param.aD1 + param.aD3;
 		//const pi2 = Math.PI / 2;
 		//const epsilon = 0.01;
 		const Htot = 999;
@@ -259,26 +264,104 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += prefixLog(wheelGeom.logstr, wheelParam.getPartNameSuffix());
 		// sub-pivot
 		const pivotParam = designParam(pivotDef.pDef, '');
-		pivotParam.setVal('D1', param.aD3 + param.wED3);
+		pivotParam.setVal('D1', param.pD1);
+		pivotParam.setVal('D2', param.pD2);
+		pivotParam.setVal('D3', param.pD3);
+		pivotParam.setVal('T1', param.pT1);
+		pivotParam.setVal('T2', param.pT2);
+		pivotParam.setVal('W4', param.pW4);
+		pivotParam.setVal('S1', param.pS1);
+		pivotParam.setVal('S2min', param.pS2min);
+		pivotParam.setVal('S3', param.pS3);
+		pivotParam.setVal('RR2', param.pRR2);
+		pivotParam.setVal('RR3', param.pRR3);
+		pivotParam.setVal('A2', param.pA2);
+		pivotParam.setVal('T3a', param.pT3a);
+		pivotParam.setVal('T3b', param.pT3b);
+		pivotParam.setVal('T4a', param.pT4a);
+		pivotParam.setVal('T4b', param.pT4b);
+		pivotParam.setVal('T5a', param.pT5a);
+		pivotParam.setVal('T5b', param.pT5b);
+		pivotParam.setVal('S5a', param.pS5a);
+		pivotParam.setVal('S5b', param.pS5b);
+		pivotParam.setVal('RR4', param.pRR4);
+		pivotParam.setVal('RR5', param.pRR5);
+		pivotParam.setVal('H11', param.pH11);
+		pivotParam.setVal('H12', param.pH12);
+		pivotParam.setVal('H13', param.pH13);
+		pivotParam.setVal('H14', param.pH14);
+		pivotParam.setVal('H15', param.pH15);
+		pivotParam.setVal('H5', param.pH5);
+		pivotParam.setVal('H2', param.pH2);
+		pivotParam.setVal('H31', param.pH31);
+		pivotParam.setVal('H32', param.pH32);
+		pivotParam.setVal('H33', param.pH33);
+		pivotParam.setVal('H34', param.pH34);
+		pivotParam.setVal('H35', param.pH35);
+		pivotParam.setVal('H36', param.pH36);
+		pivotParam.setVal('U31', param.pU31);
+		pivotParam.setVal('U32', param.pU32);
+		pivotParam.setVal('U33', param.pU33);
+		pivotParam.setVal('RR31', param.pRR31);
+		pivotParam.setVal('U41', param.pU41);
+		pivotParam.setVal('U42', param.pU42);
+		pivotParam.setVal('U43', param.pU43);
+		pivotParam.setVal('U51', param.pU51);
+		pivotParam.setVal('U52', param.pU52);
+		pivotParam.setVal('U53', param.pU53);
 		const pivotGeom = pivotDef.pGeom(0, pivotParam.getParamVal(), pivotParam.getSuffix());
 		checkGeom(pivotGeom);
 		rGeome.logstr += prefixLog(pivotGeom.logstr, pivotParam.getPartNameSuffix());
 		// sub-lift
 		const liftParam = designParam(liftDef.pDef, '');
-		liftParam.setVal('D1', param.aD3 + param.wED3);
+		liftParam.setVal('D1', param.lD1);
+		liftParam.setVal('D2', param.lD2);
+		liftParam.setVal('T1', param.lT1);
+		liftParam.setVal('T2', param.lT2);
+		liftParam.setVal('A1', param.lA1);
+		liftParam.setVal('S1', param.lS1);
+		liftParam.setVal('T3', param.lT3);
+		liftParam.setVal('S2min', param.lS2min);
+		liftParam.setVal('RR1', param.lRR1);
+		liftParam.setVal('RR2', param.lRR2);
+		liftParam.setVal('RR3', param.lRR3);
+		liftParam.setVal('T4', param.lT4);
+		liftParam.setVal('T5', param.lT5);
+		liftParam.setVal('T6', param.lT6);
+		liftParam.setVal('T7', param.lT7);
+		liftParam.setVal('H1', param.lH1);
+		liftParam.setVal('H2', param.lH2);
+		liftParam.setVal('H3', param.lH3);
+		liftParam.setVal('H4', param.lH4);
+		liftParam.setVal('H5', param.lH5);
+		liftParam.setVal('LD1', param.lLD1);
+		liftParam.setVal('LD2', param.lLD2);
+		liftParam.setVal('LX1', param.lLX1);
+		liftParam.setVal('LY1', param.lLY1);
+		liftParam.setVal('LX2', param.lLX2);
+		liftParam.setVal('LY2', param.lLY2);
+		liftParam.setVal('LR2', param.lLR2);
+		liftParam.setVal('MD1', param.lMD1);
+		liftParam.setVal('MD2', param.lMD2);
+		liftParam.setVal('MX1', param.lMX1);
+		liftParam.setVal('MY1', param.lMY1);
+		liftParam.setVal('MY2', param.lMY2);
+		liftParam.setVal('MY3', param.lMY3);
 		const liftGeom = liftDef.pGeom(0, liftParam.getParamVal(), liftParam.getSuffix());
 		checkGeom(liftGeom);
 		rGeome.logstr += prefixLog(liftGeom.logstr, liftParam.getPartNameSuffix());
 		// sub-functions
 		// figTop
 		// figSide
-		// figAxis12
+		// figAxis1
+		figAxis1.addMainOI([contourCircle(0, 0, R2), contourCircle(0, 0, R1)]);
 		// figAxis3
+		figAxis3.addMainOI([contourCircle(0, 0, R2), contourCircle(0, 0, R1)]);
 		// final figure list
 		rGeome.fig = {
 			faceTop: figTop,
 			faceSide: figSide,
-			faceAxis12: figAxis12,
+			faceAxis1: figAxis1,
 			faceAxis3: figAxis3
 		};
 		// step-8 : recipes of the 3D construction
