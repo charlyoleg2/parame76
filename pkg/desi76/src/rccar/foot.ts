@@ -32,8 +32,8 @@ import {
 	contourCircle,
 	//ctrRectangle,
 	figure,
-	//degToRad,
-	//radToDeg,
+	degToRad,
+	radToDeg,
 	//pointCoord,
 	ffix,
 	pNumber,
@@ -179,7 +179,7 @@ const pDef: tParamDef = {
 		pSectionSeparator('Assembly'),
 		pNumber('aW1', 'mm', 2, 1, 50, 1),
 		pNumber('aW3', 'mm', 2, 1, 50, 1),
-		pNumber('orientation', 'degrew', -180, 180, 0, 1),
+		pNumber('steeringAngle', 'degrew', 0, -180, 180, 1),
 		pDropdown('output3D', ['assembly', 'parts'])
 	],
 	paramSvg: {
@@ -238,7 +238,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const R3i = R3 - param.aW3;
 		const wW16 = param.wW1 + param.wW2 + param.wW3 + param.wW3 * 2 + param.wW5 + param.wW6;
 		const pS5b = wW16 + param.pwE - 2 * param.pS5a;
-		//const pi2 = Math.PI / 2;
+		const lD2 = param.pD2 + param.lED2;
+		const aPivot = degToRad(param.steeringAngle);
+		const lA1 = degToRad(param.lA1);
+		const pi2 = Math.PI / 2;
 		//const epsilon = 0.01;
 		const Htot = 999;
 		const Ltot = 999;
@@ -248,6 +251,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		if (R3i < 0) {
 			throw `err248: aD3 ${ffix(param.aD3)} is too small compare to aW3 ${ffix(param.aW3)}`;
+		}
+		if (Math.abs(aPivot) > lA1) {
+			throw `err255: aPivot ${ffix(radToDeg(aPivot))} is too large compare to lA1 ${ffix(radToDeg(lA1))} degree`;
 		}
 		// step-6 : any logs
 		rGeome.logstr += `wheel-pivot wW16 ${ffix(wW16)} pS5b ${ffix(pS5b)} mm\n`;
@@ -325,7 +331,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// sub-lift
 		const liftParam = designParam(liftDef.pDef, '');
 		liftParam.setVal('D1', param.aD1 + param.lED1);
-		liftParam.setVal('D2', param.pD2 + param.lED2);
+		liftParam.setVal('D2', lD2);
 		liftParam.setVal('T1', param.lT1);
 		liftParam.setVal('T2', param.lT2);
 		liftParam.setVal('A1', param.lA1);
@@ -361,12 +367,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		checkGeom(liftGeom);
 		rGeome.logstr += prefixLog(liftGeom.logstr, liftParam.getPartNameSuffix());
 		// sub-functions
-		// figTop
-		// figSide
 		// figAxis1
 		figAxis1.addMainOI([contourCircle(0, 0, R1), contourCircle(0, 0, R1i)]);
 		// figAxis3
 		figAxis3.addMainOI([contourCircle(0, 0, R3), contourCircle(0, 0, R3i)]);
+		// figTop
+		const lY0 = param.lT3 + param.lS1 + lD2 / 2;
+		figTop.mergeFigure(liftGeom.fig.faceTopEnd.translate(0, -lY0).rotate(0, 0, -pi2), true);
+		figTop.mergeFigure(pivotGeom.fig.faceTopPlate1.rotate(0, 0, aPivot));
+		figTop.mergeFigure(wheelGeom.fig.faceCut.translate(10, 0).rotate(0, 0, aPivot));
+		figTop.mergeFigure(figAxis1);
+		// figSide
 		// final figure list
 		rGeome.fig = {
 			faceTop: figTop,
