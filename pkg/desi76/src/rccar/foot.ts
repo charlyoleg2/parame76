@@ -177,6 +177,8 @@ const pDef: tParamDef = {
 		pNumber('lMY2', 'mm', 25, 0, 500, 1),
 		pNumber('lMY3', 'mm', 50, 0, 500, 1),
 		pSectionSeparator('Assembly'),
+		pNumber('aW1', 'mm', 2, 1, 50, 1),
+		pNumber('aW3', 'mm', 2, 1, 50, 1),
 		pNumber('orientation', 'degrew', -180, 180, 0, 1),
 		pDropdown('output3D', ['assembly', 'parts'])
 	],
@@ -230,15 +232,20 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
-		const R1 = param.aD1;
-		const R2 = param.aD1 + param.aD3;
+		const R1 = param.aD1 / 2;
+		const R1i = R1 - param.aW1;
+		const R3 = param.aD3 / 3;
+		const R3i = R3 - param.aW3;
 		//const pi2 = Math.PI / 2;
 		//const epsilon = 0.01;
 		const Htot = 999;
 		const Ltot = 999;
 		// step-5 : checks on the parameter values
-		if (param.wN6 < 2) {
-			throw `err195: W5 ${ffix(param.W5)} is too small compare to D8 ${ffix(2 * param.R8)} and W8 ${ffix(param.W8)}`;
+		if (R1i < 0) {
+			throw `err244: aD1 ${ffix(param.aD1)} is too small compare to aW1 ${ffix(param.aW1)}`;
+		}
+		if (R3i < 0) {
+			throw `err248: aD3 ${ffix(param.aD3)} is too small compare to aW3 ${ffix(param.aW3)}`;
 		}
 		// step-6 : any logs
 		rGeome.logstr += `length ${ffix(Ltot)}  height ${ffix(Htot)}\n`;
@@ -354,9 +361,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figTop
 		// figSide
 		// figAxis1
-		figAxis1.addMainOI([contourCircle(0, 0, R2), contourCircle(0, 0, R1)]);
+		figAxis1.addMainOI([contourCircle(0, 0, R1), contourCircle(0, 0, R1i)]);
 		// figAxis3
-		figAxis3.addMainOI([contourCircle(0, 0, R2), contourCircle(0, 0, R1)]);
+		figAxis3.addMainOI([contourCircle(0, 0, R3), contourCircle(0, 0, R3i)]);
 		// final figure list
 		rGeome.fig = {
 			faceTop: figTop,
