@@ -226,7 +226,8 @@ const pDef: tParamDef = {
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
 	const figTop = figure();
-	const figSide = figure();
+	const figSidePlate = figure();
+	const figSideArc = figure();
 	const figAxis1 = figure();
 	const figAxis3 = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
@@ -373,15 +374,19 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figAxis3.addMainOI([contourCircle(0, 0, R3), contourCircle(0, 0, R3i)]);
 		// figTop
 		const lY0 = param.lT3 + param.lS1 + lD2 / 2;
+		const pX0 = param.pD2 / 2 + param.pS1 + param.pT3b + param.pT3a + param.pS3;
+		const pX1 = pX0 - wW16 - param.pwE / 2;
 		figTop.mergeFigure(liftGeom.fig.faceTopEnd.translate(0, -lY0).rotate(0, 0, -pi2), true);
 		figTop.mergeFigure(pivotGeom.fig.faceTopPlate1.rotate(0, 0, aPivot));
-		figTop.mergeFigure(wheelGeom.fig.faceCut.translate(10, 0).rotate(0, 0, aPivot));
+		figTop.mergeFigure(wheelGeom.fig.faceCut.translate(pX1, 0).rotate(0, 0, aPivot));
 		figTop.mergeFigure(figAxis1);
-		// figSide
+		// figSidePlate
+		// figSideArc
 		// final figure list
 		rGeome.fig = {
 			faceTop: figTop,
-			faceSide: figSide,
+			faceSidePlate: figSidePlate,
+			faceSideArc: figSideArc,
 			faceAxis1: figAxis1,
 			faceAxis3: figAxis3
 		};
