@@ -47,8 +47,8 @@ import {
 	EBVolume
 } from 'geometrix';
 //import { triAPiPi, triAArA, triALArLL, triLALrL, triALLrL, triALLrLAA, triLLLrA, triLLLrAAA } from 'triangule';
-//import { liftDef } from './lift.ts';
-//import { pivotDef } from './pivot.ts';
+import { liftDef } from './lift.ts';
+import { pivotDef } from './pivot.ts';
 import { wheelDef } from './wheel.ts';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
@@ -257,6 +257,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const wheelGeom = wheelDef.pGeom(0, wheelParam.getParamVal(), wheelParam.getSuffix());
 		checkGeom(wheelGeom);
 		rGeome.logstr += prefixLog(wheelGeom.logstr, wheelParam.getPartNameSuffix());
+		// sub-pivot
+		const pivotParam = designParam(pivotDef.pDef, '');
+		pivotParam.setVal('D1', param.aD3 + param.wED3);
+		const pivotGeom = pivotDef.pGeom(0, pivotParam.getParamVal(), pivotParam.getSuffix());
+		checkGeom(pivotGeom);
+		rGeome.logstr += prefixLog(pivotGeom.logstr, pivotParam.getPartNameSuffix());
+		// sub-lift
+		const liftParam = designParam(liftDef.pDef, '');
+		liftParam.setVal('D1', param.aD3 + param.wED3);
+		const liftGeom = liftDef.pGeom(0, liftParam.getParamVal(), liftParam.getSuffix());
+		checkGeom(liftGeom);
+		rGeome.logstr += prefixLog(liftGeom.logstr, liftParam.getPartNameSuffix());
 		// sub-functions
 		// figTop
 		// figSide
@@ -287,7 +299,29 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			partList.push(`inpax_${designName}_wheel`);
 		}
 		// part3D pivot
+		if ([0, 1].includes(param.output3D)) {
+			const partPivot: tInherit = {
+				outName: `inpax_${designName}_pivot`,
+				subdesign: 'pax_pivot',
+				subgeom: pivotGeom,
+				rotate: [0, 0, 0],
+				translate: [0, 0, 0]
+			};
+			partInherit.push(partPivot);
+			partList.push(`inpax_${designName}_pivot`);
+		}
 		// part3D lift
+		if ([0, 1].includes(param.output3D)) {
+			const partLift: tInherit = {
+				outName: `inpax_${designName}_lift`,
+				subdesign: 'pax_lift',
+				subgeom: liftGeom,
+				rotate: [0, 0, 0],
+				translate: [0, 0, 0]
+			};
+			partInherit.push(partLift);
+			partList.push(`inpax_${designName}_lift`);
+		}
 		// part3D axis
 		if ([0, 1].includes(param.output3D)) {
 			for (const ii of [1, 3]) {
@@ -327,8 +361,22 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			orientation: [0, 0, 0],
 			position: [0, 0, 0]
 		};
+		const subPivot: tSubInst = {
+			partName: pivotParam.getPartName(),
+			dparam: pivotParam.getDesignParamList(),
+			orientation: [0, 0, 0],
+			position: [0, 0, 0]
+		};
+		const subLift: tSubInst = {
+			partName: liftParam.getPartName(),
+			dparam: liftParam.getDesignParamList(),
+			orientation: [0, 0, 0],
+			position: [0, 0, 0]
+		};
 		rGeome.sub = {
-			wheel1: subWheel
+			wheel1: subWheel,
+			pivot1: subPivot,
+			lift1: subLift
 		};
 		// step-10 : final log message
 		// finalize
