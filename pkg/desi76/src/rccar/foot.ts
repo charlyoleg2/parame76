@@ -75,7 +75,7 @@ const pDef: tParamDef = {
 		pNumber('wRD5', 'mm', 100, 1, 1000, 1),
 		pNumber('pwE', 'mm', 0.7, -5, 10, 0.1),
 		pSectionSeparator('Wheel main'),
-		pNumber('wD1', 'mm', 20, 1, 1000, 0.1),
+		//pNumber('wD1', 'mm', 20, 1, 1000, 0.1),
 		//pNumber('wRD2', 'mm', 1, 1, 500, 1),
 		pNumber('wRD3', 'mm', 5, 1, 500, 1),
 		pNumber('wRD4', 'mm', 2, 1, 500, 1),
@@ -200,7 +200,7 @@ const pDef: tParamDef = {
 		wRD2: 'foot_joints.svg',
 		wRD5: 'foot_joints.svg',
 		pwE: 'foot_joints.svg',
-		wD1: 'foot_wheel_side.svg',
+		//wD1: 'foot_wheel_side.svg',
 		//wRD2: 'foot_wheel_side.svg',
 		wRD3: 'foot_wheel_cut.svg',
 		wRD4: 'foot_wheel_cut.svg',
@@ -237,11 +237,26 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const R1i = R1 - param.aW1;
 		const R3 = param.aD3 / 3;
 		const R3i = R3 - param.aW3;
-		const wW16 = param.wW1 + param.wW2 + param.wW3 + param.wW3 * 2 + param.wW5 + param.wW6;
+		const wW16 = param.wW1 + param.wW2 + param.wW3 + param.wW4 * 2 + param.wW5 + param.wW6;
 		const pS5b = wW16 + param.pwE - 2 * param.pS5a;
-		const lD2 = param.pD2 + param.lED2;
+		const lD2 = param.pD2 + 2 * param.lED2;
 		const aPivot = degToRad(param.steeringAngle);
 		const lA1 = degToRad(param.lA1);
+		const lY0 = param.lT3 + param.lS1 + lD2 / 2;
+		const pX0 = param.pD2 / 2 + param.pS1 + param.pT3b + param.pT3a + param.pS3;
+		const pX1 = pX0 - wW16 - param.pwE / 2;
+		const wheelX = pX1 + param.wW1 + param.wW2;
+		const wD1 = param.aD3 + param.wED3;
+		const wheelY = wD1 / 2 + param.wRD2 + param.wRD5 + param.wRD6;
+		const wheelRz = Math.sqrt(wheelX ** 2 + wheelY ** 2);
+		const pivotX = pX0 + param.pT4b + param.pT4a;
+		const pivotY = param.pW4 / 2;
+		const pivotRz = Math.sqrt(pivotX ** 2 + pivotY ** 2);
+		const DzMin = Math.max(param.pD2, lD2);
+		const RzMax = Math.max(wheelRz, pivotRz);
+		const RzDiff = RzMax - DzMin / 2;
+		const wheelRy = wD1 / 2 + param.wRD2 + param.wRD5;
+		const wheelD = 2 * wheelRy;
 		const pi2 = Math.PI / 2;
 		//const epsilon = 0.01;
 		const Htot = 999;
@@ -258,12 +273,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// step-6 : any logs
 		rGeome.logstr += `wheel-pivot wW16 ${ffix(wW16)} pS5b ${ffix(pS5b)} mm\n`;
+		rGeome.logstr += `DzMin ${ffix(DzMin)}  RzMax ${ffix(RzMax)}  RzDiff ${ffix(RzDiff)} mm\n`;
+		rGeome.logstr += `wheelD ${ffix(wheelD)} mm\n`;
 		rGeome.logstr += `length ${ffix(Ltot)}  height ${ffix(Htot)}\n`;
 		// step-7 : drawing of the figures
 		// inherite
 		// sub-wheel
 		const wheelParam = designParam(wheelDef.pDef, '');
-		wheelParam.setVal('D1', param.aD3 + param.wED3);
+		wheelParam.setVal('D1', wD1);
 		wheelParam.setVal('RD2', param.wRD2);
 		wheelParam.setVal('RD3', param.wRD3);
 		wheelParam.setVal('RD4', param.wRD4);
@@ -373,13 +390,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figAxis3
 		figAxis3.addMainOI([contourCircle(0, 0, R3), contourCircle(0, 0, R3i)]);
 		// figTop
-		const lY0 = param.lT3 + param.lS1 + lD2 / 2;
-		const pX0 = param.pD2 / 2 + param.pS1 + param.pT3b + param.pT3a + param.pS3;
-		const pX1 = pX0 - wW16 - param.pwE / 2;
 		figTop.mergeFigure(liftGeom.fig.faceTopEnd.translate(0, -lY0).rotate(0, 0, -pi2), true);
 		figTop.mergeFigure(pivotGeom.fig.faceTopPlate1.rotate(0, 0, aPivot));
 		figTop.mergeFigure(wheelGeom.fig.faceCut.translate(pX1, 0).rotate(0, 0, aPivot));
 		figTop.mergeFigure(figAxis1);
+		figTop.addSecond(contourCircle(0, 0, RzMax));
 		// figSidePlate
 		// figSideArc
 		// final figure list

@@ -26,7 +26,7 @@ import {
 	//ShapePoint,
 	contour,
 	contourCircle,
-	//ctrRectangle,
+	ctrRectangle,
 	figure,
 	//degToRad,
 	//radToDeg,
@@ -97,9 +97,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const R2 = R1 + param.RD2;
 		const R3 = R2 + param.RD3;
 		const R4 = R3 + param.RD4;
-		const R5 = R1 + param.RD5;
+		const R5 = R2 + param.RD5;
 		const R6 = R5 + param.RD6;
 		const R56 = R5 + param.RD6 / 2;
+		const RD56 = param.RD5 + param.RD6;
 		//const pi2 = Math.PI / 2;
 		//const epsilon = 0.01;
 		const a62 = Math.PI / param.N6; // 2*Pi/(2*N6)
@@ -151,6 +152,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figTrans1
 		figTrans1.mergeFigure(figPneu, true);
 		figTrans1.addMainOI([contourCircle(0, 0, R4), contourCircle(0, 0, R1)]);
+		figTrans1.addSecond(contourCircle(0, 0, R5));
+		figTrans1.addSecond(contourCircle(0, 0, R6));
 		// figTrans2
 		figTrans2.mergeFigure(figTrans1, true);
 		figTrans2.addMainOI([contourCircle(0, 0, R3), contourCircle(0, 0, R1)]);
@@ -159,14 +162,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const rCtr = contour(0, iy * R1)
 				.addSegStrokeR(0, iy * param.RD2)
 				.addSegStrokeR(param.W1, 0)
-				.addSegStrokeR(0, iy * param.RD5)
+				.addSegStrokeR(0, iy * RD56)
 				.addSegStrokeR(param.W2, 0);
 			if (param.W3 > 0) {
-				rCtr.addSegStrokeR(0, -iy * param.RD5)
+				rCtr.addSegStrokeR(0, -iy * RD56)
 					.addSegStrokeR(param.W3, 0)
 					.addSegStrokeR(0, iy * (param.RD3 + param.RD4));
 			} else {
-				rCtr.addSegStrokeR(0, iy * (param.RD3 + param.RD4 - param.RD5));
+				rCtr.addSegStrokeR(0, iy * (param.RD3 + param.RD4 - RD56));
 			}
 			rCtr.addSegStrokeR(param.W4, 0)
 				.addSegStrokeR(0, -iy * param.RD4)
@@ -181,6 +184,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		figCut.addMainO(ctrCut(1));
 		figCut.addMainO(ctrCut(-1));
+		figCut.addSecond(ctrRectangle(param.W1, R5, param.W2, param.RD6));
+		figCut.addSecond(ctrRectangle(param.W1, -R6, param.W2, param.RD6));
 		// final figure list
 		rGeome.fig = {
 			facePneu: figPneu,
