@@ -183,7 +183,6 @@ const pDef: tParamDef = {
 		pDropdown('output3D', ['assembly', 'parts'])
 	],
 	paramSvg: {
-		//L0: 'foot_joints.svg',
 		aD1: 'foot_joints.svg',
 		pED1: 'foot_joints.svg',
 		lED1: 'foot_joints.svg',
@@ -194,18 +193,21 @@ const pDef: tParamDef = {
 		lpE: 'foot_joints.svg',
 		lH5: 'foot_joints.svg',
 		pH5: 'foot_joints.svg',
+		// Wheel axis
 		aD3: 'foot_joints.svg',
 		wED3: 'foot_joints.svg',
 		pED3: 'foot_joints.svg',
 		wRD2: 'foot_joints.svg',
 		wRD5: 'foot_joints.svg',
 		pwE: 'foot_joints.svg',
+		// Wheel main
 		//wD1: 'foot_wheel_side.svg',
 		//wRD2: 'foot_wheel_side.svg',
 		wRD3: 'foot_wheel_cut.svg',
 		wRD4: 'foot_wheel_cut.svg',
 		//wRD5: 'foot_wheel_side.svg',
 		wRD6: 'foot_wheel_side.svg',
+		// Wheel widths
 		wN6: 'foot_wheel_side.svg',
 		wW1: 'foot_wheel_cut.svg',
 		wW2: 'foot_wheel_cut.svg',
@@ -213,6 +215,35 @@ const pDef: tParamDef = {
 		wW4: 'foot_wheel_cut.svg',
 		wW5: 'foot_wheel_cut.svg',
 		wW6: 'foot_wheel_cut.svg',
+		// Pivot main
+		// pD1: 'foot_pivot_plate.svg',
+		// pD2: 'foot_pivot_plate.svg',
+		// pD3: 'foot_pivot_plate.svg',
+		pT1: 'foot_pivot_plate.svg',
+		pT2: 'foot_pivot_plate.svg',
+		pW4: 'foot_pivot_plate.svg',
+		// Pivot top details
+		// pS1: 'foot_pivot_plate.svg',
+		pS2min: 'foot_pivot_plate.svg',
+		pS3: 'foot_pivot_plate.svg',
+		pHollowTop: 'foot_pivot_plate.svg',
+		pRR2: 'foot_pivot_plate.svg',
+		pRR3: 'foot_pivot_plate.svg',
+		pA2: 'foot_pivot_wall.svg',
+		// Pivot side
+		pT3a: 'foot_pivot_side_x.svg',
+		pT3b: 'foot_pivot_side_x.svg',
+		pT4a: 'foot_pivot_side_x.svg',
+		pT4b: 'foot_pivot_side_x.svg',
+		pT5a: 'foot_pivot_side_x.svg',
+		pT5b: 'foot_pivot_side_x.svg',
+		pS5a: 'foot_pivot_side_x.svg',
+		//pS5b: 'foot_pivot_side_x.svg',
+		pRR4: 'foot_pivot_relief35.svg',
+		pRR5: 'foot_pivot_side_x.svg',
+		// Pivot heights
+		pT41: 'foot_pivot_relief4.svg',
+		// assembly
 		output3D: 'foot_joints.svg'
 	},
 	sim: {
