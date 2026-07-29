@@ -266,6 +266,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (param.U42 <= param.T2) {
 			throw `err263: U42 ${ffix(param.U42)} is too large compare to T2 ${ffix(param.T2)}`;
 		}
+		if (2 * param.S5a + param.S5b < param.S3) {
+			throw `err270: S3 ${ffix(param.S3)} is too large compare to S5a ${ffix(param.S5a)} or S5b ${ffix(param.S5b)}`;
+		}
 		// step-6 : any logs
 		rGeome.logstr += `Lextra ${ffix(Lextra)}  Rmax ${ffix(R9)}  Dmax ${ffix(2 * R9)} mm\n`;
 		rGeome.logstr += `Lreturn ${ffix(Lreturn)}  Lend ${ffix(Lend)} mm\n`;
