@@ -3,8 +3,8 @@
 
 <svg
    width="401.6756"
-   height="565.34277"
-   viewBox="0 0 106.27666 149.58026"
+   height="594.33423"
+   viewBox="0 0 106.27666 157.25091"
    version="1.1"
    id="svg1"
    inkscape:version="1.4.4 (1:1.4.4+202605061436+dcaf3e7d9e)"
@@ -24,8 +24,8 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
      inkscape:zoom="1.4142136"
-     inkscape:cx="290.26733"
-     inkscape:cy="4347.9996"
+     inkscape:cx="372.29171"
+     inkscape:cy="6870.9564"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="0"
@@ -36,7 +36,7 @@
        x="0"
        y="0"
        width="106.27666"
-       height="149.58026"
+       height="157.25092"
        id="page2"
        margin="0"
        bleed="0" />
@@ -621,17 +621,67 @@
        width="50.180958"
        height="32.038612"
        id="rect127" />
+    <rect
+       x="364"
+       y="7008"
+       width="66.5"
+       height="33"
+       id="rect207-9-8-5" />
+    <marker
+       style="overflow:visible"
+       id="Stop-741"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Stop"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1"
+         d="M 0,4 V -4"
+         id="path23-8" />
+    </marker>
+    <rect
+       x="68.589355"
+       y="4470.6826"
+       width="52.325901"
+       height="29.698484"
+       id="rect216-3" />
+    <marker
+       style="overflow:visible"
+       id="ArrowWide-386"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Wide arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:butt"
+         d="M 3,-3 0,0 3,3"
+         transform="rotate(180,0.125,0)"
+         sodipodi:nodetypes="ccc"
+         id="path4-0" />
+    </marker>
   </defs>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-33.831484,-874.89671)">
+     transform="translate(-33.831484,-874.89674)">
     <rect
        style="fill:#ffffff;stroke:#ffffff;stroke-width:0.264583;stroke-linejoin:round"
        id="rect99-4"
        width="106.01208"
-       height="149.31567"
+       height="156.9863"
        x="33.963776"
        y="875.02905"
        inkscape:export-filename="foot_pivot_relief35.svg"
@@ -875,11 +925,11 @@
        id="path94-9-8-0-5-73-7" />
     <path
        style="fill:#ffffff;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide-4-3-3-2-6-3);marker-end:url(#ArrowWide-4-3-3-2-6-3)"
-       d="m 126.08573,971.10781 v 25.4339"
+       d="M 126.08573,971.09947 V 995.6963"
        id="path94-9-8-0-5-1-7" />
     <path
        style="fill:#ffffff;stroke:#000000;stroke-width:0.264582;stroke-linejoin:round;marker-start:url(#ArrowWide-4-3-3-2-3-6);marker-end:url(#ArrowWide-4-3-3-2-3-6)"
-       d="m 124.66927,997.05801 v 13.90539"
+       d="m 124.66927,996.21781 v 14.73059"
        id="path94-9-8-0-5-0-6" />
     <text
        xml:space="preserve"
@@ -1055,10 +1105,6 @@
        d="m 72.729449,1001.4208 -23.687373,14.1547"
        id="path66-8" />
     <path
-       style="fill:#ffffff;stroke:#999999;stroke-width:0.264582;stroke-linejoin:round"
-       d="m 77.81645,996.94771 h 48.26928"
-       id="path67-3-5-6-2" />
-    <path
        style="fill:#ffffff;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide-5-6);marker-end:url(#ArrowWide-6-2)"
        d="m 76.86802,964.42241 h 2.565433"
        id="path96-4" />
@@ -1162,5 +1208,55 @@
          x="47.09375"
          y="3780.5099"
          id="tspan23">pU33</tspan></text>
+    <ellipse
+       style="fill:#e5ff80;stroke:#445500;stroke-width:0.264999;stroke-linejoin:round"
+       id="path20-3-1-8-3"
+       cx="78.122154"
+       cy="996.07336"
+       rx="4.3899851"
+       ry="4.3906403" />
+    <ellipse
+       style="fill:#ffffff;stroke:#445500;stroke-width:0.264999;stroke-linejoin:round"
+       id="path20-3-1-3-5-8"
+       cx="78.122154"
+       cy="996.07336"
+       rx="2.6215742"
+       ry="2.6219652" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.2645833,0,0,0.2645833,-18.756444,-827.09147)"
+       id="text207-1-8"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect207-9-8-5);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="364"
+         y="7022.2364"
+         id="tspan24">aW3</tspan></text>
+    <path
+       style="fill:#ffffff;stroke:#999999;stroke-width:0.264582;stroke-linejoin:round"
+       d="M 80.743737,1026.3896 V 996.07341"
+       id="path67-3-5-6-1-7-5-7-8" />
+    <path
+       style="fill:#ffffff;stroke:#999999;stroke-width:0.264582;stroke-linejoin:round"
+       d="M 82.512147,1026.3896 V 996.07341"
+       id="path67-3-5-6-1-7-5-7-1-9" />
+    <path
+       style="fill:#ffffff;stroke:#000000;stroke-width:0.264999;stroke-linejoin:round;marker-start:url(#Stop-741);marker-end:url(#Stop-741)"
+       d="m 80.743737,1026.3896 h 1.76841"
+       id="path215-6" />
+    <path
+       style="fill:#ffffff;stroke:#999999;stroke-width:0.264582;stroke-linejoin:round"
+       d="M 78.122154,996.07349 H 126.39143"
+       id="path67-3-5-6-2" />
+    <path
+       style="fill:#ffffff;stroke:#000000;stroke-width:0.264999;stroke-linejoin:round;marker-start:url(#ArrowWide-386)"
+       d="m 73.54508,994.85728 -27.689118,-4.2095"
+       id="path216-8" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.2645833,0,0,0.2645833,19.382919,-195.21356)"
+       id="text216-8"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect216-3);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="68.589844"
+         y="4484.92"
+         id="tspan25">aD3</tspan></text>
   </g>
 </svg>

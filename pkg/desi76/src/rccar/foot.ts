@@ -303,10 +303,10 @@ const pDef: tParamDef = {
 		lMY2: 'foot_lift_side2.svg',
 		lMY3: 'foot_lift_side2.svg',
 		// Assembly
-		aW1: 'foot_joints.svg',
-		aW3: 'foot_joints.svg',
-		steeringAngle: 'foot_joints.svg',
-		output3D: 'foot_joints.svg'
+		aW1: 'foot_pivot_axis.svg',
+		aW3: 'foot_pivot_relief4.svg',
+		steeringAngle: 'foot_pivot_axis.svg',
+		output3D: 'foot_pivot_axis.svg'
 	},
 	sim: {
 		tMax: 100,
