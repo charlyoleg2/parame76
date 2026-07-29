@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
-     inkscape:zoom="1"
-     inkscape:cx="290.5"
-     inkscape:cy="2102"
+     inkscape:zoom="0.7071068"
+     inkscape:cx="290.62088"
+     inkscape:cy="3480.3795"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="0"
@@ -530,7 +530,7 @@
        height="149.31567"
        x="26.139668"
        y="1065.7935"
-       inkscape:export-filename="pivot_relief4.svg"
+       inkscape:export-filename="foot_pivot_relief4.svg"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
     <rect
@@ -890,7 +890,7 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect96-2-1-4-9);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="77.517578"
          y="3093.0939"
-         id="tspan16">pT43</tspan></text>
+         id="tspan16">pU43</tspan></text>
     <circle
        style="fill:#ff0000;stroke:#c8ab37;stroke-width:0.264583;stroke-linejoin:round"
        id="path20-8-5-8-3"
@@ -929,7 +929,7 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect96-2-7);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="77.517578"
          y="3093.0939"
-         id="tspan17">pT41</tspan></text>
+         id="tspan17">pU41</tspan></text>
     <path
        style="fill:#ffffff;stroke:#000000;stroke-width:0.264582;stroke-linejoin:round;marker-start:url(#ArrowWide-5-3-61);marker-end:url(#ArrowWide-6-2-8-2)"
        d="M 46.518134,1125.5285 H 49.98068"
@@ -941,7 +941,7 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect96-2-1-5);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="77.517578"
          y="3093.0939"
-         id="tspan18">pT42</tspan></text>
+         id="tspan18">pU42</tspan></text>
     <path
        style="fill:#ffffff;stroke:#000000;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide-5-3-6-9);marker-end:url(#ArrowWide-6-2-8-4-1)"
        d="m 56.373881,1112.7217 v -6.3538"

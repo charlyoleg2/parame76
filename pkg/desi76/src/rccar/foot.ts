@@ -242,7 +242,31 @@ const pDef: tParamDef = {
 		pRR4: 'foot_pivot_relief35.svg',
 		pRR5: 'foot_pivot_side_x.svg',
 		// Pivot heights
-		pT41: 'foot_pivot_relief4.svg',
+		pH11: 'foot_pivot_relief35.svg',
+		pH12: 'foot_pivot_relief35.svg',
+		pH13: 'foot_pivot_relief35.svg',
+		pH14: 'foot_pivot_relief35.svg',
+		pH15: 'foot_pivot_relief35.svg',
+		//pH5: 'foot_pivot_relief35.svg',
+		pH2: 'foot_pivot_relief35.svg',
+		pH31: 'foot_pivot_relief35.svg',
+		pH32: 'foot_pivot_relief35.svg',
+		pH33: 'foot_pivot_relief35.svg',
+		pH34: 'foot_pivot_relief35.svg',
+		pH35: 'foot_pivot_relief35.svg',
+		pH36: 'foot_pivot_relief35.svg',
+		// Pivot relief
+		pU31: 'foot_pivot_relief35.svg',
+		pU32: 'foot_pivot_relief35.svg',
+		pU33: 'foot_pivot_relief35.svg',
+		pRR31: 'foot_pivot_relief35.svg',
+		pU41: 'foot_pivot_relief4.svg',
+		pU42: 'foot_pivot_relief4.svg',
+		pU43: 'foot_pivot_relief4.svg',
+		pU51: 'foot_pivot_relief35.svg',
+		pU52: 'foot_pivot_relief35.svg',
+		pU53: 'foot_pivot_relief35.svg',
+		// Lift main
 		// assembly
 		output3D: 'foot_joints.svg'
 	},
