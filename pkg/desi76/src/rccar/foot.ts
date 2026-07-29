@@ -158,7 +158,7 @@ const pDef: tParamDef = {
 		pNumber('lT6', 'mm', 3, 1, 100, 1),
 		pNumber('lT7', 'mm', 10, 1, 100, 1),
 		pSectionSeparator('Lift side'),
-		pNumber('lH1', 'mm', 100, 1, 1000, 1),
+		//pNumber('lH1', 'mm', 100, 1, 1000, 1),
 		pNumber('lH2', 'mm', 3, 1, 100, 1),
 		pNumber('lH3', 'mm', 25, 0, 100, 1),
 		pNumber('lH4', 'mm', 15, 0, 100, 1),
@@ -284,7 +284,7 @@ const pDef: tParamDef = {
 		lT6: 'foot_lift_top2.svg',
 		lT7: 'foot_lift_back.svg',
 		// Lift side
-		lH1: 'foot_lift_side1.svg',
+		//lH1: 'foot_lift_side1.svg',
 		lH2: 'foot_lift_side1.svg',
 		lH3: 'foot_lift_side1.svg',
 		lH4: 'foot_lift_side1.svg',
@@ -349,10 +349,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const RzMax = Math.max(wheelRz, pivotRz);
 		const RzDiff = RzMax - DzMin / 2;
 		const wheelD = 2 * wheelY;
+		const pH15 = param.pH11 + param.pH12 + param.pH13 + param.pH14 + param.pH15;
+		const lH1 = pH15 + 2 * (param.pH5 + param.lH5) + param.lpE;
 		const pi2 = Math.PI / 2;
 		//const epsilon = 0.01;
-		const Htot = 999;
-		const Ltot = 999;
+		const Htot = lH1 + 2 * param.lH2 + param.lH3 + param.lH4;
 		// step-5 : checks on the parameter values
 		if (R1i < 0) {
 			throw `err244: aD1 ${ffix(param.aD1)} is too small compare to aW1 ${ffix(param.aW1)}`;
@@ -367,7 +368,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `wheel-pivot wW16 ${ffix(wW16)} pS5b ${ffix(pS5b)} mm\n`;
 		rGeome.logstr += `DzMin ${ffix(DzMin)}  RzMax ${ffix(RzMax)}  RzDiff ${ffix(RzDiff)} mm\n`;
 		rGeome.logstr += `wheelD ${ffix(wheelD)} mm\n`;
-		rGeome.logstr += `length ${ffix(Ltot)}  height ${ffix(Htot)}\n`;
+		rGeome.logstr += `pH15 ${ffix(pH15)}  lH1 ${ffix(lH1)}  total-height ${ffix(Htot)}\n`;
 		// step-7 : drawing of the figures
 		// inherite
 		// sub-wheel
@@ -455,7 +456,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		liftParam.setVal('T5', param.lT5);
 		liftParam.setVal('T6', param.lT6);
 		liftParam.setVal('T7', param.lT7);
-		liftParam.setVal('H1', param.lH1);
+		liftParam.setVal('H1', lH1);
 		liftParam.setVal('H2', param.lH2);
 		liftParam.setVal('H3', param.lH3);
 		liftParam.setVal('H4', param.lH4);

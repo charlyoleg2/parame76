@@ -244,6 +244,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (param.MY1 + param.MY2 > H32124) {
 			throw `err239: MY2 ${ffix(param.MY2)} is too large compare to MY1 ${ffix(param.MY1)}`;
 		}
+		if (param.H1 < 2 * param.H5) {
+			throw `err248: H1 ${ffix(param.H1)} is too small compare to H5 ${ffix(param.H5)}`;
+		}
 		// step-6 : any logs
 		rGeome.logstr += `W7 ${ffix(2 * W72)} mm  outline-mode ${outlineMode}\n`;
 		rGeome.logstr += `A1 bounds  b1 ${ffix(radToDeg(2 * a12b1))}  b2 ${ffix(radToDeg(2 * a12b2))} degree\n`;
