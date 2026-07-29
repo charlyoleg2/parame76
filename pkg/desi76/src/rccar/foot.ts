@@ -84,10 +84,10 @@ const pDef: tParamDef = {
 		pNumber('wN6', 'teeth', 50, 5, 500, 1),
 		pSectionSeparator('Wheel widths'),
 		pNumber('wW1', 'mm', 1, 0, 500, 1),
-		pNumber('wW2', 'mm', 20, 1, 500, 1),
-		pNumber('wW3', 'mm', 0, 0, 500, 1),
+		pNumber('wW2', 'mm', 80, 1, 500, 1),
+		pNumber('wW3', 'mm', 20, 0, 500, 1),
 		pNumber('wW4', 'mm', 2, 1, 500, 1),
-		pNumber('wW5', 'mm', 2, 1, 500, 1),
+		pNumber('wW5', 'mm', 10, 1, 500, 1),
 		pNumber('wW6', 'mm', 1, 0, 500, 1),
 		pSectionSeparator('Pivot main'),
 		//pNumber('pD1', 'mm', 60, 1, 1000, 1),
@@ -99,7 +99,7 @@ const pDef: tParamDef = {
 		pSectionSeparator('Pivot top details'),
 		//pNumber('pS1', 'mm', 2, 0, 500, 1),
 		pNumber('pS2min', 'mm', 30, 1, 500, 1),
-		pNumber('pS3', 'mm', 40, 1, 1000, 1),
+		pNumber('pS3', 'mm', 30, 1, 1000, 1),
 		pCheckbox('pHollowTop', true),
 		pNumber('pRR2', 'mm', 2, 0, 100, 1),
 		pNumber('pRR3', 'mm', 5, 0, 100, 1),
@@ -331,7 +331,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const R3 = param.aD3 / 3;
 		const R3i = R3 - param.aW3;
 		const wW16 = param.wW1 + param.wW2 + param.wW3 + param.wW4 * 2 + param.wW5 + param.wW6;
-		const pS5b = wW16 + param.pwE - 2 * param.pS5a;
+		const pS3max = wW16 + param.pwE;
+		const pS5b = pS3max - 2 * param.pS5a;
 		const lD2 = param.pD2 + 2 * param.lED2; // *2 or *1 ?
 		const aPivot = degToRad(param.steeringAngle);
 		const lA1 = degToRad(param.lA1);
@@ -363,6 +364,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		if (Math.abs(aPivot) > lA1) {
 			throw `err255: aPivot ${ffix(radToDeg(aPivot))} is too large compare to lA1 ${ffix(radToDeg(lA1))} degree`;
+		}
+		if (param.pS3 > pS3max) {
+			throw `err369: pS3 ${ffix(param.pS3)} is too large compare to pS3max ${ffix(pS3max)} mm`;
 		}
 		// step-6 : any logs
 		rGeome.logstr += `wheel-pivot wW16 ${ffix(wW16)} pS5b ${ffix(pS5b)} mm\n`;
