@@ -365,7 +365,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeR(0, param.H4)
 			.addSegStrokeR(-param.T3, 0)
 			.closeSegStroke();
-		const ctrSideLse = contour(param.T3 + R2 + R1, 0)
+		const ctrSideLse = contour(param.T3 + param.S1 + R2 + R1, 0)
 			.addSegStrokeR(param.T1, 0)
 			.addSegStrokeR(0, param.H3)
 			.addSegStrokeR(R2 - R1 - param.T1 - param.T2, 0)
@@ -374,7 +374,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeR(0, H325)
 			.addSegStrokeR(-R2 + R1, 0)
 			.closeSegStroke();
-		const ctrSideLne = contour(param.T3 + R2 + R1, H321)
+		const Ylne = H321 - param.H5;
+		const ctrSideLne = contour(param.T3 + param.S1 + R2 + R1, Ylne)
 			.addSegStrokeR(R2 - R1, 0)
 			.addSegStrokeR(0, H425)
 			.addSegStrokeR(-param.T2, 0)
@@ -553,7 +554,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				extrudeMethod: EExtrude.eLinearOrtho,
 				length: param.H5,
 				rotate: [0, 0, 0],
-				translate: [0, 0, H3212 - param.H5]
+				translate: [0, 0, Ylne]
 			});
 			partList.push(eName);
 		}
