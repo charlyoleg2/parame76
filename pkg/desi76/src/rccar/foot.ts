@@ -83,12 +83,12 @@ const pDef: tParamDef = {
 		pNumber('wRD6', 'mm', 4, 1, 500, 1),
 		pNumber('wN6', 'teeth', 50, 5, 500, 1),
 		pSectionSeparator('Wheel widths'),
-		pNumber('wW1', 'mm', 1, 0, 500, 1),
+		pNumber('wW1', 'mm', 10, 0, 500, 1),
 		pNumber('wW2', 'mm', 80, 1, 500, 1),
 		pNumber('wW3', 'mm', 20, 0, 500, 1),
 		pNumber('wW4', 'mm', 2, 1, 500, 1),
 		pNumber('wW5', 'mm', 10, 1, 500, 1),
-		pNumber('wW6', 'mm', 1, 0, 500, 1),
+		pNumber('wW6', 'mm', 5, 0, 500, 1),
 		pSectionSeparator('Pivot main'),
 		//pNumber('pD1', 'mm', 60, 1, 1000, 1),
 		//pNumber('pD2', 'mm', 100, 1, 1000, 1),
@@ -319,7 +319,8 @@ const pDef: tParamDef = {
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
 	const figTop = figure();
-	const figSidePlate = figure();
+	const figSideExt = figure();
+	const figSideInt = figure();
 	const figSideArc = figure();
 	const figAxis1 = figure();
 	const figAxis3 = figure();
@@ -354,7 +355,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const lH1 = pH15 + 2 * (param.pH5 + param.lH5) + param.lpE;
 		const pi2 = Math.PI / 2;
 		//const epsilon = 0.01;
-		const Htot = lH1 + 2 * param.lH2 + param.lH3 + param.lH4;
+		const lHtot = lH1 + 2 * param.lH2 + param.lH3 + param.lH4;
+		const pH23 = param.pH2 + param.pH31 + param.pH32 + param.pH33 + param.pH34 + param.pH35;
+		const HtotPre = pH23 + pH15 + 2 * param.pH5 + param.lH5 + param.lpE + param.lH2 + param.lH3;
+		const Htot = HtotPre + wheelY;
 		// step-5 : checks on the parameter values
 		if (R1i < 0) {
 			throw `err244: aD1 ${ffix(param.aD1)} is too small compare to aW1 ${ffix(param.aW1)}`;
@@ -372,7 +376,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `wheel-pivot wW16 ${ffix(wW16)} pS5b ${ffix(pS5b)} mm\n`;
 		rGeome.logstr += `DzMin ${ffix(DzMin)}  RzMax ${ffix(RzMax)}  RzDiff ${ffix(RzDiff)} mm\n`;
 		rGeome.logstr += `wheelD ${ffix(wheelD)} mm\n`;
-		rGeome.logstr += `pH15 ${ffix(pH15)}  lH1 ${ffix(lH1)}  total-height ${ffix(Htot)}\n`;
+		rGeome.logstr += `pH15 ${ffix(pH15)}  lH1 ${ffix(lH1)}  lHtot ${ffix(lHtot)}  Htot ${ffix(Htot)} mm\n`;
 		// step-7 : drawing of the figures
 		// inherite
 		// sub-wheel
@@ -492,12 +496,20 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figTop.mergeFigure(wheelGeom.fig.faceCut.translate(pX1, 0).rotate(0, 0, aPivot));
 		figTop.mergeFigure(figAxis1);
 		figTop.addSecond(contourCircle(0, 0, RzMax));
-		// figSidePlate
+		// figSideExt
+		// figSideInt
 		// figSideArc
+		const lXArc = param.pD2 / 2 + param.lED2 + param.lS1 + param.lT3;
+		const lYarc2 = param.lH3 + param.lH2 + param.lH5 + param.lpE / 2;
+		const lYarc = pH23 + param.pH36 - param.pH5 - lYarc2;
+		figSideArc.mergeFigure(liftGeom.fig.faceSideL.translate(-lXArc, lYarc), true);
+		figSideArc.mergeFigure(pivotGeom.fig.faceSideArc);
+		figSideArc.mergeFigure(wheelGeom.fig.faceCut.translate(pX1, param.pH36));
 		// final figure list
 		rGeome.fig = {
 			faceTop: figTop,
-			faceSidePlate: figSidePlate,
+			faceSideExt: figSideExt,
+			faceSideInt: figSideInt,
 			faceSideArc: figSideArc,
 			faceAxis1: figAxis1,
 			faceAxis3: figAxis3
