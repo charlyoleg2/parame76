@@ -357,8 +357,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		//const epsilon = 0.01;
 		const lHtot = lH1 + 2 * param.lH2 + param.lH3 + param.lH4;
 		const pH23 = param.pH2 + param.pH31 + param.pH32 + param.pH33 + param.pH34 + param.pH35;
-		const HtotPre = pH23 + pH15 + 2 * param.pH5 + param.lH5 + param.lpE + param.lH2 + param.lH3;
-		const Htot = HtotPre + wheelY;
+		const lXArc = param.pD2 / 2 + param.lED2 + param.lS1 + param.lT3;
+		const lYarc2 = param.lH3 + param.lH2 + param.lH5 + param.lpE / 2;
+		const lYarc = pH23 - param.pH5 - lYarc2;
+		const Htot = wheelY + lYarc + lHtot;
 		// step-5 : checks on the parameter values
 		if (R1i < 0) {
 			throw `err244: aD1 ${ffix(param.aD1)} is too small compare to aW1 ${ffix(param.aW1)}`;
@@ -499,10 +501,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figSideExt
 		// figSideInt
 		// figSideArc
-		const lXArc = param.pD2 / 2 + param.lED2 + param.lS1 + param.lT3;
-		const lYarc2 = param.lH3 + param.lH2 + param.lH5 + param.lpE / 2;
-		const lYarc = pH23 + param.pH36 - param.pH5 - lYarc2;
-		figSideArc.mergeFigure(liftGeom.fig.faceSideL.translate(-lXArc, lYarc), true);
+		figSideArc.mergeFigure(liftGeom.fig.faceSideL.translate(-lXArc, lYarc + param.pH36), true);
 		figSideArc.mergeFigure(pivotGeom.fig.faceSideArc);
 		figSideArc.mergeFigure(wheelGeom.fig.faceCut.translate(pX1, param.pH36));
 		// final figure list
