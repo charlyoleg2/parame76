@@ -499,7 +499,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figTop.mergeFigure(figAxis1);
 		figTop.addSecond(contourCircle(0, 0, RzMax));
 		// figSideExt
+		figSideExt.mergeFigure(liftGeom.fig.faceBack.translate(0, lYarc));
+		figSideExt.mergeFigure(pivotGeom.fig.faceRelief4.translate(0, -param.pH36));
+		figSideExt.mergeFigure(wheelGeom.fig.facePneu);
 		// figSideInt
+		figSideInt.mergeFigure(liftGeom.fig.faceBack.translate(0, lYarc));
+		figSideInt.mergeFigure(pivotGeom.fig.faceRelief5.translate(0, -param.pH36));
+		figSideInt.mergeFigure(wheelGeom.fig.facePneu);
 		// figSideArc
 		figSideArc.mergeFigure(liftGeom.fig.faceSideL.translate(-lXArc, lYarc + param.pH36), true);
 		figSideArc.mergeFigure(pivotGeom.fig.faceSideArc);
