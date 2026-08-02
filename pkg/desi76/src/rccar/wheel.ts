@@ -46,10 +46,11 @@ const pDef: tParamDef = {
 	params: [
 		//pNumber(name, unit, init, min, max, step)
 		pNumber('D1', 'mm', 20, 1, 1000, 0.1),
+		pNumber('D6', 'mm', 100, 1, 2000, 1),
 		pNumber('RD2', 'mm', 1, 1, 500, 1),
 		pNumber('RD3', 'mm', 5, 1, 500, 1),
 		pNumber('RD4', 'mm', 2, 1, 500, 1),
-		pNumber('RD5', 'mm', 40, 1, 500, 1),
+		//pNumber('RD5', 'mm', 40, 1, 500, 1),
 		pNumber('RD6', 'mm', 4, 1, 500, 1),
 		pNumber('N6', 'teeth', 50, 5, 500, 1),
 		pSectionSeparator('widths'),
@@ -62,10 +63,11 @@ const pDef: tParamDef = {
 	],
 	paramSvg: {
 		D1: 'wheel_side.svg',
+		D6: 'wheel_side.svg',
 		RD2: 'wheel_side.svg',
 		RD3: 'wheel_cut.svg',
 		RD4: 'wheel_cut.svg',
-		RD5: 'wheel_side.svg',
+		//RD5: 'wheel_side.svg',
 		RD6: 'wheel_side.svg',
 		N6: 'wheel_side.svg',
 		W1: 'wheel_cut.svg',
@@ -94,13 +96,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	try {
 		// step-4 : some preparation calculation
 		const R1 = param.D1 / 2;
+		const R6 = param.D6 / 2;
 		const R2 = R1 + param.RD2;
 		const R3 = R2 + param.RD3;
 		const R4 = R3 + param.RD4;
-		const R5 = R2 + param.RD5;
-		const R6 = R5 + param.RD6;
+		const R5 = R6 - param.RD6;
+		const RD5 = R5 - R2;
 		const R56 = R5 + param.RD6 / 2;
-		const RD56 = param.RD5 + param.RD6;
+		const RD56 = RD5 + param.RD6;
 		//const pi2 = Math.PI / 2;
 		//const epsilon = 0.01;
 		const a62 = Math.PI / param.N6; // 2*Pi/(2*N6)
@@ -119,6 +122,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const Xtrans1 = param.W1 + param.W2 + param.W3;
 		const Wtot = Xtrans1 + 2 * param.W4 + param.W5 + param.W6;
 		// step-5 : checks on the parameter values
+		if (RD5 < 0) {
+			throw `err126: D6 ${ffix(param.D6)} is too small compare to D1 ${ffix(param.D1)} and RD2 ${ffix(param.RD2)}`;
+		}
 		if (Rpneu < Rtrans) {
 			throw `err230: Dpneu ${ffix(2 * Rpneu)} is too small compare to Dtrans ${ffix(2 * Rtrans)}`;
 		}
