@@ -69,18 +69,18 @@ const pDef: tParamDef = {
 		pNumber('pH5', 'mm', 1, 0, 5, 0.1),
 		pNumber('pEH2', 'mm', 5, 0, 100, 1),
 		pSectionSeparator('Wheel axis'),
+		pNumber('wD6', 'mm', 250, 1, 2000, 1),
 		pNumber('aD3', 'mm', 20, 1, 500, 1),
 		pNumber('wED3', 'mm', 0.4, -5, 10, 0.1),
 		pNumber('pED3', 'mm', 0.7, -5, 10, 0.1),
 		pNumber('wRD2', 'mm', 2, 1, 100, 1),
-		pNumber('wRD5', 'mm', 100, 1, 1000, 1),
 		pNumber('pwE', 'mm', 0.7, -5, 10, 0.1),
 		pSectionSeparator('Wheel main'),
 		//pNumber('wD1', 'mm', 20, 1, 1000, 0.1),
+		//pNumber('wD6', 'mm', 250, 1, 2000, 1),
 		//pNumber('wRD2', 'mm', 1, 1, 500, 1),
 		pNumber('wRD3', 'mm', 5, 1, 500, 1),
 		pNumber('wRD4', 'mm', 2, 1, 500, 1),
-		//pNumber('wRD5', 'mm', 40, 1, 500, 1),
 		pNumber('wRD6', 'mm', 4, 1, 500, 1),
 		pNumber('wN6', 'teeth', 50, 5, 500, 1),
 		pSectionSeparator('Wheel widths'),
@@ -126,7 +126,7 @@ const pDef: tParamDef = {
 		//pNumber('pH2', 'mm', 40, 1, 500, 1),
 		pNumber('pH31', 'mm', 3, 1, 100, 1),
 		pNumber('pH32', 'mm', 30, 1, 500, 1),
-		pNumber('pH33', 'mm', 30, 1, 500, 1),
+		pNumber('pH33', 'mm', 40, 1, 500, 1),
 		pNumber('pH34', 'mm', 0, 0, 500, 1),
 		pNumber('pH35', 'mm', 60, 1, 1000, 1),
 		pNumber('pH36', 'mm', 30, 1, 1000, 1),
@@ -196,18 +196,18 @@ const pDef: tParamDef = {
 		pH5: 'foot_joints.svg',
 		pEH2: 'foot_joints.svg',
 		// Wheel axis
+		wD6: 'foot_wheel_side.svg',
 		aD3: 'foot_joints.svg',
 		wED3: 'foot_joints.svg',
 		pED3: 'foot_joints.svg',
 		wRD2: 'foot_joints.svg',
-		wRD5: 'foot_joints.svg',
 		pwE: 'foot_joints.svg',
 		// Wheel main
 		//wD1: 'foot_wheel_side.svg',
+		//wD6: 'foot_wheel_side.svg',
 		//wRD2: 'foot_wheel_side.svg',
 		wRD3: 'foot_wheel_cut.svg',
 		wRD4: 'foot_wheel_cut.svg',
-		//wRD5: 'foot_wheel_side.svg',
 		wRD6: 'foot_wheel_side.svg',
 		// Wheel widths
 		wN6: 'foot_wheel_side.svg',
@@ -344,7 +344,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const pX1 = pX0 - wW16 - param.pwE / 2;
 		const wheelX = pX1 + param.wW1 + param.wW2;
 		const wD1 = param.aD3 + param.wED3;
-		const wheelY = wD1 / 2 + param.wRD2 + param.wRD5 + param.wRD6;
+		const wheelY = param.wD6 / 2;
 		const wheelRz = Math.sqrt(wheelX ** 2 + wheelY ** 2);
 		const pivotX = pX0 + param.pT4b + param.pT4a;
 		const pivotY = param.pW4 / 2;
@@ -352,14 +352,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const DzMin = Math.max(param.pD2, lD2);
 		const RzMax = Math.max(wheelRz, pivotRz);
 		const RzDiff = RzMax - DzMin / 2;
-		const wheelD = 2 * wheelY;
 		const pH15 = param.pH11 + param.pH12 + param.pH13 + param.pH14 + param.pH15;
 		const lH1 = pH15 + 2 * (param.pH5 + param.lH5) + param.lpE;
 		const pi2 = Math.PI / 2;
 		//const epsilon = 0.01;
 		const lHtot = lH1 + 2 * param.lH2 + param.lH3 + param.lH4;
 		const pH2 = param.pH5 + param.lpE + param.lH5 + param.lH2 + param.lH3 + param.pEH2;
-		const pH23 = pH2 + param.pH31 + param.pH32 + param.pH33 + param.pH34 + param.pH35;
+		const pH325 = param.pH32 + param.pH33 + param.pH34 + param.pH35;
+		const pH23 = pH2 + param.pH31 + pH325;
 		const lXArc = param.pD2 / 2 + param.lED2 + param.lS1 + param.lT3;
 		const lYarc2 = param.lH3 + param.lH2 + param.lH5 + param.lpE / 2;
 		const lYarc = pH23 - param.pH5 - lYarc2;
@@ -380,20 +380,22 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (param.pS1 <= param.lED2) {
 			rGeome.logstr += `warn379: Warning, pS1 ${ffix(param.pS1)} shall be bigger than lED2 ${ffix(param.lED2)} mm\n`;
 		}
+		if (wheelY > pH325) {
+			throw `err382: wD6 ${ffix(param.wD6)} is too large compare to pH32 ${ffix(param.pH32)} and pH35 ${ffix(param.pH35)} mm`;
+		}
 		// step-6 : any logs
 		rGeome.logstr += `wheel-pivot wW16 ${ffix(wW16)} pS5b ${ffix(pS5b)} mm\n`;
 		rGeome.logstr += `DzMin ${ffix(DzMin)}  RzMax ${ffix(RzMax)}  RzDiff ${ffix(RzDiff)} mm\n`;
-		rGeome.logstr += `wheelD ${ffix(wheelD)} mm\n`;
 		rGeome.logstr += `pH15 ${ffix(pH15)}  lH1 ${ffix(lH1)}  lHtot ${ffix(lHtot)}  Htot ${ffix(Htot)} mm\n`;
 		// step-7 : drawing of the figures
 		// inherite
 		// sub-wheel
 		const wheelParam = designParam(wheelDef.pDef, '');
 		wheelParam.setVal('D1', wD1);
+		wheelParam.setVal('D6', param.wD6);
 		wheelParam.setVal('RD2', param.wRD2);
 		wheelParam.setVal('RD3', param.wRD3);
 		wheelParam.setVal('RD4', param.wRD4);
-		wheelParam.setVal('RD5', param.wRD5);
 		wheelParam.setVal('RD6', param.wRD6);
 		wheelParam.setVal('N6', param.wN6);
 		wheelParam.setVal('W1', param.wW1);
