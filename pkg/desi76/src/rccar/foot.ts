@@ -363,9 +363,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const pH325 = param.pH32 + pH335;
 		const pH23 = pH2 + param.pH31 + pH325;
 		const lXArc = param.pD2 / 2 + param.lED2 + param.lS1 + param.lT3;
-		const lYarc2 = param.lH3 + param.lH2 + param.lH5 + param.lpE / 2;
-		const lYarc = pH23 - param.pH5 - lYarc2;
-		const Htot = wheelY + lYarc + lHtot;
+		const lYside2 = param.lH3 + param.lH2 + param.lH5 + param.lpE / 2;
+		const lYside = pH23 - param.pH5 - lYside2;
+		const Htot = wheelY + lYside + lHtot;
 		// step-5 : checks on the parameter values
 		if (R1i < 0) {
 			throw `err244: aD1 ${ffix(param.aD1)} is too small compare to aW1 ${ffix(param.aW1)}`;
@@ -515,22 +515,31 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figTop.mergeFigure(figAxis1);
 		figTop.addSecond(contourCircle(0, 0, RzMax));
 		// figSideExt
-		figSideExt.mergeFigure(liftGeom.fig.faceBack.translate(0, lYarc));
+		figSideExt.mergeFigure(liftGeom.fig.faceBack.translate(0, lYside));
 		figSideExt.mergeFigure(pivotGeom.fig.faceRelief4.translate(0, -param.pH36));
 		figSideExt.mergeFigure(wheelGeom.fig.facePneu);
 		figSideExt.mergeFigure(figAxis3);
+		const axis11 = ctrRectangle(-R1, lYside, param.aW1, lHtot);
+		const axis12 = ctrRectangle(R1 - param.aW1, lYside, param.aW1, lHtot);
+		figSideExt.addMainO(axis11);
+		figSideExt.addMainO(axis12);
 		// figSideInt
-		figSideInt.mergeFigure(liftGeom.fig.faceBack.translate(0, lYarc));
+		figSideInt.mergeFigure(liftGeom.fig.faceBack.translate(0, lYside));
 		figSideInt.mergeFigure(pivotGeom.fig.faceRelief5.translate(0, -param.pH36));
 		figSideInt.mergeFigure(wheelGeom.fig.facePneu);
 		figSideInt.mergeFigure(figAxis3);
+		figSideInt.addMainO(axis11);
+		figSideInt.addMainO(axis12);
 		// figSideArc
-		figSideArc.mergeFigure(liftGeom.fig.faceSideL.translate(-lXArc, lYarc + param.pH36), true);
+		const lYarc = lYside + param.pH36;
+		figSideArc.mergeFigure(liftGeom.fig.faceSideL.translate(-lXArc, lYarc), true);
 		figSideArc.mergeFigure(pivotGeom.fig.faceSideArc);
 		figSideArc.mergeFigure(wheelGeom.fig.faceCut.translate(pX1, param.pH36));
 		const a3w = param.pT5a + param.pT5b + 2 * param.pS5a + pS5b + param.pT4a + param.pT4b;
 		figSideArc.addMainO(ctrRectangle(pX2 - a3w, param.pH36 - R3, a3w, param.aW3));
 		figSideArc.addMainO(ctrRectangle(pX2 - a3w, param.pH36 + R3 - param.aW3, a3w, param.aW3));
+		figSideArc.addMainO(axis11.translate(0, lYarc - lYside));
+		figSideArc.addMainO(axis12.translate(0, lYarc - lYside));
 		// final figure list
 		rGeome.fig = {
 			faceTop: figTop,
