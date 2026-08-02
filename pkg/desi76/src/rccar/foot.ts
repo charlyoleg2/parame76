@@ -331,7 +331,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-4 : some preparation calculation
 		const R1 = param.aD1 / 2;
 		const R1i = R1 - param.aW1;
-		const R3 = param.aD3 / 3;
+		const R3 = param.aD3 / 2;
 		const R3i = R3 - param.aW3;
 		const wW16 = param.wW1 + param.wW2 + param.wW3 + param.wW4 * 2 + param.wW5 + param.wW6;
 		const pS3max = wW16 + param.pwE;
@@ -517,10 +517,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figSideExt.mergeFigure(liftGeom.fig.faceBack.translate(0, lYarc));
 		figSideExt.mergeFigure(pivotGeom.fig.faceRelief4.translate(0, -param.pH36));
 		figSideExt.mergeFigure(wheelGeom.fig.facePneu);
+		figSideExt.mergeFigure(figAxis3);
 		// figSideInt
 		figSideInt.mergeFigure(liftGeom.fig.faceBack.translate(0, lYarc));
 		figSideInt.mergeFigure(pivotGeom.fig.faceRelief5.translate(0, -param.pH36));
 		figSideInt.mergeFigure(wheelGeom.fig.facePneu);
+		figSideInt.mergeFigure(figAxis3);
 		// figSideArc
 		figSideArc.mergeFigure(liftGeom.fig.faceSideL.translate(-lXArc, lYarc + param.pH36), true);
 		figSideArc.mergeFigure(pivotGeom.fig.faceSideArc);
