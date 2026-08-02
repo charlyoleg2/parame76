@@ -30,7 +30,7 @@ import {
 	//vector,
 	//contour,
 	contourCircle,
-	//ctrRectangle,
+	ctrRectangle,
 	figure,
 	degToRad,
 	radToDeg,
@@ -342,6 +342,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const lY0 = param.lT3 + param.lS1 + lD2 / 2;
 		const pX0 = param.pD2 / 2 + param.pS1 + param.pT3b + param.pT3a + param.pS3;
 		const pX1 = pX0 - wW16 - param.pwE / 2;
+		const pX2 = pX0 + param.pT4a + param.pT4b;
 		const wheelX = pX1 + param.wW1 + param.wW2;
 		const wD1 = param.aD3 + param.wED3;
 		const wheelY = param.wD6 / 2;
@@ -527,6 +528,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figSideArc.mergeFigure(liftGeom.fig.faceSideL.translate(-lXArc, lYarc + param.pH36), true);
 		figSideArc.mergeFigure(pivotGeom.fig.faceSideArc);
 		figSideArc.mergeFigure(wheelGeom.fig.faceCut.translate(pX1, param.pH36));
+		const a3w = param.pT5a + param.pT5b + 2 * param.pS5a + pS5b + param.pT4a + param.pT4b;
+		figSideArc.addMainO(ctrRectangle(pX2 - a3w, param.pH36 - R3, a3w, param.aW3));
+		figSideArc.addMainO(ctrRectangle(pX2 - a3w, param.pH36 + R3 - param.aW3, a3w, param.aW3));
 		// final figure list
 		rGeome.fig = {
 			faceTop: figTop,
