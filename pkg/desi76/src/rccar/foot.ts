@@ -556,60 +556,79 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const partList: string[] = [];
 		// part3D wheel
 		const wheelT3d = transform3d().addRotation(0, pi2, 0).addTranslation(pX1, 0, param.pH36);
+		const wheelT3dP = transform3d();
+		const wheelT3dC = param.output3D === 0 ? wheelT3d : wheelT3dP;
 		if ([0, 1].includes(param.output3D)) {
 			const partWheel: tInherit = {
 				outName: `inpax_${designName}_wheel`,
 				subdesign: 'pax_wheel',
 				subgeom: wheelGeom,
-				rotate: wheelT3d.getRotation(),
-				translate: wheelT3d.getTranslation()
+				rotate: wheelT3dC.getRotation(),
+				translate: wheelT3dC.getTranslation()
 			};
 			partInherit.push(partWheel);
 			partList.push(`inpax_${designName}_wheel`);
 		}
 		// part3D pivot
+		const pivotT3d = transform3d();
+		const pivotT3dP = transform3d();
+		const pivotT3dC = param.output3D === 0 ? pivotT3d : pivotT3dP;
 		if ([0, 1].includes(param.output3D)) {
 			const partPivot: tInherit = {
 				outName: `inpax_${designName}_pivot`,
 				subdesign: 'pax_pivot',
 				subgeom: pivotGeom,
-				rotate: [0, 0, 0],
-				translate: [0, 0, 0]
+				rotate: pivotT3dC.getRotation(),
+				translate: pivotT3dC.getTranslation()
 			};
 			partInherit.push(partPivot);
 			partList.push(`inpax_${designName}_pivot`);
 		}
 		// part3D lift
 		const liftT3d = transform3d().addRotation(0, 0, -pi2).addTranslation(-lXarc, 0, lYarc);
+		const liftT3dP = transform3d();
+		const liftT3dC = param.output3D === 0 ? liftT3d : liftT3dP;
 		if ([0, 1].includes(param.output3D)) {
 			const partLift: tInherit = {
 				outName: `inpax_${designName}_lift`,
 				subdesign: 'pax_lift',
 				subgeom: liftGeom,
-				rotate: liftT3d.getRotation(),
-				translate: liftT3d.getTranslation()
+				rotate: liftT3dC.getRotation(),
+				translate: liftT3dC.getTranslation()
 			};
 			partInherit.push(partLift);
 			partList.push(`inpax_${designName}_lift`);
 		}
-		// part3D axis
+		// part3D axis1
+		const axis1T3d = transform3d().addTranslation(-lXarc, 0, lYarc);
+		const axis1T3dP = transform3d();
+		const axis1T3dC = param.output3D === 0 ? axis1T3d : axis1T3dP;
 		if ([0, 1].includes(param.output3D)) {
-			for (const ii of [1, 3]) {
-				const iiName = `subpax_${designName}_axis_${ii}`;
-				const iiAxisT3d2 = transform3d().addTranslation(0, 0, 0);
-				const iiAxisT3d = param.output3D === 0 ? transform3d() : iiAxisT3d2;
-				//rGeome.logstr += `dbg511: ii ${ii}  iiAxisT3d ${ffix(iiAxisT3d.getTranslation()[2])}\n`;
-				const iiPartAxis: tExtrude = {
-					outName: iiName,
-					face: `${designName}_faceAxis${ii}`,
-					extrudeMethod: EExtrude.eLinearOrtho,
-					length: 10,
-					rotate: iiAxisT3d.getRotation(),
-					translate: iiAxisT3d.getTranslation()
-				};
-				partExtrude.push(iiPartAxis);
-				partList.push(iiName);
-			}
+			const partAxis1: tExtrude = {
+				outName: `subpax_${designName}_axis1`,
+				face: `${designName}_faceAxis1`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: lHtot,
+				rotate: axis1T3dC.getRotation(),
+				translate: axis1T3dC.getTranslation()
+			};
+			partExtrude.push(partAxis1);
+			partList.push(`subpax_${designName}_axis1`);
+		}
+		const axis3T3d = transform3d().addRotation(0, pi2, 0).addTranslation(pX1, 0, param.pH36);
+		const axis3T3dP = transform3d();
+		const axis3T3dC = param.output3D === 0 ? axis3T3d : axis3T3dP;
+		if ([0, 1].includes(param.output3D)) {
+			const partAxis3: tExtrude = {
+				outName: `subpax_${designName}_axis3`,
+				face: `${designName}_faceAxis3`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: a3w,
+				rotate: axis3T3dC.getRotation(),
+				translate: axis3T3dC.getTranslation()
+			};
+			partExtrude.push(partAxis3);
+			partList.push(`subpax_${designName}_axis3`);
 		}
 		// part3D output
 		rGeome.vol = {
@@ -628,20 +647,20 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const subWheel: tSubInst = {
 			partName: wheelParam.getPartName(),
 			dparam: wheelParam.getDesignParamList(),
-			orientation: [0, 0, 0],
-			position: [0, 0, 0]
+			orientation: wheelT3d.getRotation(),
+			position: wheelT3d.getTranslation()
 		};
 		const subPivot: tSubInst = {
 			partName: pivotParam.getPartName(),
 			dparam: pivotParam.getDesignParamList(),
-			orientation: [0, 0, 0],
-			position: [0, 0, 0]
+			orientation: pivotT3d.getRotation(),
+			position: pivotT3d.getTranslation()
 		};
 		const subLift: tSubInst = {
 			partName: liftParam.getPartName(),
 			dparam: liftParam.getDesignParamList(),
-			orientation: [0, 0, 0],
-			position: [0, 0, 0]
+			orientation: liftT3d.getRotation(),
+			position: liftT3d.getTranslation()
 		};
 		rGeome.sub = {
 			wheel1: subWheel,
