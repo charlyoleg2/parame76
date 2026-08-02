@@ -96,7 +96,7 @@ const pDef: tParamDef = {
 		//pNumber('pD3', 'mm', 20, 1, 500, 1),
 		pNumber('pT1', 'mm', 5, 1, 100, 1),
 		pNumber('pT2', 'mm', 2, 1, 100, 1),
-		pNumber('pW4', 'mm', 80, 1, 1000, 1),
+		pNumber('pW4', 'mm', 120, 1, 1000, 1),
 		pSectionSeparator('Pivot top details'),
 		//pNumber('pS1', 'mm', 2, 0, 500, 1),
 		pNumber('pS2min', 'mm', 30, 1, 500, 1),
@@ -128,7 +128,7 @@ const pDef: tParamDef = {
 		pNumber('pH32', 'mm', 30, 1, 500, 1),
 		pNumber('pH33', 'mm', 40, 1, 500, 1),
 		pNumber('pH34', 'mm', 0, 0, 500, 1),
-		pNumber('pH35', 'mm', 60, 1, 1000, 1),
+		pNumber('pH35', 'mm', 75, 1, 1000, 1),
 		pNumber('pH36', 'mm', 30, 1, 1000, 1),
 		pSectionSeparator('Pivot relief'),
 		pNumber('pU31', 'mm', 2, 1, 100, 1),
@@ -358,7 +358,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		//const epsilon = 0.01;
 		const lHtot = lH1 + 2 * param.lH2 + param.lH3 + param.lH4;
 		const pH2 = param.pH5 + param.lpE + param.lH5 + param.lH2 + param.lH3 + param.pEH2;
-		const pH325 = param.pH32 + param.pH33 + param.pH34 + param.pH35;
+		const pH335 = param.pH33 + param.pH34 + param.pH35;
+		const pH325 = param.pH32 + pH335;
 		const pH23 = pH2 + param.pH31 + pH325;
 		const lXArc = param.pD2 / 2 + param.lED2 + param.lS1 + param.lT3;
 		const lYarc2 = param.lH3 + param.lH2 + param.lH5 + param.lpE / 2;
@@ -380,12 +381,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (param.pS1 <= param.lED2) {
 			rGeome.logstr += `warn379: Warning, pS1 ${ffix(param.pS1)} shall be bigger than lED2 ${ffix(param.lED2)} mm\n`;
 		}
-		if (wheelY > pH325) {
+		const wheelDmargin1 = pH325 - wheelY;
+		if (wheelDmargin1 < 0) {
 			throw `err382: wD6 ${ffix(param.wD6)} is too large compare to pH32 ${ffix(param.pH32)} and pH35 ${ffix(param.pH35)} mm`;
+		}
+		const wheelDmargin2 = Math.sqrt((param.pW4 / 2 - param.pT2) ** 2 + pH335 ** 2) - wheelY;
+		if (wheelDmargin2 < 0) {
+			throw `err390: wD6 ${ffix(param.wD6)} is too large compare to pW4 ${ffix(param.pW4)} and pH35 ${ffix(param.pH35)} mm`;
 		}
 		// step-6 : any logs
 		rGeome.logstr += `wheel-pivot wW16 ${ffix(wW16)} pS5b ${ffix(pS5b)} mm\n`;
 		rGeome.logstr += `DzMin ${ffix(DzMin)}  RzMax ${ffix(RzMax)}  RzDiff ${ffix(RzDiff)} mm\n`;
+		rGeome.logstr += `wheelD wD6 ${ffix(param.wD6)}  margin1 ${ffix(wheelDmargin1)}  margin2 ${ffix(wheelDmargin2)} mm\n`;
 		rGeome.logstr += `pH15 ${ffix(pH15)}  lH1 ${ffix(lH1)}  lHtot ${ffix(lHtot)}  Htot ${ffix(Htot)} mm\n`;
 		// step-7 : drawing of the figures
 		// inherite
