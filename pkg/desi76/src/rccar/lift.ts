@@ -443,13 +443,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			figBack.addSecond(ctrRectangle(ix, param.MY1 - MR2, param.T6, 2 * MR2));
 		}
 		function ctrU(iYinit: number, iYd: number, iXs: number, iYs: number): tContour {
+			const H25Yd = param.H2 + param.H5 + iYd;
 			const rCtr = contour(-iXs * R2, iYinit)
 				.addSegStrokeR(iXs * param.T2, 0)
 				.addSegStrokeR(0, iYs * iYd)
 				.addSegStrokeR(iXs * (R2 - R1 - param.T2 - param.T1), 0)
 				.addSegStrokeR(0, -iYs * iYd)
 				.addSegStrokeR(iXs * param.T1, 0)
-				.addSegStrokeR(0, iYs * H325)
+				.addSegStrokeR(0, iYs * H25Yd)
 				.addSegStrokeR(iXs * (-R2 + R1), 0)
 				.closeSegStroke();
 			return rCtr;
