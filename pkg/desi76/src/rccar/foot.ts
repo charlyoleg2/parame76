@@ -67,6 +67,7 @@ const pDef: tParamDef = {
 		pNumber('lpE', 'mm', 0.7, -5, 10, 0.1),
 		pNumber('lH5', 'mm', 0, 0, 5, 0.1),
 		pNumber('pH5', 'mm', 1, 0, 5, 0.1),
+		pNumber('pEH2', 'mm', 5, 0, 100, 1),
 		pSectionSeparator('Wheel axis'),
 		pNumber('aD3', 'mm', 20, 1, 500, 1),
 		pNumber('wED3', 'mm', 0.4, -5, 10, 0.1),
@@ -122,7 +123,7 @@ const pDef: tParamDef = {
 		pNumber('pH14', 'mm', 10, 1, 1000, 1),
 		pNumber('pH15', 'mm', 3, 1, 100, 1),
 		//pNumber('pH5', 'mm', 1, 0, 20, 1),
-		pNumber('pH2', 'mm', 40, 1, 500, 1),
+		//pNumber('pH2', 'mm', 40, 1, 500, 1),
 		pNumber('pH31', 'mm', 3, 1, 100, 1),
 		pNumber('pH32', 'mm', 30, 1, 500, 1),
 		pNumber('pH33', 'mm', 30, 1, 500, 1),
@@ -193,6 +194,7 @@ const pDef: tParamDef = {
 		lpE: 'foot_joints.svg',
 		lH5: 'foot_joints.svg',
 		pH5: 'foot_joints.svg',
+		pEH2: 'foot_joints.svg',
 		// Wheel axis
 		aD3: 'foot_joints.svg',
 		wED3: 'foot_joints.svg',
@@ -248,7 +250,7 @@ const pDef: tParamDef = {
 		pH14: 'foot_pivot_relief35.svg',
 		pH15: 'foot_pivot_relief35.svg',
 		//pH5: 'foot_pivot_relief35.svg',
-		pH2: 'foot_pivot_relief35.svg',
+		//pH2: 'foot_pivot_relief35.svg',
 		pH31: 'foot_pivot_relief35.svg',
 		pH32: 'foot_pivot_relief35.svg',
 		pH33: 'foot_pivot_relief35.svg',
@@ -356,7 +358,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const pi2 = Math.PI / 2;
 		//const epsilon = 0.01;
 		const lHtot = lH1 + 2 * param.lH2 + param.lH3 + param.lH4;
-		const pH23 = param.pH2 + param.pH31 + param.pH32 + param.pH33 + param.pH34 + param.pH35;
+		const pH2 = param.pH5 + param.lpE + param.lH5 + param.lH2 + param.lH3 + param.pEH2;
+		const pH23 = pH2 + param.pH31 + param.pH32 + param.pH33 + param.pH34 + param.pH35;
 		const lXArc = param.pD2 / 2 + param.lED2 + param.lS1 + param.lT3;
 		const lYarc2 = param.lH3 + param.lH2 + param.lH5 + param.lpE / 2;
 		const lYarc = pH23 - param.pH5 - lYarc2;
@@ -373,6 +376,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		if (param.pS3 > pS3max) {
 			throw `err369: pS3 ${ffix(param.pS3)} is too large compare to pS3max ${ffix(pS3max)} mm`;
+		}
+		if (param.pS1 <= param.lED2) {
+			rGeome.logstr += `warn379: Warning, pS1 ${ffix(param.pS1)} shall be bigger than lED2 ${ffix(param.lED2)} mm\n`;
 		}
 		// step-6 : any logs
 		rGeome.logstr += `wheel-pivot wW16 ${ffix(wW16)} pS5b ${ffix(pS5b)} mm\n`;
@@ -429,7 +435,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		pivotParam.setVal('H14', param.pH14);
 		pivotParam.setVal('H15', param.pH15);
 		pivotParam.setVal('H5', param.pH5);
-		pivotParam.setVal('H2', param.pH2);
+		pivotParam.setVal('H2', pH2);
 		pivotParam.setVal('H31', param.pH31);
 		pivotParam.setVal('H32', param.pH32);
 		pivotParam.setVal('H33', param.pH33);

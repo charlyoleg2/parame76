@@ -24,8 +24,8 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
      inkscape:zoom="1"
-     inkscape:cx="282"
-     inkscape:cy="354"
+     inkscape:cx="266.49999"
+     inkscape:cy="3751.9999"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="0"
@@ -43,6 +43,12 @@
   </sodipodi:namedview>
   <defs
      id="defs1">
+    <rect
+       x="41.918686"
+       y="493.85471"
+       width="63.407135"
+       height="60.645275"
+       id="rect122" />
     <rect
        x="57"
        y="557.18768"
@@ -744,7 +750,7 @@
        xml:space="preserve"
        transform="matrix(0.2645833,0,0,0.2645833,94.768676,-39.940952)"
        id="text16"
-       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect16);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect16);display:inline;fill:#999999;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="117.87891"
          y="460.89074"
          id="tspan16">pH2</tspan></text>
@@ -856,5 +862,18 @@
          x="57"
          y="571.42394"
          id="tspan25">pwE</tspan></text>
+    <path
+       style="fill:#999999;stroke:#000000;stroke-width:0.264999;stroke-linejoin:round;marker-start:url(#Stop);marker-end:url(#Stop)"
+       d="M 109.60666,90.508422 V 93.75496"
+       id="path122"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.2645833,0,0,0.2645833,99.615613,-42.068745)"
+       id="text122"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect122);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="41.917969"
+         y="508.09191"
+         id="tspan26">pEH2</tspan></text>
   </g>
 </svg>
