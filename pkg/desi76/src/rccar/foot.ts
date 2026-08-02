@@ -362,7 +362,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const pH335 = param.pH33 + param.pH34 + param.pH35;
 		const pH325 = param.pH32 + pH335;
 		const pH23 = pH2 + param.pH31 + pH325;
-		const lXArc = param.pD2 / 2 + param.lED2 + param.lS1 + param.lT3;
+		const lXarc = param.pD2 / 2 + param.lED2 + param.lS1 + param.lT3;
 		const lYside2 = param.lH3 + param.lH2 + param.lH5 + param.lpE / 2;
 		const lYside = pH23 - param.pH5 - lYside2;
 		const Htot = wheelY + lYside + lHtot;
@@ -532,7 +532,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figSideInt.addMainO(axis12);
 		// figSideArc
 		const lYarc = lYside + param.pH36;
-		figSideArc.mergeFigure(liftGeom.fig.faceSideL.translate(-lXArc, lYarc), true);
+		figSideArc.mergeFigure(liftGeom.fig.faceSideL.translate(-lXarc, lYarc), true);
 		figSideArc.mergeFigure(pivotGeom.fig.faceSideArc);
 		figSideArc.mergeFigure(wheelGeom.fig.faceCut.translate(pX1, param.pH36));
 		const a3w = param.pT5a + param.pT5b + 2 * param.pS5a + pS5b + param.pT4a + param.pT4b;
@@ -555,13 +555,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const partExtrude: tExtrude[] = [];
 		const partList: string[] = [];
 		// part3D wheel
+		const wheelT3d = transform3d().addRotation(0, pi2, 0).addTranslation(pX1, 0, param.pH36);
 		if ([0, 1].includes(param.output3D)) {
 			const partWheel: tInherit = {
 				outName: `inpax_${designName}_wheel`,
 				subdesign: 'pax_wheel',
 				subgeom: wheelGeom,
-				rotate: [0, 0, 0],
-				translate: [0, 0, 0]
+				rotate: wheelT3d.getRotation(),
+				translate: wheelT3d.getTranslation()
 			};
 			partInherit.push(partWheel);
 			partList.push(`inpax_${designName}_wheel`);
@@ -579,13 +580,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			partList.push(`inpax_${designName}_pivot`);
 		}
 		// part3D lift
+		const liftT3d = transform3d().addRotation(0, 0, -pi2).addTranslation(-lXarc, 0, lYarc);
 		if ([0, 1].includes(param.output3D)) {
 			const partLift: tInherit = {
 				outName: `inpax_${designName}_lift`,
 				subdesign: 'pax_lift',
 				subgeom: liftGeom,
-				rotate: [0, 0, 0],
-				translate: [0, 0, 0]
+				rotate: liftT3d.getRotation(),
+				translate: liftT3d.getTranslation()
 			};
 			partInherit.push(partLift);
 			partList.push(`inpax_${designName}_lift`);
