@@ -368,6 +368,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const lYside2 = param.lH3 + param.lH2 + param.lH5 + param.lpE / 2;
 		const lYside = pH23 - param.pH5 - lYside2;
 		const Htot = wheelY + lYside + lHtot;
+		const pHtot = pH23 + param.pH36 + pH15 + param.pH5;
 		// step-5 : checks on the parameter values
 		if (R1i < 0) {
 			throw `err244: aD1 ${ffix(param.aD1)} is too small compare to aW1 ${ffix(param.aW1)}`;
@@ -555,9 +556,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const partInherit: tInherit[] = [];
 		const partExtrude: tExtrude[] = [];
 		const partList: string[] = [];
+		// spacing for printing
+		const spacing = 1.5 * Math.max(param.pD2, param.wD6);
 		// part3D wheel
 		const wheelT3d = transform3d().addRotation(0, pi2, 0).addTranslation(pX1, 0, param.pH36);
-		const wheelT3dP = transform3d();
+		const wheelT3dP = transform3d().addTranslation(0, spacing, 0);
 		const wheelT3dC = param.output3D === 0 ? wheelT3d : wheelT3dP;
 		if ([0, 1].includes(param.output3D)) {
 			const partWheel: tInherit = {
@@ -572,7 +575,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// part3D pivot
 		const pivotT3d = transform3d();
-		const pivotT3dP = transform3d();
+		const pivotT3dP = transform3d()
+			.addRotation(0, 2 * pi2, 0)
+			.addTranslation(0, 2 * spacing, pHtot);
 		const pivotT3dC = param.output3D === 0 ? pivotT3d : pivotT3dP;
 		if ([0, 1].includes(param.output3D)) {
 			const partPivot: tInherit = {
@@ -587,7 +592,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// part3D lift
 		const liftT3d = transform3d().addRotation(0, 0, -pi2).addTranslation(-lXarc, 0, lYarc);
-		const liftT3dP = transform3d();
+		const liftT3dP = transform3d().addTranslation(0, 3 * spacing, 0);
 		const liftT3dC = param.output3D === 0 ? liftT3d : liftT3dP;
 		if ([0, 1].includes(param.output3D)) {
 			const partLift: tInherit = {
@@ -602,7 +607,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// part3D axis1
 		const axis1T3d = transform3d().addTranslation(0, 0, lYarc);
-		const axis1T3dP = transform3d();
+		const axis1T3dP = transform3d().addTranslation(0, 0, 0);
 		const axis1T3dC = param.output3D === 0 ? axis1T3d : axis1T3dP;
 		if ([0, 1].includes(param.output3D)) {
 			const partAxis1: tExtrude = {
@@ -617,7 +622,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			partList.push(`subpax_${designName}_axis1`);
 		}
 		const axis3T3d = transform3d().addRotation(0, pi2, 0).addTranslation(pX3, 0, param.pH36);
-		const axis3T3dP = transform3d();
+		const axis3T3dP = transform3d().addTranslation(spacing, 0, 0);
 		const axis3T3dC = param.output3D === 0 ? axis3T3d : axis3T3dP;
 		if ([0, 1].includes(param.output3D)) {
 			const partAxis3: tExtrude = {
