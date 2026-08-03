@@ -343,6 +343,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const pX0 = param.pD2 / 2 + param.pS1 + param.pT3b + param.pT3a + param.pS3;
 		const pX1 = pX0 - wW16 - param.pwE / 2;
 		const pX2 = pX0 + param.pT4a + param.pT4b;
+		const a3w = param.pT5a + param.pT5b + 2 * param.pS5a + pS5b + param.pT4a + param.pT4b;
+		const pX3 = pX2 - a3w;
 		const wheelX = pX1 + param.wW1 + param.wW2;
 		const wD1 = param.aD3 + param.wED3;
 		const wheelY = param.wD6 / 2;
@@ -535,9 +537,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figSideArc.mergeFigure(liftGeom.fig.faceSideL.translate(-lXarc, lYarc), true);
 		figSideArc.mergeFigure(pivotGeom.fig.faceSideArc);
 		figSideArc.mergeFigure(wheelGeom.fig.faceCut.translate(pX1, param.pH36));
-		const a3w = param.pT5a + param.pT5b + 2 * param.pS5a + pS5b + param.pT4a + param.pT4b;
-		figSideArc.addMainO(ctrRectangle(pX2 - a3w, param.pH36 - R3, a3w, param.aW3));
-		figSideArc.addMainO(ctrRectangle(pX2 - a3w, param.pH36 + R3 - param.aW3, a3w, param.aW3));
+		figSideArc.addMainO(ctrRectangle(pX3, param.pH36 - R3, a3w, param.aW3));
+		figSideArc.addMainO(ctrRectangle(pX3, param.pH36 + R3 - param.aW3, a3w, param.aW3));
 		figSideArc.addMainO(axis11.translate(0, lYarc - lYside));
 		figSideArc.addMainO(axis12.translate(0, lYarc - lYside));
 		// final figure list
@@ -600,7 +601,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			partList.push(`inpax_${designName}_lift`);
 		}
 		// part3D axis1
-		const axis1T3d = transform3d().addTranslation(-lXarc, 0, lYarc);
+		const axis1T3d = transform3d().addTranslation(0, 0, lYarc);
 		const axis1T3dP = transform3d();
 		const axis1T3dC = param.output3D === 0 ? axis1T3d : axis1T3dP;
 		if ([0, 1].includes(param.output3D)) {
@@ -615,7 +616,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			partExtrude.push(partAxis1);
 			partList.push(`subpax_${designName}_axis1`);
 		}
-		const axis3T3d = transform3d().addRotation(0, pi2, 0).addTranslation(pX1, 0, param.pH36);
+		const axis3T3d = transform3d().addRotation(0, pi2, 0).addTranslation(pX3, 0, param.pH36);
 		const axis3T3dP = transform3d();
 		const axis3T3dC = param.output3D === 0 ? axis3T3d : axis3T3dP;
 		if ([0, 1].includes(param.output3D)) {
