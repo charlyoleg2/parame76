@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
-     inkscape:zoom="0.78484147"
-     inkscape:cx="396.25837"
-     inkscape:cy="561.25984"
+     inkscape:zoom="2.2198669"
+     inkscape:cx="144.8285"
+     inkscape:cy="191.00244"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="0"
@@ -53,5 +53,129 @@
          x="16.564453"
          y="38.445426"
          id="tspan2">src_arm.svg</tspan></text>
+    <rect
+       style="fill:#0000ff;stroke:#0000ff;stroke-width:0.26458333;stroke-linejoin:round"
+       id="rect2"
+       width="20.307865"
+       height="5.7806582"
+       x="21.811558"
+       y="29.20126"
+       ry="0" />
+    <rect
+       style="fill:#0000ff;stroke:#0000ff;stroke-width:0.26458333;stroke-linejoin:round"
+       id="rect2-3"
+       width="66.553131"
+       height="5.7806582"
+       x="29.20126"
+       y="-47.900078"
+       ry="0"
+       transform="rotate(90)" />
+    <rect
+       style="fill:#0000ff;stroke:#0000ff;stroke-width:0.26458333;stroke-linejoin:round"
+       id="rect2-1"
+       width="20.307865"
+       height="5.7806582"
+       x="21.811554"
+       y="89.97374"
+       ry="0" />
+    <rect
+       style="fill:#0000ff;stroke:#0000ff;stroke-width:0.26458333;stroke-linejoin:round"
+       id="rect2-3-3"
+       width="43.668877"
+       height="5.7806582"
+       x="40.643391"
+       y="-91.780769"
+       ry="0"
+       transform="rotate(90)" />
+    <rect
+       style="fill:#0000ff;stroke:#0000ff;stroke-width:0.26458333;stroke-linejoin:round"
+       id="rect2-6"
+       width="20.307865"
+       height="5.7806582"
+       x="91.780769"
+       y="40.643391"
+       ry="0" />
+    <rect
+       style="fill:#0000ff;stroke:#0000ff;stroke-width:0.26458333;stroke-linejoin:round"
+       id="rect2-2"
+       width="20.307865"
+       height="5.7806582"
+       x="91.780769"
+       y="78.531616"
+       ry="0" />
+    <rect
+       style="fill:#0000ff;stroke:#0000ff;stroke-width:0.264583;stroke-linejoin:round"
+       id="rect2-3-3-9"
+       width="36.421314"
+       height="6.5572143"
+       x="56.955788"
+       y="13.096572"
+       ry="0"
+       transform="rotate(17.316282)" />
+    <circle
+       style="fill:none;stroke:#0000ff;stroke-width:0.264583;stroke-linejoin:round"
+       id="path2"
+       cx="86.000114"
+       cy="33.909222"
+       r="6.734169" />
+    <circle
+       style="fill:none;stroke:#0000ff;stroke-width:0.264583;stroke-linejoin:round"
+       id="path2-2-0"
+       cx="86.000107"
+       cy="33.909222"
+       r="13.170365" />
+    <circle
+       style="fill:none;stroke:#0000ff;stroke-width:0.264583;stroke-linejoin:round"
+       id="path2-2-0-6"
+       cx="47.900078"
+       cy="42.371624"
+       r="13.170365" />
+    <circle
+       style="fill:none;stroke:#0000ff;stroke-width:0.264583;stroke-linejoin:round"
+       id="path2-7"
+       cx="47.900078"
+       cy="42.371624"
+       r="6.734169" />
+    <rect
+       style="fill:#0000ff;stroke:#0000ff;stroke-width:0.264583;stroke-linejoin:round"
+       id="rect2-3-3-9-3"
+       width="36.421314"
+       height="6.5572143"
+       x="19.92304"
+       y="-106.43621"
+       ry="0"
+       transform="matrix(0.95467625,-0.29764618,-0.29764618,-0.95467625,0,0)" />
+    <rect
+       style="fill:#0000ff;stroke:#0000ff;stroke-width:0.264583;stroke-linejoin:round"
+       id="rect3"
+       width="52.381226"
+       height="2.6895239"
+       x="-33.469231"
+       y="93.450203"
+       transform="matrix(0.65695159,-0.75393276,0.75397362,0.6569047,0,0)" />
+    <rect
+       style="fill:#0000ff;stroke:#0000ff;stroke-width:0.264583;stroke-linejoin:round"
+       id="rect3-5"
+       width="52.381226"
+       height="2.6895239"
+       x="60.826202"
+       y="11.35622"
+       transform="matrix(0.65695159,0.75393276,0.75397362,-0.6569047,0,0)" />
+    <path
+       style="fill:none;stroke:#0000ff;stroke-width:0.264583;stroke-linejoin:round"
+       d="M 49.82093,43.146355 V 80.33327 L 64.838722,62.931701 Z"
+       id="path1" />
+    <path
+       style="fill:none;stroke:#0000ff;stroke-width:0.264583;stroke-linejoin:round"
+       d="m 75.804092,62.693322 8.104841,9.058351 V 53.158217 Z"
+       id="path3" />
+    <path
+       style="fill:none;stroke:#0000ff;stroke-width:0.264583;stroke-linejoin:round"
+       d="m 56.733881,40.524202 14.183471,15.852113 8.104841,-8.343217 z"
+       id="path4" />
+    <path
+       style="fill:none;stroke:#0000ff;stroke-width:0.264583;stroke-linejoin:round"
+       d="m 57.055577,84.579051 14.183471,-15.852113 8.104841,8.343217 z"
+       id="path4-3" />
   </g>
 </svg>
