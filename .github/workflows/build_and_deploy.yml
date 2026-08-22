@@ -30,8 +30,7 @@ jobs:
                   registry-url: 'https://registry.npmjs.org/'
 
             - name: clean and install
-              run: |
-                  npm ci
+              run: npm ci
 
             - name: Build and check
               env:
@@ -53,5 +52,3 @@ jobs:
               run: |
                   npm run ci  # rebuild without env BASE_PATH
                   npm run gh-publish
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
